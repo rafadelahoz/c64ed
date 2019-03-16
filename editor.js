@@ -1,28 +1,22 @@
-let image = new Image();
-image.src = 'tiles.png';
+/* Editor things */
 
-const tileWidth = 32,
-    tileHeight = 32;
+const tileWidth = 14,
+    tileHeight = 14;
 
-const mapRows = 8,
-    mapColumns = 18;
+const mapColumns = 15;
+const mapRows = 11;
 
-const sourceWidth = 256,
-    sourceHeight = 256;
+var bgColor = '#ff000a';
 
 let tiles = new Array(mapColumns * mapRows);
 let mapHeight = mapRows * tileHeight;
 let mapWidth = mapColumns * tileWidth;
-let sourceX, sourceY, sourceTile;
 
 let mapCanvas = document.getElementById('myCanvas');
 mapCanvas.setAttribute('width', mapWidth);
 mapCanvas.setAttribute('height', mapHeight);
 
-let tilesetCanvas = document.getElementById('tileset');
-
 let mapContext = mapCanvas.getContext('2d');
-let tilesetContext = tilesetCanvas.getContext('2d');
 
 let mouseDown;
 
@@ -33,26 +27,19 @@ mapCanvas.addEventListener('mousemove', onMapMouseMove);
 mapCanvas.addEventListener('click', onMapMouseClick);
 mapCanvas.addEventListener('mouseup', onMapMouseUp);
 
-tilesetCanvas.addEventListener('mousedown', onTilesetMouseDown);
-tilesetCanvas.addEventListener('mousemove', onTilesetMouseMove);
-
-// After loading image, do things
-image.addEventListener('load', function() {
-    tilesetCanvas.setAttribute('width', image.width);
-    tilesetCanvas.setAttribute('height', image.height);
-    redrawSource();
+document.getElementById('redraw').addEventListener('click', function(ev) {
+    renderFullMap();
 });
+
+document.getElementById('bgColor').addEventListener('change', function(ev) {
+    bgColor = ev.target.value;
+    renderFullMap();
+});
+
+tilesetPanel.init();
 
 var mapX = mapCanvas.getClientRects()[0].x;
 var mapY = mapCanvas.getClientRects()[0].y;
-
-function getTilesetX() {
-    return tilesetCanvas.getClientRects()[0].x;
-}
-
-function getTilesetY() {
-    return tilesetCanvas.getClientRects()[0].y;
-}
 
 // draw the grid
 
@@ -66,10 +53,6 @@ for (let i = 0; i <= mapRows; i++) {
     mapContext.lineTo(mapWidth, i * tileHeight);
 }
 mapContext.stroke();
-
-function redrawSource() {
-    tilesetContext.drawImage(image, 0, 0, sourceWidth, sourceHeight);
-}
 
 function onMapMouseUp(e) {
     mouseDown = false;
@@ -95,66 +78,37 @@ function onMapMouseDown(e) {
             let tileX = Math.floor(x / tileWidth);
             let tileY = Math.floor(y / tileHeight);
             let targetTile = tileY * mapColumns + tileX;
-            sourceTile = tiles[targetTile];
-            var wint = Math.floor((sourceWidth / tileWidth));
-            sourceX = sourceTile % wint * tileWidth;
-            sourceY = Math.floor(sourceTile / wint) * tileHeight;
-            console.log(sourceTile  + ", " + sourceX + ", " + sourceY);
-            redrawSource();
-            drawBox();
+            tilesetPanel.setCurrentTile(tiles[targetTile]);
         }
     }
-}
-
-function onTilesetMouseDown(e) {
-    mouseDown = false;
-
-    let x = e.clientX - getTilesetX();
-    let y = e.clientY - getTilesetY();
-    let gridX = Math.floor(x / tileWidth) * tileWidth;
-    let gridY = Math.floor(y / tileHeight) * tileHeight;
-
-    // if (y > mapHeight && y < (mapHeight + sourceHeight) && x < sourceWidth) { // source
-        let tileX = Math.floor(x / tileWidth);
-        let tileY = Math.floor(y / tileHeight);
-        sourceTile = tileY * (sourceWidth / tileWidth) + tileX;
-        sourceX = gridX;
-        sourceY = gridY;
-        console.log(sourceTile  + ", " + sourceX + ", " + sourceY);
-        redrawSource();
-        drawBox();
-    // }
 }
 
 function onMapMouseMove(e) {
     if (mouseDown == true) drawTile(e);
 }
 
-function onTilesetMouseMove(e) {
-    let x = e.clientX - getTilesetX();
-    let y = e.clientY - getTilesetY();
-    let gridX, gridY;
-    gridX = Math.floor(x / tileWidth) * tileWidth;
-    gridY = Math.floor(y / tileHeight) * tileHeight;
-
-    tilesetContext.clearRect(0, 0, sourceWidth, sourceHeight);
-    redrawSource();
-    tilesetContext.beginPath();
-    tilesetContext.strokeStyle = 'blue';
-    tilesetContext.rect(gridX, gridY, tileWidth, tileHeight);
-    tilesetContext.stroke();
-    drawBox();
-}
-
-function drawBox() {
-    tilesetContext.beginPath();
-    tilesetContext.strokeStyle = 'red';
-    tilesetContext.rect(sourceX, sourceY, tileWidth, tileHeight);
-    tilesetContext.stroke();
-}
-
 function onMapMouseClick(e) {
     drawTile(e);
+}
+
+function renderFullMap() {
+    mapContext.beginPath();
+    mapContext.rect(0, 0, mapWidth, mapHeight);
+    mapContext.fillStyle = bgColor;
+    mapContext.fill();
+
+    var srcTile, tsetX, tsetY;
+
+    // Render each tile
+    for (var tx = 0; tx < mapColumns; tx++) {
+        for (var ty = 0; ty < mapRows; ty++) {
+            srcTile = tiles[tx + ty*mapColumns]
+            tsetX = tilesetPanel.getTileX(srcTile);
+            tsetY = tilesetPanel.getTileY(srcTile);
+
+            mapContext.drawImage(tilesetPanel.image, tsetX, tsetY, tileWidth, tileHeight, tx*tileWidth, ty*tileHeight, tileWidth, tileHeight);
+        }
+    }
 }
 
 function drawTile(e) {
@@ -164,19 +118,14 @@ function drawTile(e) {
     gridX = Math.floor(x / tileWidth) * tileWidth;
     gridY = Math.floor(y / tileHeight) * tileHeight;
     if (y < mapHeight && x < mapWidth) { // target
-        mapContext.clearRect(gridX, gridY, tileWidth, tileHeight);
-        mapContext.drawImage(image, sourceX, sourceY, tileWidth, tileHeight, gridX, gridY, tileWidth, tileHeight);
+        mapContext.beginPath();
+        mapContext.rect(gridX, gridY, tileWidth, tileHeight);
+        mapContext.fillStyle = bgColor;
+        mapContext.fill();
+        mapContext.drawImage(tilesetPanel.image, tilesetPanel.currentTileX, tilesetPanel.currentTileY, tileWidth, tileHeight, gridX, gridY, tileWidth, tileHeight);
         let tileX = Math.floor(x / tileWidth);
         let tileY = Math.floor(y / tileHeight);
         let targetTile = tileY * mapColumns + tileX;
-        tiles[targetTile] = sourceTile;
-        if (e.button == 2) {
-            mapContext.clearRect(gridX, gridY, tileWidth, tileHeight);
-            mapContext.beginPath();
-            mapContext.strokeStyle = 'black';
-            mapContext.rect(gridX, gridY, tileWidth, tileHeight);
-            mapContext.stroke();
-            tiles[targetTile] = null
-        };
+        tiles[targetTile] = tilesetPanel.currentTile;
     }
 }
