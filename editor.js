@@ -6,6 +6,7 @@ const tileWidth = 14,
 const mapColumns = 15;
 const mapRows = 11;
 
+var fgColor = '#00ff0a';
 var bgColor = '#ff000a';
 
 let tiles = new Array(mapColumns * mapRows);
@@ -28,11 +29,22 @@ mapCanvas.addEventListener('click', onMapMouseClick);
 mapCanvas.addEventListener('mouseup', onMapMouseUp);
 
 document.getElementById('redraw').addEventListener('click', function(ev) {
+    tilesetPanel.redraw();
     renderFullMap();
 });
 
+document.getElementById('fgColor').addEventListener('change', function(ev) {
+    fgColor = ev.target.value;
+    tilesetPanel.redraw();
+    tilesetPanel.buildTintedCanvas();
+    renderFullMap();
+});
+
+
 document.getElementById('bgColor').addEventListener('change', function(ev) {
     bgColor = ev.target.value;
+    tilesetPanel.redraw();
+    tilesetPanel.buildTintedCanvas();
     renderFullMap();
 });
 
@@ -106,7 +118,7 @@ function renderFullMap() {
             tsetX = tilesetPanel.getTileX(srcTile);
             tsetY = tilesetPanel.getTileY(srcTile);
 
-            mapContext.drawImage(tilesetPanel.image, tsetX, tsetY, tileWidth, tileHeight, tx*tileWidth, ty*tileHeight, tileWidth, tileHeight);
+            mapContext.drawImage(tilesetPanel.tintedCanvas, tsetX, tsetY, tileWidth, tileHeight, tx*tileWidth, ty*tileHeight, tileWidth, tileHeight);
         }
     }
 }
@@ -122,7 +134,7 @@ function drawTile(e) {
         mapContext.rect(gridX, gridY, tileWidth, tileHeight);
         mapContext.fillStyle = bgColor;
         mapContext.fill();
-        mapContext.drawImage(tilesetPanel.image, tilesetPanel.currentTileX, tilesetPanel.currentTileY, tileWidth, tileHeight, gridX, gridY, tileWidth, tileHeight);
+        mapContext.drawImage(tilesetPanel.tintedCanvas, tilesetPanel.currentTileX, tilesetPanel.currentTileY, tileWidth, tileHeight, gridX, gridY, tileWidth, tileHeight);
         let tileX = Math.floor(x / tileWidth);
         let tileY = Math.floor(y / tileHeight);
         let targetTile = tileY * mapColumns + tileX;

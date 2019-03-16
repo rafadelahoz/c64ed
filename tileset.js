@@ -10,6 +10,8 @@ const tilesetPanel = {
     canvas: undefined,
     context: undefined,
     image: undefined,
+    tintedCanvas: undefined,
+    tintedContext: undefined,
 
     sourceWidth: -1,
     sourceHeight: -1,
@@ -39,7 +41,24 @@ const tilesetPanel = {
             that.sourceHeight = that.image.height;
             that.widthInTiles = Math.floor((that.sourceWidth / tileWidth));
             that.redraw();
+            that.buildTintedCanvas();
         });
+    },
+
+    buildTintedCanvas: function() {
+        if (!this.tintedCanvas) {
+            this.tintedCanvas = document.createElement('canvas');
+            this.tintedCanvas.id = 'tintedcanvas';
+            this.tintedCanvas.width = this.image.width;
+            this.tintedCanvas.height = this.image.height;
+            this.tintedContext = this.tintedCanvas.getContext('2d');
+            // document.getElementById('secret').appendChild(this.tintedCanvas);
+        }
+
+        this.tintedContext.rect(0, 0, this.sourceWidth, this.sourceHeight);
+        this.tintedContext.fillStyle = bgColor;
+        this.tintedContext.fill();
+        drawTintedImage(true, this.tintedContext, this.image, fgColor, 0, 0, this.image.width, this.image.height);
     },
 
     onMouseMove: function (e) {
@@ -95,7 +114,7 @@ const tilesetPanel = {
         this.context.rect(0, 0, this.sourceWidth, this.sourceHeight);
         this.context.fillStyle = bgColor;
         this.context.fill();
-        this.context.drawImage(this.image, 0, 0, this.sourceWidth, this.sourceHeight);
+        drawTintedImage(true, this.context, this.image, fgColor, 0, 0, this.sourceWidth, this.sourceHeight);
     },
 
     drawBox: function () {

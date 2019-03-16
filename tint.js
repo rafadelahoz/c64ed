@@ -68,8 +68,25 @@ function drawTintedImage(useMultiply, context, image, fillStyle, x, y, width, he
     context.drawImage(buffer, x, y, width, height);
 }
 
+function drawTintedPart(context, image, color, srcx, srcy, srcw, srch, x, y, width, height) {
+    if (!buffer) {
+        buffer = document.createElement("canvas");
+        bufferContext = buffer.getContext("2d");
+    }
+    var srcwidth = image.width,
+        srcheight = image.height; 
+
+    buffer.width = width;
+    buffer.height = height;
+
+    tint(true, bufferContext, image, color, x, y, width, height);
+    
+    context.drawImage(buffer, srcx, srcy, srcw, srch, x, y, width, height);
+}
+
 module.exports = {
     isMultiplySupported: isMultiplySupported,
     tint: tint,
-    drawTintedImage: drawTintedImage
+    drawTintedImage: drawTintedImage,
+    drawTintedPart: drawTintedPart
 }

@@ -9,32 +9,21 @@
 
     <canvas id='myCanvas' width='600' height='800'></canvas>
     <button id="redraw">Redraw</button>
+    <label for="bgColor">BG</label>
     <input id="bgColor" type="color" list="presetColors">
+    <label for="fgColor">FG</label>
+    <input id="fgColor" type="color" list="presetColors">
     <datalist>
       <option>rgb(0,0,0)</option>
       <option>rgb(255,255,255)</option>
-        <!--255 255 255	Untitled
-        136  57  50	Untitled
-        103 182 189	Untitled
-        139  63 150	Untitled
-         85 160  73	Untitled
-         64  49 141	Untitled
-        191 206 114	Untitled
-        139  84  41	Untitled
-         87  66   0	Untitled
-        184 105  98	Untitled
-         80  80  80	Untitled
-        120 120 120	Untitled
-        148 224 137	Untitled
-        120 105 196	Untitled
-        159 159 159	Untitled-->
-        </option>
     </datalist>
     <br>
     <canvas id="tileset" width='600', height='600'></canvas>
     <br/>
     <label id='result'>Click on the image at the bottom to select a tile, then click on the grid to draw.</label>
+    <div id="secret">
 
+    </div>
     <script>
       // You can also require other files to run in this process
       require('./renderer.js')
