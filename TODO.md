@@ -2,12 +2,13 @@
 
 ## Backlog 
 
+- COLORS NOT GLOBAL!
+
 - Panels
     - Design layout
 - Edit multiple screens
     - Setup connections
 - Map properties
-- Second layer of tiles with color
 - Actors, entites, objects
     - DB
     - Placement
@@ -21,6 +22,8 @@
     - On map
 
 ## Doing
+
+- Second layer of tiles with color
 
 ## Done
 

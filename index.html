@@ -16,10 +16,17 @@
         <div class="sidebar-header">
             <h3>Sidebar</h3>
         </div>
+
+        <label for="bgColor">BG</label>
+        <input id="bgColor" type="color" list="presetColors" value="#ffffff">
+        
         <ul class="nav nav-tabs" id="sidebarTab" role="tablist">
           <li class="nav-item">
-            <a class="nav-link active" id="tiles-tab" data-toggle="tab" href="#tiles" role="tab" aria-controls="tiles" aria-selected="true">Tiles</a>
+            <a class="nav-link active" id="tiles-bg-tab" data-toggle="tab" href="#tiles-bg" role="tab" aria-controls="tiles" aria-selected="true">BG</a>
           </li>
+          <li class="nav-item">
+              <a class="nav-link" id="tiles-fg-tab" data-toggle="tab" href="#tiles-fg" role="tab" aria-controls="tiles" aria-selected="true">FG</a>
+            </li>
           <li class="nav-item">
             <a class="nav-link" id="solids-tab" data-toggle="tab" href="#solids" role="tab" aria-controls="solids" aria-selected="false">Solids</a>
           </li>
@@ -29,12 +36,22 @@
         </ul>
 
         <div class="tab-content" id="sidebarTabContent">
-          <div class="tab-pane fade show active" id="tiles" role="tabpanel" aria-labelledby="tiles-tab">
-              <p>Tileset</p>
-              <canvas id="tileset" width='600' , height='600'></canvas>
-              <label for="bgColor">BG</label>
-              <input id="bgColor" type="color" list="presetColors" value="#ffffff">
+          <div class="tab-pane fade show active" id="tiles-bg" role="tabpanel" aria-labelledby="tiles-bg-tab">
+              <p>FG Tiles</p>
+              <canvas id="tileset-bg" width='600' , height='600'></canvas>
+              <div id="secret"></div>
               <br/>
+              <label for="fgColor">FG</label>
+              <input id="fgColor" type="color" list="presetColors" value="#000000">
+              <datalist>
+                <option>rgb(0,0,0)</option>
+                <option>rgb(255,255,255)</option>
+              </datalist>
+          </div>
+          <div class="tab-pane fade show active" id="tiles-fg" role="tabpanel" aria-labelledby="tiles-fg-tab">
+              <p>BG Tile</p>
+              <canvas id="tileset-fg" width='600' , height='600'></canvas>
+              <div id="secret"></div>
               <label for="fgColor">FG</label>
               <input id="fgColor" type="color" list="presetColors" value="#000000">
               <datalist>
@@ -45,20 +62,16 @@
           <div class="tab-pane fade" id="solids" role="tabpanel" aria-labelledby="solids-tab">
             <p>Solids</p>
           </div>
-          <div class="tab-pane fade" id="objects" role="tabpanel" aria-labelledby="objects-tab">
-            <p>Objects</p>
+          <div class="tab-pane fade" id="actors" role="tabpanel" aria-labelledby="actors-tab">
+            <p>Actors</p>
           </div>
         </div>
     </nav>
     <div class="container">
       <canvas id='myCanvas' width='600' height='800'></canvas>
       <button id="redraw">Redraw</button>
-    
       <br>
-      
-      <br />
-      <label id='result'>Click on the image at the bottom to select a tile, then click on the grid to draw.</label>
-      <div id="secret"></div>
+      <p id='result'>Click on the image at the bottom to select a tile, then click on the grid to draw.</p>
     </div>
   </div>
   
