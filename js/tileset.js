@@ -1,3 +1,5 @@
+const tint = require('./tint.js')
+
 /* 
  * Tileset panel
  * 
@@ -6,7 +8,6 @@
  * 
  */
 const tilesetPanel = {
-    
     canvas: undefined,
     context: undefined,
     image: undefined,
@@ -20,123 +21,147 @@ const tilesetPanel = {
 
     currentTile: -1,
     currentTileX: -1,
-    currentTileY: -1,
+    currentTileY: -1
+}
 
-    init: function() {
-        this.image = new Image();
-        this.image.src = 'assets/tileset-export.png';
+function init(readyCallback) {
+    let callback = readyCallback;
 
-        this.canvas = document.getElementById('tileset');
-        this.context = this.canvas.getContext('2d');
+    tilesetPanel.image = new Image();
+    tilesetPanel.image.src = 'assets/tileset-export.png';
 
-        this.canvas.addEventListener('mousedown', this.onMouseDown);
-        this.canvas.addEventListener('mousemove', this.onMouseMove);
+    tilesetPanel.canvas = document.getElementById('tileset');
+    tilesetPanel.context = tilesetPanel.canvas.getContext('2d');
 
-        // After loading image, do things
-        this.image.addEventListener('load', function() {
-            var that = tilesetPanel;
-            that.canvas.setAttribute('width', that.image.width);
-            that.canvas.setAttribute('height', that.image.height);
-            that.sourceWidth = that.image.width;
-            that.sourceHeight = that.image.height;
-            that.widthInTiles = Math.floor((that.sourceWidth / tileWidth));
-            that.refreshColors();
-            that.redraw();
-            that.buildTintedCanvas();
-        });
-    },
+    tilesetPanel.canvas.addEventListener('mousedown', onMouseDown);
+    tilesetPanel.canvas.addEventListener('mousemove', onMouseMove);
 
-    refreshColors: function() {
-        fgColor = document.getElementById('fgColor').value;
-        bgColor = document.getElementById('bgColor').value;
-    },
-
-    buildTintedCanvas: function() {
-        if (!this.tintedCanvas) {
-            this.tintedCanvas = document.createElement('canvas');
-            this.tintedCanvas.id = 'tintedcanvas';
-            this.tintedCanvas.width = this.image.width;
-            this.tintedCanvas.height = this.image.height;
-            this.tintedContext = this.tintedCanvas.getContext('2d');
-            // document.getElementById('secret').appendChild(this.tintedCanvas);
+    // After loading image, do things
+    tilesetPanel.image.addEventListener('load', function() {
+        var that = tilesetPanel;
+        that.canvas.setAttribute('width', that.image.width);
+        that.canvas.setAttribute('height', that.image.height);
+        that.sourceWidth = that.image.width;
+        that.sourceHeight = that.image.height;
+        that.widthInTiles = Math.floor((that.sourceWidth / tileWidth));
+        refreshColors();
+        redraw();
+        buildTintedCanvas();
+        if (callback) {
+            callback();
         }
+    });
+}
 
-        this.refreshColors();
+function refreshColors() {
+    fgColor = document.getElementById('fgColor').value;
+    bgColor = document.getElementById('bgColor').value;
+}
 
-        this.tintedContext.rect(0, 0, this.sourceWidth, this.sourceHeight);
-        this.tintedContext.fillStyle = bgColor;
-        this.tintedContext.fill();
-        drawTintedImage(true, this.tintedContext, this.image, fgColor, 0, 0, this.image.width, this.image.height);
-    },
-
-    onMouseMove: function (e) {
-        let that = tilesetPanel;
-
-        let x = e.clientX - that.offsetX();
-        let y = e.clientY - that.offsetY();
-        let gridX, gridY;
-        gridX = Math.floor(x / tileWidth) * tileWidth;
-        gridY = Math.floor(y / tileHeight) * tileHeight;
-    
-        that.context.clearRect(0, 0, that.sourceWidth, that.sourceHeight);
-        that.redraw();
-        that.context.beginPath();
-        that.context.strokeStyle = 'blue';
-        that.context.rect(gridX, gridY, tileWidth, tileHeight);
-        that.context.stroke();
-        that.drawBox();
-    },
-
-    onMouseDown: function(e) {
-        mouseDown = false; // from another module
-
-        let that = tilesetPanel;
-
-        let x = e.clientX - that.offsetX();
-        let y = e.clientY - that.offsetY();
-    
-        let tileX = Math.floor(x / tileWidth);
-        let tileY = Math.floor(y / tileHeight);
-        that.setCurrentTile(tileY * (that.sourceWidth / tileWidth) + tileX);
-        
-        that.redraw();
-        that.drawBox();
-    },
-
-    setCurrentTile: function(tileId) {
-        this.currentTile = tileId;
-        this.currentTileX = this.getTileX(tileId);
-        this.currentTileY = this.getTileY(tileId);
-        console.log(this.currentTile  + ", " + this.currentTileX + ", " + this.currentTileY);
-    },
-
-    offsetX : function() {
-        return this.canvas.getClientRects()[0].x;
-    },
-
-    offsetY : function() {
-        return this.canvas.getClientRects()[0].y;
-    },
-
-    redraw: function () {
-        this.context.rect(0, 0, this.sourceWidth, this.sourceHeight);
-        this.context.fillStyle = bgColor;
-        this.context.fill();
-        drawTintedImage(true, this.context, this.image, fgColor, 0, 0, this.sourceWidth, this.sourceHeight);
-    },
-
-    drawBox: function () {
-        this.context.beginPath();
-        this.context.strokeStyle = 'red';
-        this.context.rect(this.sourceX, this.sourceY, tileWidth, tileHeight);
-        this.context.stroke();
-    },
-
-    getTileX: function(tileId) {
-        return (tileId % this.widthInTiles) * tileWidth;
-    },
-
-    getTileY: function(tileId) {
-        return (Math.floor(tileId / this.widthInTiles)) * tileHeight;
+function buildTintedCanvas() {
+    if (!tilesetPanel.tintedCanvas) {
+        tilesetPanel.tintedCanvas = document.createElement('canvas');
+        tilesetPanel.tintedCanvas.id = 'tintedcanvas';
+        tilesetPanel.tintedCanvas.width = tilesetPanel.image.width;
+        tilesetPanel.tintedCanvas.height = tilesetPanel.image.height;
+        tilesetPanel.tintedContext = tilesetPanel.tintedCanvas.getContext('2d');
+        // document.getElementById('secret').appendChild(tilesetPanel.tintedCanvas);
     }
+
+    refreshColors();
+
+    tilesetPanel.tintedContext.rect(0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
+    tilesetPanel.tintedContext.fillStyle = bgColor;
+    tilesetPanel.tintedContext.fill();
+    tint.drawTintedImage(true, tilesetPanel.tintedContext, tilesetPanel.image, fgColor, 0, 0, tilesetPanel.image.width, tilesetPanel.image.height);
+}
+
+function onMouseMove(e) {
+    let that = tilesetPanel;
+
+    let x = e.clientX - offsetX();
+    let y = e.clientY - offsetY();
+    let gridX, gridY;
+    gridX = Math.floor(x / tileWidth) * tileWidth;
+    gridY = Math.floor(y / tileHeight) * tileHeight;
+
+    that.context.clearRect(0, 0, that.sourceWidth, that.sourceHeight);
+    redraw();
+    that.context.beginPath();
+    that.context.strokeStyle = 'blue';
+    that.context.rect(gridX, gridY, tileWidth, tileHeight);
+    that.context.stroke();
+    drawBox();
+}
+
+function onMouseDown(e) {
+    mouseDown = false; // from another module
+
+    let that = tilesetPanel;
+
+    let x = e.clientX - offsetX();
+    let y = e.clientY - offsetY();
+
+    let tileX = Math.floor(x / tileWidth);
+    let tileY = Math.floor(y / tileHeight);
+    setCurrentTile(tileY * (that.sourceWidth / tileWidth) + tileX);
+    
+    redraw();
+    drawBox();
+}
+
+function setCurrentTile(tileId) {
+    tilesetPanel.currentTile = tileId;
+    tilesetPanel.currentTileX = getTileX(tileId);
+    tilesetPanel.currentTileY = getTileY(tileId);
+    console.log(tilesetPanel.currentTile  + ", " + tilesetPanel.currentTileX + ", " + tilesetPanel.currentTileY);
+}
+
+function getCurrentTile() {
+    return tilesetPanel.currentTile;
+}
+
+function offsetX() {
+    return tilesetPanel.canvas.getClientRects()[0].x;
+}
+
+function offsetY() {
+    return tilesetPanel.canvas.getClientRects()[0].y;
+}
+
+function redraw() {
+    tilesetPanel.context.rect(0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
+    tilesetPanel.context.fillStyle = bgColor;
+    tilesetPanel.context.fill();
+    tint.drawTintedImage(true, tilesetPanel.context, tilesetPanel.image, fgColor, 0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
+}
+
+function drawBox() {
+    tilesetPanel.context.beginPath();
+    tilesetPanel.context.strokeStyle = 'red';
+    tilesetPanel.context.rect(tilesetPanel.sourceX, tilesetPanel.sourceY, tileWidth, tileHeight);
+    tilesetPanel.context.stroke();
+}
+
+function getTileX(tileId) {
+    return (tileId % tilesetPanel.widthInTiles) * tileWidth;
+}
+
+function getTileY(tileId) {
+    return (Math.floor(tileId / tilesetPanel.widthInTiles)) * tileHeight;
+}
+
+function getTintedCanvas() {
+    return tilesetPanel.tintedCanvas;
+}
+
+module.exports = {
+    init: init,
+    redraw: redraw,
+    buildTintedCanvas: buildTintedCanvas,
+    getCurrentTile: getCurrentTile,
+    setCurrentTile: setCurrentTile,
+    getTileX: getTileX,
+    getTileY: getTileY,
+    getTintedCanvas: getTintedCanvas
 }

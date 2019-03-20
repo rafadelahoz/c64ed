@@ -1,4 +1,5 @@
 /* Editor things */
+const tilesetPanel = require('./js/tileset.js');
 
 const tileWidth = 14,
     tileHeight = 14;
@@ -48,20 +49,7 @@ document.getElementById('bgColor').addEventListener('change', function(ev) {
     renderFullMap();
 });
 
-tilesetPanel.init();
-
-// draw the grid
-
-for (let i = 0; i <= mapColumns; i++) {
-    mapContext.moveTo(i * tileWidth, 0);
-    mapContext.lineTo(i * tileWidth, mapHeight);
-}
-mapContext.stroke();
-for (let i = 0; i <= mapRows; i++) {
-    mapContext.moveTo(0, i * tileHeight);
-    mapContext.lineTo(mapWidth, i * tileHeight);
-}
-mapContext.stroke();
+tilesetPanel.init(renderFullMap);
 
 function onMapMouseUp(e) {
     mouseDown = false;
@@ -93,11 +81,11 @@ function onMapMouseDown(e) {
 }
 
 function onMapMouseMove(e) {
-    if (mouseDown == true) drawTile(e);
+    if (mouseDown == true) setTile(e);
 }
 
 function onMapMouseClick(e) {
-    drawTile(e);
+    setTile(e);
 }
 
 function renderFullMap() {
@@ -115,27 +103,34 @@ function renderFullMap() {
             tsetX = tilesetPanel.getTileX(srcTile);
             tsetY = tilesetPanel.getTileY(srcTile);
 
-            mapContext.drawImage(tilesetPanel.tintedCanvas, tsetX, tsetY, tileWidth, tileHeight, tx*tileWidth, ty*tileHeight, tileWidth, tileHeight);
+            mapContext.drawImage(tilesetPanel.getTintedCanvas(), tsetX, tsetY, tileWidth, tileHeight, tx*tileWidth, ty*tileHeight, tileWidth, tileHeight);
         }
     }
+
+    // Draw the grid
+    for (let i = 0; i <= mapColumns; i++) {
+        mapContext.moveTo(i * tileWidth, 0);
+        mapContext.lineTo(i * tileWidth, mapHeight);
+    }
+    mapContext.lineWidth = 0.5;
+    mapContext.stroke();
+    for (let i = 0; i <= mapRows; i++) {
+        mapContext.moveTo(0, i * tileHeight);
+        mapContext.lineTo(mapWidth, i * tileHeight);
+    }
+    mapContext.lineWidth = 0.5;
+    mapContext.stroke();
 }
 
-function drawTile(e) {
+function setTile(e) {
     let x = e.clientX - mapX();
     let y = e.clientY - mapY();
-    let gridX, gridY;
-    gridX = Math.floor(x / tileWidth) * tileWidth;
-    gridY = Math.floor(y / tileHeight) * tileHeight;
     if (y < mapHeight && x < mapWidth) { // target
-        mapContext.beginPath();
-        mapContext.rect(gridX, gridY, tileWidth, tileHeight);
-        mapContext.fillStyle = bgColor;
-        mapContext.fill();
-        mapContext.drawImage(tilesetPanel.tintedCanvas, tilesetPanel.currentTileX, tilesetPanel.currentTileY, tileWidth, tileHeight, gridX, gridY, tileWidth, tileHeight);
-        let tileX = Math.floor(x / tileWidth);
-        let tileY = Math.floor(y / tileHeight);
-        let targetTile = tileY * mapColumns + tileX;
-        tiles[targetTile] = tilesetPanel.currentTile;
+        let mapTileX = Math.floor(x / tileWidth);
+        let mapTileY = Math.floor(y / tileHeight);
+        let targetMapTile = mapTileY * mapColumns + mapTileX;
+        tiles[targetMapTile] = tilesetPanel.getCurrentTile();
+        renderFullMap();
     }
 }
 

@@ -21,3 +21,11 @@ body {
 #sidebar.active {
     margin-left: -250px;
 }
+
+.tab-pane {
+    padding: 5px;
+}
+
+canvas {
+    display: block;
+}

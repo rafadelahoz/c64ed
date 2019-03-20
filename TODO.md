@@ -7,14 +7,14 @@
 - Edit multiple screens
     - Setup connections
 - Map properties
-- Scrolling makes editor fail
 - Second layer of tiles with color
-- Entites, objects
+- Actors, entites, objects
     - DB
     - Placement
         - Properties?
     - Graphics?
 - Solids
+    - Put like tiles
 - Saving, loading
 - Select multiple tiles
     - On tileset
@@ -25,3 +25,5 @@
 ## Done
 
 - Tileset tint (or map tint)
+- Scrolling makes editor fail
+- Draw grid over map properly
