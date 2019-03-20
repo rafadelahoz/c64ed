@@ -3,7 +3,7 @@ body {
 }
 
 .side-panel {
-    background: lightgray;
+    /*background: lightgray;*/
     border-right: 4px  double darkgray;
 }
 
