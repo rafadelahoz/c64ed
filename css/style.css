@@ -1,0 +1,23 @@
+body {
+    font: caption;
+}
+
+.side-panel {
+    background: lightgray;
+    border-right: 4px  double darkgray;
+}
+
+.wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+}
+
+#sidebar.active {
+    margin-left: -250px;
+}

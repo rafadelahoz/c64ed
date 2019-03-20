@@ -24,7 +24,7 @@ const tilesetPanel = {
 
     init: function() {
         this.image = new Image();
-        this.image.src = 'tileset-export.png';
+        this.image.src = 'assets/tileset-export.png';
 
         this.canvas = document.getElementById('tileset');
         this.context = this.canvas.getContext('2d');
@@ -40,9 +40,15 @@ const tilesetPanel = {
             that.sourceWidth = that.image.width;
             that.sourceHeight = that.image.height;
             that.widthInTiles = Math.floor((that.sourceWidth / tileWidth));
+            that.refreshColors();
             that.redraw();
             that.buildTintedCanvas();
         });
+    },
+
+    refreshColors: function() {
+        fgColor = document.getElementById('fgColor').value;
+        bgColor = document.getElementById('bgColor').value;
     },
 
     buildTintedCanvas: function() {
@@ -54,6 +60,8 @@ const tilesetPanel = {
             this.tintedContext = this.tintedCanvas.getContext('2d');
             // document.getElementById('secret').appendChild(this.tintedCanvas);
         }
+
+        this.refreshColors();
 
         this.tintedContext.rect(0, 0, this.sourceWidth, this.sourceHeight);
         this.tintedContext.fillStyle = bgColor;

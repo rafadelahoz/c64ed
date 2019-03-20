@@ -50,9 +50,6 @@ document.getElementById('bgColor').addEventListener('change', function(ev) {
 
 tilesetPanel.init();
 
-var mapX = mapCanvas.getClientRects()[0].x;
-var mapY = mapCanvas.getClientRects()[0].y;
-
 // draw the grid
 
 for (let i = 0; i <= mapColumns; i++) {
@@ -84,8 +81,8 @@ function onMapMouseDown(e) {
         mouseDown = true;
     } else if (e.button == 2) {
         // Right mouse button: pick tile
-        let x = e.clientX - mapX;
-        let y = e.clientY - mapY;
+        let x = e.clientX - mapX();
+        let y = e.clientY - mapY();
         if (x > 0 && x < mapWidth && y > 0 && y < mapHeight) {
             let tileX = Math.floor(x / tileWidth);
             let tileY = Math.floor(y / tileHeight);
@@ -124,8 +121,8 @@ function renderFullMap() {
 }
 
 function drawTile(e) {
-    let x = e.clientX - mapX;
-    let y = e.clientY - mapY;
+    let x = e.clientX - mapX();
+    let y = e.clientY - mapY();
     let gridX, gridY;
     gridX = Math.floor(x / tileWidth) * tileWidth;
     gridY = Math.floor(y / tileHeight) * tileHeight;
@@ -140,4 +137,12 @@ function drawTile(e) {
         let targetTile = tileY * mapColumns + tileX;
         tiles[targetTile] = tilesetPanel.currentTile;
     }
+}
+
+function mapX() {
+    return mapCanvas.getClientRects()[0].x;
+}
+
+function mapY() {
+    return mapCanvas.getClientRects()[0].y;
 }

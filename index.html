@@ -1,35 +1,59 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>A shabby map editor</h1>
 
-    <canvas id='myCanvas' width='600' height='800'></canvas>
-    <button id="redraw">Redraw</button>
-    <label for="bgColor">BG</label>
-    <input id="bgColor" type="color" list="presetColors">
-    <label for="fgColor">FG</label>
-    <input id="fgColor" type="color" list="presetColors">
-    <datalist>
-      <option>rgb(0,0,0)</option>
-      <option>rgb(255,255,255)</option>
-    </datalist>
-    <br>
-    <canvas id="tileset" width='600', height='600'></canvas>
-    <br/>
-    <label id='result'>Click on the image at the bottom to select a tile, then click on the grid to draw.</label>
-    <div id="secret">
+<head>
+  <meta charset="UTF-8">
+  <title>C64ED!</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/style.css">
+</head>
 
+<body>
+  <p>Screen editor</p>
+
+  <div class="wrapper">
+    <nav id="sidebar" class="side-panel">
+        <div class="sidebar-header">
+            <h3>Sidebar</h3>
+        </div>
+        <label for="bgColor">BG</label>
+        <input id="bgColor" type="color" list="presetColors" value="#ffffff">
+        <br/>
+        <label for="fgColor">FG</label>
+        <input id="fgColor" type="color" list="presetColors" value="#000000">
+        <datalist>
+          <option>rgb(0,0,0)</option>
+          <option>rgb(255,255,255)</option>
+        </datalist>
+    </nav>
+    <div class="container">
+      <canvas id='myCanvas' width='600' height='800'></canvas>
+      <button id="redraw">Redraw</button>
+    
+      <br>
+      <canvas id="tileset" width='600' , height='600'></canvas>
+      <br />
+      <label id='result'>Click on the image at the bottom to select a tile, then click on the grid to draw.</label>
+      <div id="secret"></div>
     </div>
-    <script>
-      // You can also require other files to run in this process
-      require('./renderer.js')
-    </script>
-    <script src="tint.js"></script>
-    <script src="tileset.js"></script>
-    <script src="editor.js"></script>
-  </body>
+  </div>
+  <script>
+    // You can also require other files to run in this process
+    require('./renderer.js')
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script src="js/tint.js"></script>
+  <script src="js/tileset.js"></script>
+  <script src="js/editor.js"></script>
+</body>
+
 </html>
