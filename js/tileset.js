@@ -8,25 +8,29 @@ const tint = require('./tint.js')
  * - Allows picking current tile
  * 
  */
-const tilesetPanel = {
-    canvas: undefined,
-    context: undefined,
-    image: undefined,
-    tintedCanvas: undefined,
-    tintedContext: undefined,
 
-    sourceWidth: -1,
-    sourceHeight: -1,
-
-    widthInTiles: -1,
-
-    currentTile: -1,
-    currentTileX: -1,
-    currentTileY: -1
-}
-
-function init(readyCallback) {
+function init(layer, readyCallback) {
     let callback = readyCallback;
+
+    if (layer != "bg" && layer != "fg")
+        throw "Invalid layer, expected bg or fg";
+
+    let tilesetPanel = {
+        canvas: undefined,
+        context: undefined,
+        image: undefined,
+        tintedCanvas: undefined,
+        tintedContext: undefined,
+    
+        sourceWidth: -1,
+        sourceHeight: -1,
+    
+        widthInTiles: -1,
+    
+        currentTile: -1,
+        currentTileX: -1,
+        currentTileY: -1
+    }
 
     tilesetPanel.image = new Image();
     tilesetPanel.image.src = 'assets/tileset-export.png';
@@ -46,12 +50,13 @@ function init(readyCallback) {
         that.sourceHeight = that.image.height;
         that.widthInTiles = Math.floor((that.sourceWidth / globals.tileWidth));
         refreshColors();
-        redraw();
-        buildTintedCanvas();
+        redraw(tilesetPanel);
         if (callback) {
-            callback();
+            callback(tilesetPanel);
         }
     });
+
+    return tilesetPanel;
 }
 
 function refreshColors() {
@@ -59,7 +64,7 @@ function refreshColors() {
     globals.setBgColor(document.getElementById('bgColor').value);
 }
 
-function buildTintedCanvas() {
+function buildTintedCanvas(tilesetPanel) {
     if (!tilesetPanel.tintedCanvas) {
         tilesetPanel.tintedCanvas = document.createElement('canvas');
         tilesetPanel.tintedCanvas.id = 'tintedcanvas';
@@ -78,88 +83,88 @@ function buildTintedCanvas() {
 }
 
 function onMouseMove(e) {
-    let that = tilesetPanel;
+    let that = globals.getCurrentTilesetPanel();
 
-    let x = e.clientX - offsetX();
-    let y = e.clientY - offsetY();
+    let x = e.clientX - offsetX(that);
+    let y = e.clientY - offsetY(that);
     let gridX, gridY;
     gridX = Math.floor(x / globals.tileWidth) * globals.tileWidth;
     gridY = Math.floor(y / globals.tileHeight) * globals.tileHeight;
 
     that.context.clearRect(0, 0, that.sourceWidth, that.sourceHeight);
-    redraw();
+    redraw(that);
     that.context.beginPath();
     that.context.strokeStyle = 'blue';
     that.context.rect(gridX, gridY, globals.tileWidth, globals.tileHeight);
     that.context.stroke();
-    drawBox();
+    drawBox(that);
 }
 
 function onMouseDown(e) {
     mouseDown = false; // from another module
 
-    let that = tilesetPanel;
+    let that = globals.getCurrentTilesetPanel();
 
-    let x = e.clientX - offsetX();
-    let y = e.clientY - offsetY();
+    let x = e.clientX - offsetX(that);
+    let y = e.clientY - offsetY(that);
 
     let tileX = Math.floor(x / globals.tileWidth);
     let tileY = Math.floor(y / globals.tileHeight);
-    setCurrentTile(tileY * (that.sourceWidth / globals.tileWidth) + tileX);
+    setCurrentTile(that, tileY * (that.sourceWidth / globals.tileWidth) + tileX);
     
-    redraw();
-    drawBox();
+    redraw(that);
+    drawBox(that);
 }
 
-function setCurrentTile(tileId) {
+function setCurrentTile(tilesetPanel, tileId) {
     tilesetPanel.currentTile = tileId;
     tilesetPanel.currentTileX = getTileX(tileId);
     tilesetPanel.currentTileY = getTileY(tileId);
     console.log(tilesetPanel.currentTile  + ", " + tilesetPanel.currentTileX + ", " + tilesetPanel.currentTileY);
 }
 
-function getCurrentTile() {
+function getCurrentTile(tilesetPanel) {
     return tilesetPanel.currentTile;
 }
 
-function offsetX() {
+function offsetX(tilesetPanel) {
     return tilesetPanel.canvas.getClientRects()[0].x;
 }
 
-function offsetY() {
+function offsetY(tilesetPanel) {
     return tilesetPanel.canvas.getClientRects()[0].y;
 }
 
-function redraw() {
+function redraw(tilesetPanel) {
     tilesetPanel.context.rect(0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
     tilesetPanel.context.fillStyle = globals.getBgColor();
     tilesetPanel.context.fill();
     tint.drawTintedImage(true, tilesetPanel.context, tilesetPanel.image, globals.getFgColor(), 0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
+    buildTintedCanvas(tilesetPanel);
 }
 
-function drawBox() {
+function drawBox(tilesetPanel) {
     tilesetPanel.context.beginPath();
     tilesetPanel.context.strokeStyle = 'red';
     tilesetPanel.context.rect(tilesetPanel.sourceX, tilesetPanel.sourceY, globals.tileWidth, globals.tileHeight);
     tilesetPanel.context.stroke();
 }
 
-function getTileX(tileId) {
+function getTileX(tilesetPanel, tileId) {
     return (tileId % tilesetPanel.widthInTiles) * globals.tileWidth;
 }
 
-function getTileY(tileId) {
+function getTileY(tilesetPanel, tileId) {
     return (Math.floor(tileId / tilesetPanel.widthInTiles)) * globals.tileHeight;
 }
 
-function getTintedCanvas() {
+function getTintedCanvas(tilesetPanel) {
     return tilesetPanel.tintedCanvas;
 }
 
 module.exports = {
     init: init,
     redraw: redraw,
-    buildTintedCanvas: buildTintedCanvas,
     getCurrentTile: getCurrentTile,
     setCurrentTile: setCurrentTile,
     getTileX: getTileX,

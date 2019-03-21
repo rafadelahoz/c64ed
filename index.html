@@ -25,7 +25,7 @@
             <a class="nav-link active" id="tiles-bg-tab" data-toggle="tab" href="#tiles-bg" role="tab" aria-controls="tiles" aria-selected="true">BG</a>
           </li>
           <li class="nav-item">
-              <a class="nav-link" id="tiles-fg-tab" data-toggle="tab" href="#tiles-fg" role="tab" aria-controls="tiles" aria-selected="true">FG</a>
+              <a class="nav-link" id="tiles-fg-tab" data-toggle="tab" href="#tiles-fg" role="tab" aria-controls="tiles" aria-selected="false">FG</a>
             </li>
           <li class="nav-item">
             <a class="nav-link" id="solids-tab" data-toggle="tab" href="#solids" role="tab" aria-controls="solids" aria-selected="false">Solids</a>
@@ -37,7 +37,7 @@
 
         <div class="tab-content" id="sidebarTabContent">
           <div class="tab-pane fade show active" id="tiles-bg" role="tabpanel" aria-labelledby="tiles-bg-tab">
-              <p>FG Tiles</p>
+              <p>BG Tiles</p>
               <canvas id="tileset-bg" width='600' , height='600'></canvas>
               <div id="secret"></div>
               <br/>
@@ -48,8 +48,8 @@
                 <option>rgb(255,255,255)</option>
               </datalist>
           </div>
-          <div class="tab-pane fade show active" id="tiles-fg" role="tabpanel" aria-labelledby="tiles-fg-tab">
-              <p>BG Tile</p>
+          <div class="tab-pane fade" id="tiles-fg" role="tabpanel" aria-labelledby="tiles-fg-tab">
+              <p>FG Tile</p>
               <canvas id="tileset-fg" width='600' , height='600'></canvas>
               <div id="secret"></div>
               <label for="fgColor">FG</label>

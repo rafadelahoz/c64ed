@@ -6,5 +6,9 @@ const tilesetPanel = require('./js/tileset.js');
 document.addEventListener('contextmenu', event => event.preventDefault());
 
 screenDisplay.init();
-tilesetPanel.init(screenDisplay.render);
+tilesetPanel.init("bg", function(tilesetPanel) {
+    globals.setTilesetPanel("bg", tilesetPanel);
+    globals.setCurrentLayer("bg");
+    screenDisplay.render()
+});
 

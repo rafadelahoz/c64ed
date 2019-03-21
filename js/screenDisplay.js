@@ -1,6 +1,6 @@
 
 const globals = require('./globals.js');
-const tilesetPanel = require('./tileset.js');
+const tileset = require('./tileset.js');
 
 let tiles = new Array(globals.mapColumns * globals.mapRows);
 
@@ -23,21 +23,22 @@ function init() {
     mapCanvas.addEventListener('mouseup', onMapMouseUp);
 
     document.getElementById('redraw').addEventListener('click', function(ev) {
-        tilesetPanel.redraw();
+        let tilesetPanel = globals.getCurrentTilesetPanel();
+        tileset.redraw(tilesetPanel);
         renderFullMap();
     });
 
     document.getElementById('fgColor').addEventListener('change', function(ev) {
+        let tilesetPanel = globals.getCurrentTilesetPanel();
         globals.setFgColor(ev.target.value);
-        tilesetPanel.redraw();
-        tilesetPanel.buildTintedCanvas();
+        tileset.redraw(tilesetPanel);
         renderFullMap();
     });
 
     document.getElementById('bgColor').addEventListener('change', function(ev) {
+        let tilesetPanel = globals.getCurrentTilesetPanel();
         globals.setBgColor(ev.target.value);
-        tilesetPanel.redraw();
-        tilesetPanel.buildTintedCanvas();
+        tileset.redraw(tilesetPanel);
         renderFullMap();
     });
 }
@@ -66,7 +67,9 @@ function onMapMouseDown(e) {
             let tileX = Math.floor(x / globals.tileWidth);
             let tileY = Math.floor(y / globals.tileHeight);
             let targetTile = tileY * globals.mapColumns + tileX;
-            tilesetPanel.setCurrentTile(tiles[targetTile]);
+            
+            let tilesetPanel = globals.getCurrentTilesetPanel();
+            tileset.setCurrentTile(tilesetPanel, tiles[targetTile]);
         }
     }
 }
@@ -86,15 +89,18 @@ function renderFullMap() {
     mapContext.fill();
 
     var srcTile, tsetX, tsetY;
+    let tilesetPanel = globals.getCurrentTilesetPanel();
 
     // Render each tile
     for (var tx = 0; tx < globals.mapColumns; tx++) {
         for (var ty = 0; ty < globals.mapRows; ty++) {
-            srcTile = tiles[tx + ty*globals.mapColumns]
-            tsetX = tilesetPanel.getTileX(srcTile);
-            tsetY = tilesetPanel.getTileY(srcTile);
+            
 
-            mapContext.drawImage(tilesetPanel.getTintedCanvas(), tsetX, tsetY, globals.tileWidth, globals.tileHeight, tx*globals.tileWidth, ty*globals.tileHeight, globals.tileWidth, globals.tileHeight);
+            srcTile = tiles[tx + ty*globals.mapColumns]
+            tsetX = tileset.getTileX(tilesetPanel, srcTile);
+            tsetY = tileset.getTileY(tilesetPanel, srcTile);
+
+            mapContext.drawImage(tileset.getTintedCanvas(tilesetPanel), tsetX, tsetY, globals.tileWidth, globals.tileHeight, tx*globals.tileWidth, ty*globals.tileHeight, globals.tileWidth, globals.tileHeight);
         }
     }
 
@@ -122,7 +128,8 @@ function setTile(e) {
         let mapTileX = Math.floor(x / globals.tileWidth);
         let mapTileY = Math.floor(y / globals.tileHeight);
         let targetMapTile = mapTileY * globals.mapColumns + mapTileX;
-        tiles[targetMapTile] = tilesetPanel.getCurrentTile();
+        let tilesetPanel = globals.getCurrentTilesetPanel();        
+        tiles[targetMapTile] = tileset.getCurrentTile(tilesetPanel);
         renderFullMap();
     }
 }

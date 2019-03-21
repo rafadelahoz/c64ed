@@ -25,13 +25,50 @@ function setBgColor(color) {
     console.log(bgColor);
 }
 
+var currentLayer = "bg";
+var tilesetPanels = {};
+
+function getCurrentLayer() {
+    return currentLayer;
+}
+
+function setCurrentLayer(layer) {
+    currentLayer = layer;
+}
+
+function getTilesetPanels() {
+    return tilesetPanels;
+}
+
+function setTilesetPanel(layer, panel) {
+    tilesetPanels[layer] = panel;
+}
+
+function getTilesetPanel(layer) {
+    return tilesetPanels[layer];
+}
+
+function getCurrentTilesetPanel() {
+    return tilesetPanels[currentLayer];
+}
+
 module.exports = {
     tileWidth: tileWidth,
     tileHeight: tileHeight,
     mapColumns: mapColumns,
     mapRows: mapRows,
+
     getBgColor: getBgColor,
     setBgColor: setBgColor,
+
     getFgColor: getFgColor,
-    setFgColor: setFgColor
+    setFgColor: setFgColor,
+
+    getTilesetPanels: getTilesetPanels,
+    getCurrentTilesetPanel: getCurrentTilesetPanel,
+
+    getTilesetPanel: getTilesetPanel,
+    setTilesetPanel: setTilesetPanel,
+    getCurrentLayer: getCurrentLayer,
+    setCurrentLayer: setCurrentLayer
 }
