@@ -4,16 +4,16 @@ var tileHeight = 14;
 var mapColumns = 15;
 var mapRows = 11;
 
-var fgColor = '#00ff0a';
+var fgColor = {
+};
 var bgColor = '#ff000a';
 
-function getFgColor() {
-    return fgColor;
+function getFgColor(layer) {
+    return fgColor[layer];
 }
 
-function setFgColor(color) {
-    fgColor = color;
-    console.log(fgColor);
+function setFgColor(layer, color) {
+    fgColor[layer] = color;
 }
 
 function getBgColor() {
@@ -22,7 +22,6 @@ function getBgColor() {
 
 function setBgColor(color) {
     bgColor = color;
-    console.log(bgColor);
 }
 
 var currentLayer = "bg";

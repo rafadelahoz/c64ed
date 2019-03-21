@@ -12,3 +12,7 @@ tilesetPanel.init("bg", function(tilesetPanel) {
     screenDisplay.render()
 });
 
+tilesetPanel.init("fg", function(tilesetPanel) {
+    globals.setTilesetPanel("fg", tilesetPanel);
+    screenDisplay.render()
+});

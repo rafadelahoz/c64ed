@@ -40,9 +40,8 @@
               <p>BG Tiles</p>
               <canvas id="tileset-bg" width='600' , height='600'></canvas>
               <div id="secret"></div>
-              <br/>
-              <label for="fgColor">FG</label>
-              <input id="fgColor" type="color" list="presetColors" value="#000000">
+              <label for="fgColor-bg">Color</label>
+              <input id="fgColor-bg" type="color" list="presetColors" value="#000000">
               <datalist>
                 <option>rgb(0,0,0)</option>
                 <option>rgb(255,255,255)</option>
@@ -52,8 +51,8 @@
               <p>FG Tile</p>
               <canvas id="tileset-fg" width='600' , height='600'></canvas>
               <div id="secret"></div>
-              <label for="fgColor">FG</label>
-              <input id="fgColor" type="color" list="presetColors" value="#000000">
+              <label for="fgColor-fg">Color</label>
+              <input id="fgColor-fg" type="color" list="presetColors" value="#666666">
               <datalist>
                 <option>rgb(0,0,0)</option>
                 <option>rgb(255,255,255)</option>
@@ -68,10 +67,17 @@
         </div>
     </nav>
     <div class="container">
+      <div class="btn-group" role="group" aria-label="Zoom buttons">
+        <button type="button" class="btn btn-secondary btn-zoom" id="btn-zoom-1">1x</button>
+        <button type="button" class="btn btn-secondary btn-zoom" id="btn-zoom-2">2x</button>
+        <button type="button" class="btn btn-secondary btn-zoom" id="btn-zoom-3">3x</button>
+        <button type="button" class="btn btn-secondary btn-zoom" id="btn-zoom-4">4x</button>
+      </div>
+      <hr/>
       <canvas id='myCanvas' width='600' height='800'></canvas>
       <button id="redraw">Redraw</button>
       <br>
-      <p id='result'>Click on the image at the bottom to select a tile, then click on the grid to draw.</p>
+      <p id='result'></p>
     </div>
   </div>
   

@@ -27,19 +27,26 @@ function init(layer, readyCallback) {
     
         widthInTiles: -1,
     
-        currentTile: -1,
-        currentTileX: -1,
-        currentTileY: -1
+        currentTile: -1
     }
 
     tilesetPanel.image = new Image();
     tilesetPanel.image.src = 'assets/tileset-export.png';
 
-    tilesetPanel.canvas = document.getElementById('tileset-bg');
+    tilesetPanel.canvas = document.getElementById('tileset-' + layer);
     tilesetPanel.context = tilesetPanel.canvas.getContext('2d');
 
     tilesetPanel.canvas.addEventListener('mousedown', onMouseDown);
     tilesetPanel.canvas.addEventListener('mousemove', onMouseMove);
+
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        let newTabLayer = e.target.id.split("-")[1];
+        
+        if (newTabLayer == "fg" || newTabLayer == "bg")
+            globals.setCurrentLayer(newTabLayer);
+        else
+            console.log("Doing nothing for " + newTabLayer);
+    });
 
     // After loading image, do things
     tilesetPanel.image.addEventListener('load', function() {
@@ -60,7 +67,7 @@ function init(layer, readyCallback) {
 }
 
 function refreshColors() {
-    globals.setFgColor(document.getElementById('fgColor').value);
+    globals.setFgColor(globals.getCurrentLayer(), document.getElementById('fgColor-' + globals.getCurrentLayer()).value);
     globals.setBgColor(document.getElementById('bgColor').value);
 }
 
@@ -79,7 +86,7 @@ function buildTintedCanvas(tilesetPanel) {
     tilesetPanel.tintedContext.rect(0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
     tilesetPanel.tintedContext.fillStyle = globals.getBgColor();
     tilesetPanel.tintedContext.fill();
-    tint.drawTintedImage(true, tilesetPanel.tintedContext, tilesetPanel.image, globals.getFgColor(), 0, 0, tilesetPanel.image.width, tilesetPanel.image.height);
+    tint.drawTintedImage(true, tilesetPanel.tintedContext, tilesetPanel.image, globals.getFgColor(globals.getCurrentLayer()), 0, 0, tilesetPanel.image.width, tilesetPanel.image.height);
 }
 
 function onMouseMove(e) {
@@ -118,9 +125,6 @@ function onMouseDown(e) {
 
 function setCurrentTile(tilesetPanel, tileId) {
     tilesetPanel.currentTile = tileId;
-    tilesetPanel.currentTileX = getTileX(tileId);
-    tilesetPanel.currentTileY = getTileY(tileId);
-    console.log(tilesetPanel.currentTile  + ", " + tilesetPanel.currentTileX + ", " + tilesetPanel.currentTileY);
 }
 
 function getCurrentTile(tilesetPanel) {
@@ -139,7 +143,7 @@ function redraw(tilesetPanel) {
     tilesetPanel.context.rect(0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
     tilesetPanel.context.fillStyle = globals.getBgColor();
     tilesetPanel.context.fill();
-    tint.drawTintedImage(true, tilesetPanel.context, tilesetPanel.image, globals.getFgColor(), 0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
+    tint.drawTintedImage(true, tilesetPanel.context, tilesetPanel.image, globals.getFgColor(globals.getCurrentLayer()), 0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
     buildTintedCanvas(tilesetPanel);
 }
 
