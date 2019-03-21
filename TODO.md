@@ -25,7 +25,6 @@
     - On tileset
     - On map
 - Generalize a bit the multilayer code
-- Moving mouse outside the edition area should stop painting
 - Undo?
 
 ## Doing
@@ -38,3 +37,4 @@
 - Scrolling makes editor fail
 - Draw grid over map properly
 - Zoom levels for map
+- Moving mouse outside the edition area should stop painting

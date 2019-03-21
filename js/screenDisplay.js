@@ -24,10 +24,13 @@ function init() {
         setZoom(factor);
     });
 
+    mapContext.imageSmoothingEnabled = false;
+
     mapCanvas.addEventListener('mousedown', onMapMouseDown);
     mapCanvas.addEventListener('mousemove', onMapMouseMove);
     mapCanvas.addEventListener('click', onMapMouseClick);
     mapCanvas.addEventListener('mouseup', onMapMouseUp);
+    mapCanvas.addEventListener('mouseleave', onMapMouseUp);
 
     document.getElementById('redraw').addEventListener('click', function(ev) {
         let tilesetPanel = globals.getCurrentTilesetPanel();
@@ -63,9 +66,11 @@ function onMapMouseUp(e) {
     let string = '[';
     for (let i = 0; i < globals.mapColumns * globals.mapRows; i++) {
         if (tiles[globals.getCurrentLayer()][i] != undefined) string = string + tiles[globals.getCurrentLayer()][i];
-        string = string + ',';
+        string += ',';
+        if (i % globals.mapColumns == 0)
+            string += " ";
     }
-    string = string + ']';
+    string += ']';
     document.getElementById('result').innerHTML = string;
 }
 
@@ -170,6 +175,7 @@ function setZoom(factor) {
         mapWidth = globals.mapColumns * globals.tileWidth * zoom;
         mapCanvas.setAttribute('width', mapWidth);
         mapCanvas.setAttribute('height', mapHeight);
+        mapContext.imageSmoothingEnabled = false;
 
         renderFullMap();
     }

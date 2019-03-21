@@ -35,6 +35,7 @@ function init(layer, readyCallback) {
 
     tilesetPanel.canvas = document.getElementById('tileset-' + layer);
     tilesetPanel.context = tilesetPanel.canvas.getContext('2d');
+    tilesetPanel.context.imageSmoothingEnabled = false;
 
     tilesetPanel.canvas.addEventListener('mousedown', onMouseDown);
     tilesetPanel.canvas.addEventListener('mousemove', onMouseMove);
@@ -98,13 +99,13 @@ function onMouseMove(e) {
     gridX = Math.floor(x / globals.tileWidth) * globals.tileWidth;
     gridY = Math.floor(y / globals.tileHeight) * globals.tileHeight;
 
-    that.context.clearRect(0, 0, that.sourceWidth, that.sourceHeight);
     redraw(that);
+    
+    // Draw cursor
     that.context.beginPath();
     that.context.strokeStyle = 'blue';
     that.context.rect(gridX, gridY, globals.tileWidth, globals.tileHeight);
     that.context.stroke();
-    drawBox(that);
 }
 
 function onMouseDown(e) {
@@ -120,11 +121,11 @@ function onMouseDown(e) {
     setCurrentTile(that, tileY * (that.sourceWidth / globals.tileWidth) + tileX);
     
     redraw(that);
-    drawBox(that);
 }
 
 function setCurrentTile(tilesetPanel, tileId) {
     tilesetPanel.currentTile = tileId;
+    redraw(tilesetPanel);
 }
 
 function getCurrentTile(tilesetPanel) {
@@ -145,12 +146,12 @@ function redraw(tilesetPanel) {
     tilesetPanel.context.fill();
     tint.drawTintedImage(true, tilesetPanel.context, tilesetPanel.image, globals.getFgColor(globals.getCurrentLayer()), 0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
     buildTintedCanvas(tilesetPanel);
-}
 
-function drawBox(tilesetPanel) {
+    // Highlight current tile
+    let ct = tilesetPanel.currentTile;
     tilesetPanel.context.beginPath();
     tilesetPanel.context.strokeStyle = 'red';
-    tilesetPanel.context.rect(tilesetPanel.sourceX, tilesetPanel.sourceY, globals.tileWidth, globals.tileHeight);
+    tilesetPanel.context.rect(getTileX(tilesetPanel, ct), getTileY(tilesetPanel, ct), globals.tileWidth, globals.tileHeight);
     tilesetPanel.context.stroke();
 }
 
