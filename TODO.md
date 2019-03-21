@@ -2,8 +2,6 @@
 
 ## Backlog 
 
-- COLORS NOT GLOBAL!
-
 - Panels
     - Design layout
 - Edit multiple screens
@@ -27,10 +25,10 @@
     - On tileset
     - On map
 - Generalize a bit the multilayer code
-- Pick from other layer changes layer?
+- Moving mouse outside the edition area should stop painting
+- Undo?
 
 ## Doing
-
 
 
 ## Done
