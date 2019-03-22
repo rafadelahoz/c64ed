@@ -62,6 +62,8 @@ function init() {
 
 function onMapMouseUp(e) {
     mouseDown = false;
+    // redraw
+    redraw(globals.getCurrentTilesetPanel());
     // update the string    
     let string = '[';
     for (let i = 0; i < globals.mapColumns * globals.mapRows; i++) {
@@ -94,7 +96,33 @@ function onMapMouseDown(e) {
 }
 
 function onMapMouseMove(e) {
+    // Redraw in order to draw cursor
+    renderFullMap();
+    // Render cursor
+    renderCursor(e);
+    // Paint if painting
     if (mouseDown == true) setTile(e);
+}
+
+function renderCursor(e) {
+    let x = e.clientX - mapX();
+    let y = e.clientY - mapY();
+    if (x > 0 && x < mapWidth && y > 0 && y < mapHeight) {
+        let tileX = Math.floor(x / (globals.tileWidth*zoom))*globals.tileWidth*zoom;
+        let tileY = Math.floor(y / (globals.tileHeight*zoom))*globals.tileWidth*zoom;
+        // Outer cursor
+        mapContext.beginPath();
+        mapContext.lineWidth = 2;
+        mapContext.strokeStyle = 'blue';
+        mapContext.rect(tileX, tileY, globals.tileWidth*zoom, globals.tileHeight*zoom);
+        mapContext.stroke();
+        // Inner cursor
+        mapContext.beginPath();
+        mapContext.lineWidth = 1;
+        mapContext.strokeStyle = 'white';
+        mapContext.rect(tileX+1, tileY+1, globals.tileWidth*zoom-1, globals.tileHeight*zoom-1);
+        mapContext.stroke();
+    }
 }
 
 function onMapMouseClick(e) {
@@ -134,14 +162,14 @@ function renderFullMap() {
         mapContext.moveTo(i * globals.tileWidth * zoom, 0);
         mapContext.lineTo(i * globals.tileWidth * zoom, mapHeight);
     }
-    // mapContext.lineStyle = 'yellow';
+    mapContext.strokeStyle = 'gray';
     mapContext.lineWidth = 0.5;
     mapContext.stroke();
     for (let i = 0; i <= globals.mapRows; i++) {
         mapContext.moveTo(0, i * globals.tileHeight * zoom);
         mapContext.lineTo(mapWidth, i * globals.tileHeight * zoom);
     }
-    // mapContext.lineStyle = '#00ff00';
+    // mapContext.strokeStyle = '#00ff00';
     mapContext.lineWidth = 0.5;
     mapContext.stroke();
 }
