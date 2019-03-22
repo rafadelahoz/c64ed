@@ -18,8 +18,6 @@
     - Placement
         - Properties?
     - Graphics?
-- Solids
-    - Put like tiles
 - Saving, loading
 - Select multiple tiles
     - On tileset
@@ -29,6 +27,8 @@
 
 ## Doing
 
+- Solids
+    - Put like tiles
 
 ## Done
 

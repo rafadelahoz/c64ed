@@ -40,15 +40,6 @@ function init(layer, readyCallback) {
     tilesetPanel.canvas.addEventListener('mousedown', onMouseDown);
     tilesetPanel.canvas.addEventListener('mousemove', onMouseMove);
 
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        let newTabLayer = e.target.id.split("-")[1];
-        
-        if (newTabLayer == "fg" || newTabLayer == "bg")
-            globals.setCurrentLayer(newTabLayer);
-        else
-            console.log("Doing nothing for " + newTabLayer);
-    });
-
     // After loading image, do things
     tilesetPanel.image.addEventListener('load', function() {
         var that = tilesetPanel;

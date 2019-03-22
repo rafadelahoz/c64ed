@@ -51,6 +51,15 @@ function getCurrentTilesetPanel() {
     return tilesetPanels[currentLayer];
 }
 
+var renderSolids = true;
+function getRenderSolids() {
+    return renderSolids;
+}
+
+function switchRenderSolids() {
+    renderSolids = !renderSolids;
+}
+
 module.exports = {
     tileWidth: tileWidth,
     tileHeight: tileHeight,
@@ -69,5 +78,8 @@ module.exports = {
     getTilesetPanel: getTilesetPanel,
     setTilesetPanel: setTilesetPanel,
     getCurrentLayer: getCurrentLayer,
-    setCurrentLayer: setCurrentLayer
+    setCurrentLayer: setCurrentLayer,
+
+    getRenderSolids: getRenderSolids,
+    switchRenderSolids: switchRenderSolids
 }
