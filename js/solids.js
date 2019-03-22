@@ -1,3 +1,5 @@
+const globals = require('./globals.js');
+const screenDisplay = require('./screenDisplay.js');
 
 let currentSolid = 0;
 

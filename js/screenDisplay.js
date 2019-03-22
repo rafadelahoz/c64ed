@@ -30,6 +30,16 @@ function init() {
     mapContext.imageSmoothingEnabled = false;
     setZoom(2);
 
+    let ls = ["fg", "bg"];
+    for (var l in ls) {
+        for (var i = 0; i < tiles[ls[l]].length; i++) {
+            tiles[ls[l]][i] = 0;
+        }
+    }
+    for (var i = 0; i < solids.length; i++) {
+        solids[i] = 0;
+    }
+
     mapCanvas.addEventListener('mousedown', onMapMouseDown);
     mapCanvas.addEventListener('mousemove', onMapMouseMove);
     mapCanvas.addEventListener('click', onMapMouseClick);
@@ -57,9 +67,10 @@ function init() {
     });
 
     document.getElementById('bgColor').addEventListener('change', function(ev) {
-        let tilesetPanel = globals.getCurrentTilesetPanel();
         globals.setBgColor(ev.target.value);
-        tileset.redraw(tilesetPanel);
+        let tsets = globals.getTilesetPanels();
+        for (var tset in tsets)
+            tileset.redraw(tsets[tset]);
         renderFullMap();
     });
 }
@@ -309,8 +320,17 @@ function setZoom(factor) {
     }
 }
 
+function serializeData() {
+    return {
+        "tiles-bg": tiles["bg"],
+        "tiles-fg": tiles["fg"],
+        "solids": solids
+    };
+}
+
 module.exports = {
     init: init,
     setZoom: setZoom,
-    render: renderFullMap
+    render: renderFullMap,
+    serialize: serializeData
 }

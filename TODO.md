@@ -18,7 +18,6 @@
     - Placement
         - Properties?
     - Graphics?
-- Saving, loading
 - Select multiple tiles
     - On tileset
     - On map
@@ -27,8 +26,7 @@
 
 ## Doing
 
-- Solids
-    - Put like tiles
+- Saving, loading
 
 ## Done
 
@@ -38,3 +36,5 @@
 - Draw grid over map properly
 - Zoom levels for map
 - Moving mouse outside the edition area should stop painting
+- Solids
+    - Put like tiles

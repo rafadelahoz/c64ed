@@ -59,7 +59,9 @@ function init(layer, readyCallback) {
 }
 
 function refreshColors() {
-    globals.setFgColor(globals.getCurrentLayer(), document.getElementById('fgColor-' + globals.getCurrentLayer()).value);
+    if (globals.getCurrentLayer() == "bg" || globals.getCurrentLayer() == "fg") {
+        globals.setFgColor(globals.getCurrentLayer(), document.getElementById('fgColor-' + globals.getCurrentLayer()).value);
+    }
     globals.setBgColor(document.getElementById('bgColor').value);
 }
 
