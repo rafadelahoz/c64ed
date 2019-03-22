@@ -106,7 +106,7 @@ function handleTilesMouseDown(e) {
     if (e.button == 0) {
         mouseDown = true;
     } else if (e.button == 2) {
-        pickSolid(e);
+        pickTile(e);
     }
 }
 
