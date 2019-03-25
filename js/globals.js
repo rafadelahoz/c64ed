@@ -24,6 +24,13 @@ function setBgColor(color) {
     bgColor = color;
 }
 
+function refreshColors() {
+    if (getCurrentLayer() == "bg" || getCurrentLayer() == "fg") {
+        setFgColor(getCurrentLayer(), document.getElementById('fgColor-' + getCurrentLayer()).value);
+    }
+    setBgColor(document.getElementById('bgColor').value);
+}
+
 var currentLayer = "bg";
 var tilesetPanels = {};
 
@@ -68,9 +75,10 @@ module.exports = {
 
     getBgColor: getBgColor,
     setBgColor: setBgColor,
-
     getFgColor: getFgColor,
     setFgColor: setFgColor,
+    refreshColors: refreshColors,
+    refreshColorInputs: refreshColorInputs,
 
     getTilesetPanels: getTilesetPanels,
     getCurrentTilesetPanel: getCurrentTilesetPanel,

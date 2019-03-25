@@ -12,6 +12,7 @@ function init() {
             case "solid": currentSolid = 1; break;
             case "oneway": currentSolid = 2; break;
         }
+        refreshButtons();
     });
 }
 
@@ -21,6 +22,16 @@ function getCurrentSolid() {
 
 function setCurrentSolid(solid) {
     currentSolid = solid;
+    refreshButtons();
+}
+
+function refreshButtons() {
+    $('.btn-solid').each(function(i, el) {
+        if (i != currentSolid)
+            $(el).removeClass('btn-success');
+        else
+            $(el).addClass('btn-success');
+    });
 }
 
 module.exports = {

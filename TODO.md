@@ -4,6 +4,10 @@
 
 - Panels
     - Design layout
+- WHAT IS A MAP/LEVEL/SCENE
+    - Set of screens (connected, unconnected)
+    - Map browser (reads directory and loads all maps)
+    - Maps are saved all together, as a set of screens with ids connected by the layout
 - Edit multiple screens
     - Setup connections
         + Can use string based node rendering:
@@ -21,7 +25,7 @@
 - Select multiple tiles
     - On tileset
     - On map
-- Generalize a bit the multilayer code
+
 - Undo?
 
 ## Doing
@@ -38,3 +42,4 @@
 - Moving mouse outside the edition area should stop painting
 - Solids
     - Put like tiles
+- Generalize a bit the multilayer code

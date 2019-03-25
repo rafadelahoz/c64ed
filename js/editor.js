@@ -35,6 +35,36 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         screenDisplay.render();
 });
 
+// Colors
+document.getElementById('fgColor-bg').addEventListener('change', function(ev) {
+    let tileset = globals.getCurrentTilesetPanel();
+    globals.setFgColor("bg", ev.target.value);
+    tilesetPanel.redraw(tileset);
+    screenDisplay.render();
+});
+
+document.getElementById('fgColor-fg').addEventListener('change', function(ev) {
+    let tileset = globals.getCurrentTilesetPanel();
+    globals.setFgColor("fg", ev.target.value);
+    tilesetPanel.redraw(tileset);
+    screenDisplay.render();
+});
+
+document.getElementById('bgColor').addEventListener('change', function(ev) {
+    globals.setBgColor(ev.target.value);
+    let tsets = globals.getTilesetPanels();
+    for (var tset in tsets)
+        tilesetPanel.redraw(tsets[tset]);
+    screenDisplay.render();
+});
+
+function refreshColorInputs() {
+    document.getElementById('bgColor').value = globals.getBgColor();
+    document.getElementById('fgColor-bg').value = globals.getFgColor("bg");
+    document.getElementById('fgColor-fg').value = globals.getFgColor("fg");
+}
+
+// Solids
 $('#btn-toggle-solids').on('click', function(e) {
     globals.switchRenderSolids();
     screenDisplay.render();
@@ -45,9 +75,12 @@ $('#btn-load').on('click', function(e) {
     var data = filemanager.load("whatever-000.json");
     console.log(data);
 
-    globals.setBgColor(colors[0]);
-    globals.setFgColor("bg", colors[1]);
-    globals.setFgColor("fg", colors[2]);
+    globals.setBgColor(data.colors[0]);
+
+    globals.setFgColor("bg", data.colors[1]);
+    globals.setFgColor("fg", data.colors[2]);
+
+    refreshColorInputs();
 
     screenDisplay.load(data);
 });

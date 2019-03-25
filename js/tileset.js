@@ -16,6 +16,7 @@ function init(layer, readyCallback) {
         throw "Invalid layer, expected bg or fg";
 
     let tilesetPanel = {
+        layer : layer,
         canvas: undefined,
         context: undefined,
         image: undefined,
@@ -48,7 +49,7 @@ function init(layer, readyCallback) {
         that.sourceWidth = that.image.width;
         that.sourceHeight = that.image.height;
         that.widthInTiles = Math.floor((that.sourceWidth / globals.tileWidth));
-        refreshColors();
+        globals.refreshColors();
         redraw(tilesetPanel);
         if (callback) {
             callback(tilesetPanel);
@@ -58,12 +59,7 @@ function init(layer, readyCallback) {
     return tilesetPanel;
 }
 
-function refreshColors() {
-    if (globals.getCurrentLayer() == "bg" || globals.getCurrentLayer() == "fg") {
-        globals.setFgColor(globals.getCurrentLayer(), document.getElementById('fgColor-' + globals.getCurrentLayer()).value);
-    }
-    globals.setBgColor(document.getElementById('bgColor').value);
-}
+
 
 function buildTintedCanvas(tilesetPanel) {
     if (!tilesetPanel.tintedCanvas) {
@@ -75,12 +71,12 @@ function buildTintedCanvas(tilesetPanel) {
         // document.getElementById('secret').appendChild(tilesetPanel.tintedCanvas);
     } 
 
-    refreshColors();
+    globals.refreshColors();
 
     tilesetPanel.tintedContext.rect(0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
     tilesetPanel.tintedContext.fillStyle = globals.getBgColor();
     tilesetPanel.tintedContext.fill();
-    tint.drawTintedImage(true, tilesetPanel.tintedContext, tilesetPanel.image, globals.getFgColor(globals.getCurrentLayer()), 0, 0, tilesetPanel.image.width, tilesetPanel.image.height);
+    tint.drawTintedImage(true, tilesetPanel.tintedContext, tilesetPanel.image, globals.getFgColor(tilesetPanel.layer), 0, 0, tilesetPanel.image.width, tilesetPanel.image.height);
 }
 
 function onMouseMove(e) {
@@ -137,7 +133,7 @@ function redraw(tilesetPanel) {
     tilesetPanel.context.rect(0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
     tilesetPanel.context.fillStyle = globals.getBgColor();
     tilesetPanel.context.fill();
-    tint.drawTintedImage(true, tilesetPanel.context, tilesetPanel.image, globals.getFgColor(globals.getCurrentLayer()), 0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
+    tint.drawTintedImage(true, tilesetPanel.context, tilesetPanel.image, globals.getFgColor(tilesetPanel.layer), 0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
     buildTintedCanvas(tilesetPanel);
 
     // Highlight current tile

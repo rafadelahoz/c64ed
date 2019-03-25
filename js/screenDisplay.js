@@ -51,28 +51,6 @@ function init() {
         tileset.redraw(tilesetPanel);
         renderFullMap();
     });
-
-    document.getElementById('fgColor-bg').addEventListener('change', function(ev) {
-        let tilesetPanel = globals.getCurrentTilesetPanel();
-        globals.setFgColor("bg", ev.target.value);
-        tileset.redraw(tilesetPanel);
-        renderFullMap();
-    });
-
-    document.getElementById('fgColor-fg').addEventListener('change', function(ev) {
-        let tilesetPanel = globals.getCurrentTilesetPanel();
-        globals.setFgColor("fg", ev.target.value);
-        tileset.redraw(tilesetPanel);
-        renderFullMap();
-    });
-
-    document.getElementById('bgColor').addEventListener('change', function(ev) {
-        globals.setBgColor(ev.target.value);
-        let tsets = globals.getTilesetPanels();
-        for (var tset in tsets)
-            tileset.redraw(tsets[tset]);
-        renderFullMap();
-    });
 }
 
 function onMapMouseUp(e) {
@@ -336,6 +314,8 @@ function load(data) {
     tiles["fg"] = data["tiles-fg"];
     solids = data["solids"];
 
+    tileset.redraw(globals.getTilesetPanel("bg"));
+    tileset.redraw(globals.getTilesetPanel("fg"));
     renderFullMap();
 }
 
