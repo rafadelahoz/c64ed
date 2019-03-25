@@ -328,9 +328,21 @@ function serializeData() {
     };
 }
 
+function load(data) {
+    if (!data["tiles-bg"] || !data["tiles-fg"] || !data["solids"])
+        throw "Unreadable map";
+    
+    tiles["bg"] = data["tiles-bg"];
+    tiles["fg"] = data["tiles-fg"];
+    solids = data["solids"];
+
+    renderFullMap();
+}
+
 module.exports = {
     init: init,
     setZoom: setZoom,
     render: renderFullMap,
-    serialize: serializeData
+    serialize: serializeData,
+    load: load
 }

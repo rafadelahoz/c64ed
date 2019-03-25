@@ -3,6 +3,7 @@ const globals = require('./js/globals.js');
 const screenDisplay = require('./js/screenDisplay.js');
 const tilesetPanel = require('./js/tileset.js');
 const solidsPanel = require('./js/solids.js');
+const filemanager = require('./js/filemanager.js');
 
 document.addEventListener('contextmenu', event => event.preventDefault());
 
@@ -40,6 +41,17 @@ $('#btn-toggle-solids').on('click', function(e) {
     e.target.textContent = (globals.getRenderSolids() ? "" : "!") + "Solids";
 });
 
+$('#btn-load').on('click', function(e) {
+    var data = filemanager.load("whatever-000.json");
+    console.log(data);
+
+    globals.setBgColor(colors[0]);
+    globals.setFgColor("bg", colors[1]);
+    globals.setFgColor("fg", colors[2]);
+
+    screenDisplay.load(data);
+});
+
 $('#btn-save').on('click', function(e) {
     console.log("saving");
 
@@ -54,6 +66,8 @@ $('#btn-save').on('click', function(e) {
     }
 
     console.log(screen);
+
+    filemanager.save(screen.id + ".json", screen);
 });
 
 function getTabLayer(tab) {
