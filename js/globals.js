@@ -25,9 +25,8 @@ function setBgColor(color) {
 }
 
 function refreshColors() {
-    if (getCurrentLayer() == "bg" || getCurrentLayer() == "fg") {
-        setFgColor(getCurrentLayer(), document.getElementById('fgColor-' + getCurrentLayer()).value);
-    }
+    setFgColor('bg', document.getElementById('fgColor-bg').value);
+    setFgColor('fg', document.getElementById('fgColor-fg').value);
     setBgColor(document.getElementById('bgColor').value);
 }
 

@@ -64,7 +64,7 @@ function init(layer, readyCallback) {
 function buildTintedCanvas(tilesetPanel) {
     if (!tilesetPanel.tintedCanvas) {
         tilesetPanel.tintedCanvas = document.createElement('canvas');
-        tilesetPanel.tintedCanvas.id = 'tintedcanvas';
+        tilesetPanel.tintedCanvas.id = 'tintedcanvas' + tilesetPanel.layer;
         tilesetPanel.tintedCanvas.width = tilesetPanel.image.width;
         tilesetPanel.tintedCanvas.height = tilesetPanel.image.height;
         tilesetPanel.tintedContext = tilesetPanel.tintedCanvas.getContext('2d');
