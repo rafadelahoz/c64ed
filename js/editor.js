@@ -73,7 +73,11 @@ $('#btn-toggle-solids').on('click', function(e) {
 
 $('#btn-load').on('click', function(e) {
     var data = filemanager.load("whatever-000.json");
+    
     console.log(data);
+
+    globals.setMapSize(data.width, data.height);
+    screenDisplay.init();
 
     globals.setBgColor(data.colors[0]);
 
@@ -88,8 +92,11 @@ $('#btn-load').on('click', function(e) {
 $('#btn-save').on('click', function(e) {
     console.log("saving");
 
+    var mapSize = globals.getMapSize();
     var screen = {
         id: "whatever-000",
+        width: mapSize.columns,
+        height: mapSize.rows,
         colors: [globals.getBgColor(), globals.getFgColor("bg"), globals.getFgColor("fg")]
     };
 
@@ -101,6 +108,13 @@ $('#btn-save').on('click', function(e) {
     console.log(screen);
 
     filemanager.save(screen.id + ".json", screen);
+});
+
+$('#btn-new').on('click', function(e) {
+    let w = Math.round(Math.random()*30);
+    let h = Math.round(Math.random()*30);
+    globals.setMapSize(w, h);
+    screenDisplay.init();
 });
 
 function getTabLayer(tab) {

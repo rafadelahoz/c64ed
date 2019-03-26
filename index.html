@@ -81,7 +81,33 @@
         <button type="button" class="btn btn-secondary" id="btn-toggle-solids">Solids</button>
       </div>
       <hr/>
-      <canvas id='map-canvas' width='600' height='800'></canvas>
+      <div class="container">
+        <div class="row">
+          <div class="col text-center">
+            <button type="button" class="btn btn-secondary btn-sm btn-size-add" id="btn-size-add-top">+</button>
+            <button type="button" class="btn btn-secondary btn-sm btn-size-remove" id="btn-size-remove-top">-</button>
+          </div>
+        </div>
+        <div class="row" style="display: flex; align-items: center; flex-wrap: wrap;">
+          <div class="col text-right">
+            <button type="button" class="btn btn-secondary btn-sm btn-size-add" id="btn-size-add-left">+</button>
+            <button type="button" class="btn btn-secondary btn-sm btn-size-remove" id="btn-size-remove-left">-</button>
+          </div>
+          <div class="col">
+            <canvas id='map-canvas' width='600' height='800'></canvas>
+          </div>
+          <div class="col">
+              <button type="button" class="btn btn-secondary btn-sm btn-size-remove" id="btn-size-remove-right">-</button>
+              <button type="button" class="btn btn-secondary btn-sm btn-size-add" id="btn-size-add-right">+</button>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <button type="button" class="btn btn-secondary btn-sm btn-size-add" id="btn-size-add-bottom">+</button>
+                <button type="button" class="btn btn-secondary btn-sm btn-size-remove" id="btn-size-remove-bottom">-</button>
+            </div>
+          </div>
+      </div>
       <button id="redraw">Redraw</button>
       <br>
       <p id='result'></p>
