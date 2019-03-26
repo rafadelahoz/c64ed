@@ -66,11 +66,30 @@ function switchRenderSolids() {
     renderSolids = !renderSolids;
 }
 
+/**
+ * Sets the global size variables
+ * Does not send events or anything
+ * @param {int} columns 
+ * @param {int} rows 
+ */
+function setMapSize(columns, rows) {
+    mapColumns = columns;
+    mapRows = rows;
+}
+
+function getMapSize() {
+    return {
+        columns: mapColumns,
+        rows: mapRows
+    };
+}
+
 module.exports = {
     tileWidth: tileWidth,
     tileHeight: tileHeight,
-    mapColumns: mapColumns,
-    mapRows: mapRows,
+    
+    setMapSize: setMapSize,
+    getMapSize: getMapSize,
 
     getBgColor: getBgColor,
     setBgColor: setBgColor,

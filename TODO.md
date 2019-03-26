@@ -4,6 +4,7 @@
 
 - Panels
     - Design layout
+- Bigger maps
 - WHAT IS A MAP/LEVEL/SCENE
     - Set of screens (connected, unconnected)
     - Map browser (reads directory and loads all maps)
