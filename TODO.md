@@ -4,7 +4,7 @@
 
 - Panels
     - Design layout
-- Bigger maps
+    - Improve layout
 - WHAT IS A MAP/LEVEL/SCENE
     - Set of screens (connected, unconnected)
     - Map browser (reads directory and loads all maps)
@@ -26,12 +26,9 @@
 - Select multiple tiles
     - On tileset
     - On map
-
 - Undo?
 
 ## Doing
-
-- Saving, loading
 
 ## Done
 
@@ -44,3 +41,5 @@
 - Solids
     - Put like tiles
 - Generalize a bit the multilayer code
+- Bigger maps
+- Saving, loading (first draft)

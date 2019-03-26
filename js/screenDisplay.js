@@ -24,7 +24,7 @@ function init() {
 
     setMapSize(globals.getMapSize().columns, globals.getMapSize().rows);
 
-    setZoom(2);
+    setZoom();
 
     // Setup events
     mapCanvas.addEventListener('mousedown', onMapMouseDown);
@@ -76,11 +76,11 @@ function onMapMouseUp(e) {
     // redraw
     renderFullMap();
     // update the string
-    var mapSize = globals.getMapSize();
+    // var mapSize = globals.getMapSize();
     switch (globals.getCurrentLayer()) {
         case "bg":
         case "fg":
-            let string = '[';
+            /*let string = '[';
             for (let i = 0; i < mapSize.columns * mapSize.rows; i++) {
                 if (tiles[globals.getCurrentLayer()][i] != undefined) string = string + tiles[globals.getCurrentLayer()][i];
                 string += ',';
@@ -88,10 +88,12 @@ function onMapMouseUp(e) {
                     string += " ";
             }
             string += ']';
-            document.getElementById('result').innerHTML = string;
+            document.getElementById('result').innerHTML = string;*/
+            document.getElementById('result').innerHTML = "Current " + globals.getCurrentLayer().toUpperCase() + " tile: " + tiles.getCurrentTilesetPanel().getCurrentTile();
             break;
         default: 
             document.getElementById('result').innerHTML = "Current layer: " + globals.getCurrentLayer();
+            break;
     }
 }
 
@@ -306,6 +308,9 @@ function mapY() {
 }
 
 function setZoom(factor) {
+    if (!factor)
+        factor = zoom;
+
     if (factor > 0 && factor < 5)
     {
         let mapSize = globals.getMapSize();
@@ -376,7 +381,7 @@ function resize(delta, dir) {
     mapWidth = nw * globals.tileWidth * zoom;
     mapHeight = nh * globals.tileHeight * zoom;
 
-    setZoom(2);
+    setZoom();
 }
 
 function resizeKeepData(arr, nw, nh, w, h, ox, oy) {
