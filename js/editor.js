@@ -117,6 +117,38 @@ $('#btn-new').on('click', function(e) {
     screenDisplay.init();
 });
 
+$('.btn-size-add').on('click', function(e) {
+    let id = e.target.id;
+    let dir = id.split("-")[3];
+    
+    // TODO: Keep the current map!
+
+    let currentSize = globals.getMapSize();
+    if (dir == "right" || dir == "left") {
+        globals.setMapSize(currentSize.columns + globals.baseColumns, currentSize.rows);
+    } else if (dir == "top" || dir == "bottom") {
+        globals.setMapSize(currentSize.columns, currentSize.rows + globals.baseRows);
+    }
+    screenDisplay.init();
+});
+
+$('.btn-size-remove').on('click', function(e) {
+    let id = e.target.id;
+    let dir = id.split("-")[3];
+    
+    // TODO: Keep the current map!
+
+    let currentSize = globals.getMapSize();
+    if (dir == "right" || dir == "left") {
+        if (currentSize.columns > globals.baseColumns)
+            globals.setMapSize(currentSize.columns - globals.baseColumns, currentSize.rows);
+    } else if (dir == "top" || dir == "bottom") {
+        if (currentSize.rows > globals.baseRows)
+            globals.setMapSize(currentSize.columns, currentSize.rows - globals.baseRows);
+    }
+    screenDisplay.init();
+});
+
 function getTabLayer(tab) {
     let sections = tab.id.split("-");
     let layer = sections[0];

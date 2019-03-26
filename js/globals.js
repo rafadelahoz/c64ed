@@ -1,6 +1,9 @@
 var tileWidth = 14;
 var tileHeight = 14;
 
+const baseColumns = 15;
+const baseRows = 11;
+
 var mapColumns = 15;
 var mapRows = 11;
 
@@ -87,6 +90,8 @@ function getMapSize() {
 module.exports = {
     tileWidth: tileWidth,
     tileHeight: tileHeight,
+    baseColumns: baseColumns,
+    baseRows: baseRows,
     
     setMapSize: setMapSize,
     getMapSize: getMapSize,
