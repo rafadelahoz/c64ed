@@ -17,12 +17,35 @@
                 ###-##-#
                   |
                  ###-##
+    - Functional (other):
+        - List of screens + placement
+        - Floating rooms, each room (room is a square of a screen) clickable
+        - Click on one room side?, click on another -> linked
+            - If sizes require it, setup more connections
+    - Functional:
+        - Layer/Tool to set connections
+        - When activated, buttons appear on borders of screen
+        - Links are two-way
+        - Coherence must be preserved
+        - Clicking on them moves to the connected screen in that way
+            - If no screen is present, a 1x1 one is created and linked
+        - Increasing a screen size checks connections for coherence
 - Map properties
 - Actors, entites, objects
     - DB
     - Placement
         - Properties?
     - Graphics?
+    - Types:
+        - Player spawn
+        - Exit
+        - Teleports
+            - Doors and such, move through the level
+            - Require input for activating (up, down?)
+            - Target coordinates (in map)
+        - Enemies
+        - NPCS/Events?
+        - Items
 - Select multiple tiles
     - On tileset
     - On map
