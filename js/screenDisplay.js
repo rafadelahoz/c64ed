@@ -341,6 +341,72 @@ function load(data) {
     renderFullMap();
 }
 
+function resize(delta, dir) {
+    var current = globals.getMapSize();
+
+    var nw = current.columns;
+    var nh = current.rows;
+    var w = current.columns;
+    var h = current.rows;
+
+    if (dir == "left") {
+        nw += delta;
+        ox = delta;
+        oy = 0;
+    } else if (dir == "right") {
+        nw += delta;
+        ox = 0;
+        oy = 0;
+    } else if (dir == "top") {
+        nh += delta;
+        ox = 0;
+        oy = delta;
+    } else if (dir == "bottom") {
+        nh += delta;
+        ox = 0;
+        oy = 0;
+    }
+    
+    solids = resizeKeepData(solids, nw, nh, w, h, ox, oy);
+    tiles["bg"] = resizeKeepData(tiles["bg"], nw, nh, w, h, ox, oy);
+    tiles["fg"] = resizeKeepData(tiles["fg"], nw, nh, w, h, ox, oy);
+
+    globals.setMapSize(nw, nh);
+
+    mapWidth = nw * globals.tileWidth * zoom;
+    mapHeight = nh * globals.tileHeight * zoom;
+
+    setZoom(2);
+}
+
+function resizeKeepData(arr, nw, nh, w, h, ox, oy) {
+    let newmap = new Array(nw * nh);
+    let map = arr;
+    for (var col = 0; col < nw; col++) {
+        for (var row = 0; row < nh; row++) {
+            // Inside source map area
+            if (col >= ox && col < ox+w &&  
+                row >= oy && row < oy+h) {
+                set(newmap, nw, col, row, get(map, w, col-ox, row-oy));
+            } 
+            // Outside source map
+            else {
+                set(newmap, nw, col, row, 0);
+            }
+        }
+    }
+
+    return newmap;
+}
+
+function set(arr, cols, col, row , value) {
+    arr[col + cols*row] = value;
+}
+
+function get(arr, cols, col, row) {
+    return arr[col + cols*row];
+}
+
 module.exports = {
     init: init,
     setMapSize: setMapSize,
@@ -348,4 +414,5 @@ module.exports = {
     render: renderFullMap,
     serialize: serializeData,
     load: load,
+    resize: resize
 }

@@ -120,33 +120,26 @@ $('#btn-new').on('click', function(e) {
 $('.btn-size-add').on('click', function(e) {
     let id = e.target.id;
     let dir = id.split("-")[3];
-    
-    // TODO: Keep the current map!
 
-    let currentSize = globals.getMapSize();
-    if (dir == "right" || dir == "left") {
-        globals.setMapSize(currentSize.columns + globals.baseColumns, currentSize.rows);
-    } else if (dir == "top" || dir == "bottom") {
-        globals.setMapSize(currentSize.columns, currentSize.rows + globals.baseRows);
-    }
-    screenDisplay.init();
+    if (dir == "left" || dir == "right")
+        screenDisplay.resize(globals.baseColumns, dir);
+    else if (dir == "top" ||dir == "bottom")
+        screenDisplay.resize(globals.baseRows, dir);
 });
 
 $('.btn-size-remove').on('click', function(e) {
     let id = e.target.id;
     let dir = id.split("-")[3];
     
-    // TODO: Keep the current map!
-
     let currentSize = globals.getMapSize();
+
     if (dir == "right" || dir == "left") {
         if (currentSize.columns > globals.baseColumns)
-            globals.setMapSize(currentSize.columns - globals.baseColumns, currentSize.rows);
+            screenDisplay.resize(-globals.baseColumns, dir);
     } else if (dir == "top" || dir == "bottom") {
         if (currentSize.rows > globals.baseRows)
-            globals.setMapSize(currentSize.columns, currentSize.rows - globals.baseRows);
+            screenDisplay.resize(-globals.baseRows, dir);
     }
-    screenDisplay.init();
 });
 
 function getTabLayer(tab) {
