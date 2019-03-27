@@ -1,10 +1,11 @@
 
 const globals = require('./globals.js');
+const data = require('./data.js');
+const screenGrid = require('./screenGrid.js');
 const tileset = require('./tileset.js');
 const solidsPanel = require('./solids.js');
 
-var tiles;
-var solids;
+var room;
 
 var mapWidth = -1;
 var mapHeight = -1; 
@@ -13,7 +14,7 @@ let zoom = 2;
 var mapCanvas;
 var mapContext;
 
-let mouseDown;
+var mouseDown;
 
 function init() {
 
@@ -22,9 +23,7 @@ function init() {
 
     mapContext.imageSmoothingEnabled = false;
 
-    setMapSize(globals.getMapSize().columns, globals.getMapSize().rows);
-
-    setZoom();
+    loadRoom(screenGrid.getCurrentRoom());
 
     // Setup events
     mapCanvas.addEventListener('mousedown', onMapMouseDown);
@@ -45,25 +44,42 @@ function init() {
     });
 }
 
-function setMapSize(widthInTiles, heightInTiles) {
+function loadCurrentRoom() {
+    loadRoom(screenGrid.getCurrentRoom());
+}
+
+function loadRoom(thisRoom) {
+    room = thisRoom;
+    
+    // Initialize missing things
+    if (room.solids.length == 0) {
+        setupEmptyRoom();
+    }
+
+    setZoom();
+}
+
+function setupEmptyRoom() {
     // TODO: keep tiles and solids data appropriately
+    var widthInTiles = room.columns;
+    var heightInTiles = room.rows;
 
     // Init tiles and solids arrays
-    tiles = {};
-    tiles["bg"] = new Array(widthInTiles * heightInTiles);
-    tiles["fg"] = new Array(widthInTiles * heightInTiles)
+    room.tiles = {};
+    room.tiles["bg"] = new Array(widthInTiles * heightInTiles);
+    room.tiles["fg"] = new Array(widthInTiles * heightInTiles)
 
-    solids = new Array(widthInTiles * heightInTiles);
+    room.solids = new Array(widthInTiles * heightInTiles);
 
     let ls = ["fg", "bg"];
     for (var l in ls) {
-        for (var i = 0; i < tiles[ls[l]].length; i++) {
-            tiles[ls[l]][i] = 0;
+        for (var i = 0; i < room.tiles[ls[l]].length; i++) {
+            room.tiles[ls[l]][i] = 0;
         }
     }
 
-    for (var i = 0; i < solids.length; i++) {
-        solids[i] = 0;
+    for (var i = 0; i < room.solids.length; i++) {
+        room.solids[i] = 0;
     }
 
     // Compute sizes in pixels
@@ -75,21 +91,10 @@ function onMapMouseUp(e) {
     mouseDown = false;
     // redraw
     renderFullMap();
-    // update the string
-    // var mapSize = globals.getMapSize();
     switch (globals.getCurrentLayer()) {
         case "bg":
         case "fg":
-            /*let string = '[';
-            for (let i = 0; i < mapSize.columns * mapSize.rows; i++) {
-                if (tiles[globals.getCurrentLayer()][i] != undefined) string = string + tiles[globals.getCurrentLayer()][i];
-                string += ',';
-                if (i % mapSize.columns == 0)
-                    string += " ";
-            }
-            string += ']';
-            document.getElementById('result').innerHTML = string;*/
-            document.getElementById('result').innerHTML = "Current " + globals.getCurrentLayer().toUpperCase() + " tile: " + tiles.getCurrentTilesetPanel().getCurrentTile();
+            // document.getElementById('result').innerHTML = "Current " + globals.getCurrentLayer().toUpperCase() + " tile: " + globalsº.getCurrentTilesetPanel().getCurrentTile();
             break;
         default: 
             document.getElementById('result').innerHTML = "Current layer: " + globals.getCurrentLayer();
@@ -127,10 +132,10 @@ function pickTile(e) {
     if (x > 0 && x < mapWidth && y > 0 && y < mapHeight) {
         let tileX = Math.floor(x / (globals.tileWidth*zoom));
         let tileY = Math.floor(y / (globals.tileHeight*zoom));
-        let targetTile = tileY * globals.getMapSize().columns + tileX;
+        let targetTile = tileY * room.columns + tileX;
         
         let tilesetPanel = globals.getCurrentTilesetPanel();
-        tileset.setCurrentTile(tilesetPanel, tiles[globals.getCurrentLayer()][targetTile]);
+        tileset.setCurrentTile(tilesetPanel, room.tiles[globals.getCurrentLayer()][targetTile]);
     }
 }
 
@@ -141,8 +146,8 @@ function pickSolid(e) {
     if (x > 0 && x < mapWidth && y > 0 && y < mapHeight) {
         let solidX = Math.floor(x / (globals.tileWidth*zoom));
         let solidY = Math.floor(y / (globals.tileHeight*zoom));
-        let targetSolid = solidY * globals.getMapSize().columns + solidX;
-        solidsPanel.setCurrentSolid(solids[targetSolid]);
+        let targetSolid = solidY * room.columns + solidX;
+        solidsPanel.setCurrentSolid(room.solids[targetSolid]);
     }
 }
 
@@ -213,8 +218,6 @@ function renderFullMap() {
     mapContext.fillStyle = globals.getBgColor();
     mapContext.fill();
 
-    var mapSize = globals.getMapSize();
-
     var srcTile, tsetX, tsetY;
     
     // Draw tiles
@@ -223,9 +226,9 @@ function renderFullMap() {
         let layer = layers[layerIndex];
         let tilesetPanel = globals.getTilesetPanel(layer);
 
-        for (var tx = 0; tx < mapSize.columns; tx++) {
-            for (var ty = 0; ty < mapSize.rows; ty++) {
-                srcTile = tiles[layer][tx + ty*mapSize.columns]
+        for (var tx = 0; tx < room.columns; tx++) {
+            for (var ty = 0; ty < room.rows; ty++) {
+                srcTile = room.tiles[layer][tx + ty*room.columns]
                 if (srcTile) {
                     tsetX = tileset.getTileX(tilesetPanel, srcTile);
                     tsetY = tileset.getTileY(tilesetPanel, srcTile);
@@ -238,9 +241,9 @@ function renderFullMap() {
 
     // Draw solids
     if (globals.getRenderSolids() || globals.getCurrentLayer() == "solids") {
-        for (var tx = 0; tx < mapSize.columns; tx++) {
-            for (var ty = 0; ty < mapSize.rows; ty++) {
-                solid = solids[tx + ty*mapSize.columns]
+        for (var tx = 0; tx < room.columns; tx++) {
+            for (var ty = 0; ty < room.rows; ty++) {
+                solid = room.solids[tx + ty*room.columns]
                 switch (solid) {
                     case 0: break; // none
                     case 1: // solid: full tile      
@@ -257,14 +260,14 @@ function renderFullMap() {
     }
 
     // Draw the grid
-    for (let i = 0; i <= mapSize.columns; i++) {
+    for (let i = 0; i <= room.columns; i++) {
         mapContext.moveTo(i * globals.tileWidth * zoom, 0);
         mapContext.lineTo(i * globals.tileWidth * zoom, mapHeight);
     }
     mapContext.strokeStyle = 'gray';
     mapContext.lineWidth = 0.5;
     mapContext.stroke();
-    for (let i = 0; i <= mapSize.rows; i++) {
+    for (let i = 0; i <= room.rows; i++) {
         mapContext.moveTo(0, i * globals.tileHeight * zoom);
         mapContext.lineTo(mapWidth, i * globals.tileHeight * zoom);
     }
@@ -279,9 +282,9 @@ function setTile(e) {
     if (y < mapHeight && x < mapWidth) { // target
         let mapTileX = Math.floor(x / (globals.tileWidth * zoom));
         let mapTileY = Math.floor(y / (globals.tileHeight * zoom));
-        let targetMapTile = mapTileY * globals.getMapSize().columns + mapTileX;
+        let targetMapTile = mapTileY * room.columns + mapTileX;
         let tilesetPanel = globals.getCurrentTilesetPanel();        
-        tiles[globals.getCurrentLayer()][targetMapTile] = tileset.getCurrentTile(tilesetPanel);
+        room.tiles[globals.getCurrentLayer()][targetMapTile] = tileset.getCurrentTile(tilesetPanel);
         renderFullMap();
     }
 }
@@ -292,9 +295,9 @@ function setSolid(e) {
     if (y < mapHeight && x < mapWidth) { // target
         let mapTileX = Math.floor(x / (globals.tileWidth * zoom));
         let mapTileY = Math.floor(y / (globals.tileHeight * zoom));
-        let targetMapTile = mapTileY * globals.getMapSize().columns + mapTileX;
+        let targetMapTile = mapTileY * room.columns + mapTileX;
         
-        solids[targetMapTile] = solidsPanel.getCurrentSolid();
+        room.solids[targetMapTile] = solidsPanel.getCurrentSolid();
         renderFullMap();
     }
 }
@@ -313,10 +316,9 @@ function setZoom(factor) {
 
     if (factor > 0 && factor < 5)
     {
-        let mapSize = globals.getMapSize();
         zoom = factor;
-        mapWidth = mapSize.columns * globals.tileWidth * zoom;
-        mapHeight = mapSize.rows * globals.tileHeight * zoom;
+        mapWidth = room.columns * globals.tileWidth * zoom;
+        mapHeight = room.rows * globals.tileHeight * zoom;
         mapCanvas.setAttribute('width', mapWidth);
         mapCanvas.setAttribute('height', mapHeight);
         mapContext.imageSmoothingEnabled = false;
@@ -327,19 +329,22 @@ function setZoom(factor) {
 
 function serializeData() {
     return {
-        "tiles-bg": tiles["bg"],
-        "tiles-fg": tiles["fg"],
-        "solids": solids
+        "tiles-bg": room.tiles["bg"],
+        "tiles-fg": room.tiles["fg"],
+        "solids": room.solids
     };
 }
 
 function load(data) {
     if (!data["tiles-bg"] || !data["tiles-fg"] || !data["solids"])
         throw "Unreadable map";
+
+    room.columns = data.width;
+    room.rows = data.height;
     
-    tiles["bg"] = data["tiles-bg"];
-    tiles["fg"] = data["tiles-fg"];
-    solids = data["solids"];
+    room.tiles["bg"] = data["tiles-bg"];
+    room.tiles["fg"] = data["tiles-fg"];
+    room.solids = data["solids"];
 
     tileset.redraw(globals.getTilesetPanel("bg"));
     tileset.redraw(globals.getTilesetPanel("fg"));
@@ -347,12 +352,11 @@ function load(data) {
 }
 
 function resize(delta, dir) {
-    var current = globals.getMapSize();
-
-    var nw = current.columns;
-    var nh = current.rows;
-    var w = current.columns;
-    var h = current.rows;
+    
+    var nw = room.columns;
+    var nh = room.rows;
+    var w = room.columns;
+    var h = room.rows;
 
     if (dir == "left") {
         nw += delta;
@@ -372,11 +376,12 @@ function resize(delta, dir) {
         oy = 0;
     }
     
-    solids = resizeKeepData(solids, nw, nh, w, h, ox, oy);
-    tiles["bg"] = resizeKeepData(tiles["bg"], nw, nh, w, h, ox, oy);
-    tiles["fg"] = resizeKeepData(tiles["fg"], nw, nh, w, h, ox, oy);
+    room.solids = resizeKeepData(room.solids, nw, nh, w, h, ox, oy);
+    room.tiles["bg"] = resizeKeepData(room.tiles["bg"], nw, nh, w, h, ox, oy);
+    room.tiles["fg"] = resizeKeepData(room.tiles["fg"], nw, nh, w, h, ox, oy);
 
-    globals.setMapSize(nw, nh);
+    room.columns = nw;
+    room.rows = nh;
 
     mapWidth = nw * globals.tileWidth * zoom;
     mapHeight = nh * globals.tileHeight * zoom;
@@ -414,10 +419,10 @@ function get(arr, cols, col, row) {
 
 module.exports = {
     init: init,
-    setMapSize: setMapSize,
     setZoom: setZoom,
     render: renderFullMap,
     serialize: serializeData,
     load: load,
-    resize: resize
+    resize: resize,
+    loadCurrentRoom: loadCurrentRoom
 }

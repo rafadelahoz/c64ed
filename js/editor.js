@@ -1,5 +1,9 @@
 /* Editor things */
+const mousetrap = require('mousetrap');
+
 const globals = require('./js/globals.js');
+const data = require('./js/data.js');
+const screenGrid = require('./js/screenGrid.js');
 const screenDisplay = require('./js/screenDisplay.js');
 const tilesetPanel = require('./js/tileset.js');
 const solidsPanel = require('./js/solids.js');
@@ -7,6 +11,8 @@ const filemanager = require('./js/filemanager.js');
 
 document.addEventListener('contextmenu', event => event.preventDefault());
 
+data.init();
+screenGrid.init();
 screenDisplay.init();
 tilesetPanel.init("bg", function(tilesetPanel) {
     globals.setTilesetPanel("bg", tilesetPanel);
@@ -72,7 +78,7 @@ $('#btn-toggle-solids').on('click', function(e) {
 });
 
 $('#btn-load').on('click', function(e) {
-    var data = filemanager.load("whatever-000.json");
+    /*var data = filemanager.load("whatever-000.json");
     
     console.log(data);
 
@@ -86,13 +92,13 @@ $('#btn-load').on('click', function(e) {
 
     refreshColorInputs();
 
-    screenDisplay.load(data);
+    screenDisplay.load(data);*/
 });
 
 $('#btn-save').on('click', function(e) {
     console.log("saving");
 
-    var mapSize = globals.getMapSize();
+    /*var mapSize = globals.getMapSize();
     var screen = {
         id: "whatever-000",
         width: mapSize.columns,
@@ -107,37 +113,39 @@ $('#btn-save').on('click', function(e) {
 
     console.log(screen);
 
-    filemanager.save(screen.id + ".json", screen);
-});
-
-$('#btn-new').on('click', function(e) {
-    let w = Math.round(Math.random()*30);
-    let h = Math.round(Math.random()*30);
-    globals.setMapSize(w, h);
-    screenDisplay.init();
+    filemanager.save(screen.id + ".json", screen);*/
 });
 
 $('.btn-size-add').on('click', function(e) {
     let id = e.target.id;
     let dir = id.split("-")[3];
-
+    let delta = 0;
     if (dir == "left" || dir == "right")
-        screenDisplay.resize(globals.baseColumns, dir);
+        delta = globals.baseColumns;
     else if (dir == "top" ||dir == "bottom")
-        screenDisplay.resize(globals.baseRows, dir);
+        delta = globals.baseRows;
+    
+    if (screenGrid.canResizeCurrent(delta, dir)) {
+        screenDisplay.resize(delta, dir);
+        screenGrid.refreshCurrentRoomSize();
+    } else {
+        alert("There's already a room there! Size increase forbidden!");
+    }
+
+    screenGrid.redraw();
 });
 
 $('.btn-size-remove').on('click', function(e) {
     let id = e.target.id;
     let dir = id.split("-")[3];
     
-    let currentSize = globals.getMapSize();
+    let currentRoom = screenGrid.getCurrentRoom();
 
     if (dir == "right" || dir == "left") {
-        if (currentSize.columns > globals.baseColumns)
+        if (currentRoom.columns > globals.baseColumns)
             screenDisplay.resize(-globals.baseColumns, dir);
     } else if (dir == "top" || dir == "bottom") {
-        if (currentSize.rows > globals.baseRows)
+        if (currentRoom.rows > globals.baseRows)
             screenDisplay.resize(-globals.baseRows, dir);
     }
 });
@@ -150,3 +158,31 @@ function getTabLayer(tab) {
 
     return layer;
 }
+
+mousetrap.bind(['left', 'right', 'up', 'down'], function (e, combo) {
+    // Moves the cursor and changes creen if needed
+    let room = screenGrid.getCurrentRoom();
+    let cursor = screenGrid.getCursor();
+
+    if (combo == "right") {
+        cursor.x += 1;
+    } else if (combo == "left") {
+        cursor.x -= 1;
+    } else if (combo == "down") {
+        cursor.y += 1;
+    } else if (combo == "up") {
+        cursor.y -= 1;
+    }
+
+    screenGrid.setCursor(cursor.x, cursor.y);
+
+    if (screenGrid.empty(cursor.x, cursor.y)) {
+        screenGrid.addRoom(cursor.x, cursor.y);
+    }
+
+    var nextRoom = screenGrid.getId(cursor.x, cursor.y);
+    if (nextRoom.id != room.id)
+        screenDisplay.loadCurrentRoom();
+
+    screenGrid.redraw();
+});
