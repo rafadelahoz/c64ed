@@ -127,6 +127,10 @@ $('.btn-size-add').on('click', function(e) {
     
     if (screenGrid.canResizeCurrent(delta, dir)) {
         screenDisplay.resize(delta, dir);
+        if (dir == "left")
+            screenGrid.getCurrentRoom().gridX -= 1;
+        else if (dir == "top")
+            screenGrid.getCurrentRoom().gridY -= 1;
         screenGrid.refreshCurrentRoomSize();
     } else {
         alert("There's already a room there! Size increase forbidden!");

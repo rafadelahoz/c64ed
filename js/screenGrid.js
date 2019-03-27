@@ -22,19 +22,43 @@ function init() {
 
 function addRoom(x, y) {
     var room = data.createRoom();
-    room.gridX = x;
-    room.gridY = y;
+    
     if (x >= width) {
         grid = resizeKeepData(grid, x+1, height, width, height, 0, 0);
         width = x + 1;
+    } else if (x < 0) {
+        grid = resizeKeepData(grid, width+1, height, width, height, 1, 0);
+        width = width+1;
+        room.gridX = 0;
+        x = 0;
     }
+
     if (y >= height) {
         grid = resizeKeepData(grid, width, y+1, width, height, 0, 0);
         height = y + 1;
+    } else if (y < 0) {
+        grid = resizeKeepData(grid, width, height+1, width, height, 0, 1);
+        height = height + 1;
+        room.gridY = 1;
+        y = 0;
     }
 
+    room.gridX = x;
+    room.gridY = y;
+
     set(grid, width, x, y, room.id);
+
+    setCursor(x, y);
+
+    debugPrint();
+
     return room;
+}
+
+function debugPrint() {
+    console.log(width + ", " + height);
+    console.log(grid);
+    console.log(current);
 }
 
 function getId(x, y) {
@@ -64,7 +88,10 @@ function set(arr, cols, col, row , value) {
 }
 
 function get(arr, cols, col, row) {
-    return arr[col + cols*row];
+    if (col >= 0 && col < width && row >= 0 && row < height)
+        return arr[col + cols*row];
+    else
+        return undefined;
 }
 
 function resizeKeepData(arr, nw, nh, w, h, ox, oy) {
@@ -75,7 +102,12 @@ function resizeKeepData(arr, nw, nh, w, h, ox, oy) {
             // Inside source map area
             if (col >= ox && col < ox+w &&  
                 row >= oy && row < oy+h) {
-                set(newmap, nw, col, row, get(map, w, col-ox, row-oy));
+                let roomId = get(map, w, col-ox, row-oy);
+                set(newmap, nw, col, row, roomId);
+                if (data.getMap().rooms[roomId]) {
+                    data.getMap().rooms[roomId].gridX = col;
+                    data.getMap().rooms[roomId].gridY = row;
+                }
             } 
             // Outside source map
             else {
@@ -118,23 +150,37 @@ function refreshCurrentRoomSize() {
     let roomScreenWidth = Math.floor(room.columns / globals.baseColumns);
     let roomScreenHeight = Math.floor(room.rows / globals.baseRows);
 
-    if (room.gridX + roomScreenWidth > width) {
-        // TODO: resize from left?
-        grid = resizeKeepData(grid, room.gridX + roomScreenWidth, height, width, height, 0, 0);
-        width = room.gridX + roomScreenWidth;
+    var originX = (room.gridX > 0 ? room.gridX : 0);
+    if (room.gridX < 0) {
+        var delta = -room.gridX;
+        grid = resizeKeepData(grid, width + delta, height, width, height, delta, 0);
+        width = width + delta;
+    } else if (originX + roomScreenWidth > width) {
+        var delta = (originX + roomScreenWidth) - width;
+        grid = resizeKeepData(grid, width + delta, height, width, height, 0, 0);
+        width = width + delta;
     }
 
-    if (room.gridY + roomScreenHeight > height) {
-        grid = resizeKeepData(grid, width, room.gridY + roomScreenHeight, width, height, 0, 0);
-        height = room.gridY + roomScreenHeight;
+    var originY = (room.gridY > 0 ? room.gridY : 0);
+    if (room.gridY < 0) {
+        var delta = -room.gridY;
+        grid = resizeKeepData(grid, width, height + delta, width, height, 0, delta);
+        height = height + delta;
+    } else if (originY + roomScreenHeight > height) {
+        var delta = (originY + roomScreenHeight) - height;
+        grid = resizeKeepData(grid, width, height + delta, width, height, 0, 0);
+        height = height + delta;
     }
 
     for (var col = 0; col < roomScreenWidth; col++) {
         for (var row = 0; row < roomScreenHeight; row++) {
             // failsafe here?
-            set(grid, width, room.gridX+col, room.gridY+row, room.id);
+            set(grid, width, originX+col, originY+row, room.id);
         }
     }
+
+    room.gridX = originX;
+    room.gridY = originY;    
 
     redraw();
 }
@@ -177,5 +223,6 @@ module.exports = {
     canResizeCurrent: canResizeCurrent,
     refreshCurrentRoomSize: refreshCurrentRoomSize,
     empty: empty,
-    redraw: redraw
+    redraw: redraw,
+    debugPrint: debugPrint
 };
