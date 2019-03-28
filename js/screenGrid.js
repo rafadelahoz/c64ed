@@ -27,8 +27,8 @@ function addRoom(x, y) {
         grid = resizeKeepData(grid, x+1, height, width, height, 0, 0);
         width = x + 1;
     } else if (x < 0) {
-        grid = resizeKeepData(grid, width+1, height, width, height, 1, 0);
-        width = width+1;
+        grid = resizeKeepData(grid, width+Math.abs(x), height, width, height, Math.abs(x), 0);
+        width = width+Math.abs(x);
         room.gridX = 0;
         x = 0;
     }
@@ -37,9 +37,9 @@ function addRoom(x, y) {
         grid = resizeKeepData(grid, width, y+1, width, height, 0, 0);
         height = y + 1;
     } else if (y < 0) {
-        grid = resizeKeepData(grid, width, height+1, width, height, 0, 1);
-        height = height + 1;
-        room.gridY = 1;
+        grid = resizeKeepData(grid, width, height+Math.abs(y), width, height, 0, Math.abs(y));
+        height = height+Math.abs(y);
+        room.gridY = 0;
         y = 0;
     }
 
@@ -215,7 +215,7 @@ function redraw() {
                 str += "]";
             else str += "&nbsp;";
         }
-        str += "</p><br>";
+        str += "</p>";
     }
 
     str += "<span>Current: " + JSON.stringify(current) + "</span>";
