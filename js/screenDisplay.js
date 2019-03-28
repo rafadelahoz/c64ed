@@ -23,7 +23,7 @@ function init() {
 
     mapContext.imageSmoothingEnabled = false;
 
-    loadRoom(screenGrid.getCurrentRoom());
+    loadCurrentRoom();
 
     // Setup events
     mapCanvas.addEventListener('mousedown', onMapMouseDown);
@@ -49,14 +49,22 @@ function loadCurrentRoom() {
 }
 
 function loadRoom(thisRoom) {
-    room = thisRoom;
-    
-    // Initialize missing things
-    if (room.solids.length == 0) {
-        setupEmptyRoom();
-    }
+    if (thisRoom) {
+        room = thisRoom;
+        
+        // Initialize missing things
+        if (room.solids.length == 0) {
+            setupEmptyRoom();
+        }
 
-    setZoom();
+        setZoom();
+    } else {
+        room = undefined;
+        mapContext.fillStyle = '#aaaaaa';
+        mapContext.fillRect(0, 0, mapWidth, mapHeight);
+        mapContext.fillStyle = '#111111';
+        mapContext.fillText("x EMPTY x", 10, 10);
+    }
 }
 
 function setupEmptyRoom() {
@@ -88,6 +96,8 @@ function setupEmptyRoom() {
 }
 
 function onMapMouseUp(e) {
+    if (!room) return;
+
     mouseDown = false;
     // redraw
     renderFullMap();
@@ -103,6 +113,8 @@ function onMapMouseUp(e) {
 }
 
 function onMapMouseDown(e) {
+    if (!room) return;
+
     switch (globals.getCurrentLayer()) {
         case "fg":
         case "bg":
@@ -161,6 +173,8 @@ function handleSolidsMouseDown(e) {
 }
 
 function onMapMouseMove(e) {
+    if (!room) return;
+
     // Redraw in order to draw cursor
     renderFullMap();
     // Render cursor
@@ -201,6 +215,8 @@ function renderCursor(e) {
 }
 
 function onMapMouseClick(e) {
+    if (!room) return;
+    
     switch (globals.getCurrentLayer()) {
         case "bg":
         case "fg":

@@ -26,6 +26,11 @@
         - Increasing grid size when new rooms are added
             - Moving the whole grid when rooms are added left or top
         - Decreasing grid size when rooms are deleted/redimensioned
+
+- Move room grid cursor independently of grid size
+    - Display empty rooms as empty
+    - Press button to create a new room on empty spaces
+
 - Copy room, paste room
     - Copy screen, paste screen
     - What about entities?

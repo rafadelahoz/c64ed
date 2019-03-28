@@ -165,7 +165,7 @@ function getTabLayer(tab) {
 
 mousetrap.bind(['left', 'right', 'up', 'down'], function (e, combo) {
     // Moves the cursor and changes creen if needed
-    let room = screenGrid.getCurrentRoom();
+    let prevRoom = screenGrid.getCurrentRoom();
     let cursor = screenGrid.getCursor();
 
     if (combo == "right") {
@@ -180,13 +180,11 @@ mousetrap.bind(['left', 'right', 'up', 'down'], function (e, combo) {
 
     screenGrid.setCursor(cursor.x, cursor.y);
 
-    if (screenGrid.empty(cursor.x, cursor.y)) {
+    /*if (screenGrid.empty(cursor.x, cursor.y)) {
         screenGrid.addRoom(cursor.x, cursor.y);
-    }
+    }*/
 
-    var nextRoom = screenGrid.getId(cursor.x, cursor.y);
-    if (nextRoom.id != room.id)
-        screenDisplay.loadCurrentRoom();
-
+    screenDisplay.loadCurrentRoom();
+    
     screenGrid.redraw();
 });
