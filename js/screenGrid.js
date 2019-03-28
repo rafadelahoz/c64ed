@@ -14,6 +14,7 @@ var current = {
 mousetrap.bind('g', function(e, combo) {
     console.log(grid);
     console.log(current);
+    console.log(getCurrentRoom());
 });
 
 function init() {
@@ -53,6 +54,25 @@ function addRoom(x, y) {
     debugPrint();
 
     return room;
+}
+
+function removeCurrentRoom() {
+    room = getCurrentRoom();
+    if (room) {
+        for (var col = room.gridX; col < room.gridX + screensWidth(room.columns); col++)
+            for (var row = room.gridY; row < room.gridY + screensHeight(room.rows); row++)
+                set(grid, width, col, row, undefined);
+        
+        data.deleteRoom(room.id);
+    }
+}
+
+function screensWidth(widthInTiles) {
+    return Math.floor(widthInTiles / globals.baseColumns);
+}
+
+function screensHeight(heightInTiles) {
+    return Math.floor(heightInTiles / globals.baseRows);
 }
 
 function debugPrint() {
@@ -125,12 +145,12 @@ function empty(x, y) {
 
 function canResizeCurrent(delta, dir) {
     var room = getCurrentRoom();
-    let roomScreenWidth = Math.floor(room.columns / globals.baseColumns) - 1;
-    let roomScreenHeight = Math.floor(room.rows / globals.baseRows) - 1;
+    let roomScreenWidth = screensWidth(room.columns) - 1;
+    let roomScreenHeight = screensHeight(room.rows) - 1;
     if (dir == "left" || dir == "right")
-        delta = Math.floor(delta/globals.baseColumns);
+        delta = screensWidth(delta);
     else if (dir == "top" || dir == "bottom")
-        delta = Math.floor(delta/globals.baseRows);
+        delta = screensHeight(delta);
 
     var nx = room.gridX;
     var ny = room.gridY;
@@ -147,8 +167,8 @@ function canResizeCurrent(delta, dir) {
 
 function refreshCurrentRoomSize() {
     var room = getCurrentRoom();
-    let roomScreenWidth = Math.floor(room.columns / globals.baseColumns);
-    let roomScreenHeight = Math.floor(room.rows / globals.baseRows);
+    let roomScreenWidth = screensWidth(room.columns);
+    let roomScreenHeight = screensHeight(room.rows);
 
     var originX = (room.gridX > 0 ? room.gridX : 0);
     if (room.gridX < 0) {
@@ -172,17 +192,42 @@ function refreshCurrentRoomSize() {
         height = height + delta;
     }
 
-    for (var col = 0; col < roomScreenWidth; col++) {
+    /*for (var col = 0; col < roomScreenWidth; col++) {
         for (var row = 0; row < roomScreenHeight; row++) {
             // failsafe here?
             set(grid, width, originX+col, originY+row, room.id);
         }
-    }
+    }*/
 
     room.gridX = originX;
-    room.gridY = originY;    
+    room.gridY = originY;
+
+    refreshAllRoomPositions();
 
     redraw();
+}
+
+function refreshAllRoomPositions() {
+    let rooms = data.getMap().rooms;
+    
+    // Clear grid
+    for (let col = 0; col < width; col++)
+        for (let row = 0; row < height; row++)
+            set(grid, width, col, row, undefined);
+    
+    // Refill grid
+    for (roomId in rooms) {
+        let room = rooms[roomId];
+        if (room) {
+            let roomScreenWidth = screensWidth(room.columns);
+            let roomScreenHeight = screensHeight(room.rows);
+            for (var col = 0; col < roomScreenWidth; col++) {
+                for (var row = 0; row < roomScreenHeight; row++) {           
+                    set(grid, width, room.gridX+col, room.gridY+row, room.id);
+                }
+            }
+        }
+    }
 }
 
 function redraw() {
@@ -225,6 +270,7 @@ function redraw() {
 module.exports = {
     init: init,
     addRoom: addRoom,
+    removeCurrentRoom: removeCurrentRoom,
     getId: getId,
     getRoom: getRoom,
     getCurrentRoom: getCurrentRoom,

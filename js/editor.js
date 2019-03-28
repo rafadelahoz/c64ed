@@ -146,11 +146,21 @@ $('.btn-size-remove').on('click', function(e) {
     let currentRoom = screenGrid.getCurrentRoom();
 
     if (dir == "right" || dir == "left") {
-        if (currentRoom.columns > globals.baseColumns)
+        if (currentRoom.columns > globals.baseColumns) {
             screenDisplay.resize(-globals.baseColumns, dir);
+            if (dir == "left") {
+                currentRoom.gridX += 1;
+            }
+            screenGrid.refreshCurrentRoomSize();
+        }
     } else if (dir == "top" || dir == "bottom") {
-        if (currentRoom.rows > globals.baseRows)
+        if (currentRoom.rows > globals.baseRows) {
             screenDisplay.resize(-globals.baseRows, dir);
+            if (dir == "top") {
+                currentRoom.gridY += 1;
+            }
+            screenGrid.refreshCurrentRoomSize();
+        }
     }
 });
 
@@ -163,35 +173,39 @@ function getTabLayer(tab) {
     return layer;
 }
 
-mousetrap.bind(['left', 'right', 'up', 'down'], function (e, combo) {
+mousetrap.bind(['ctrl+left', 'ctrl+right', 'ctrl+up', 'ctrl+down'], function (e, combo) {
     // Moves the cursor and changes creen if needed
     let cursor = screenGrid.getCursor();
 
-    if (combo == "right") {
+    if (combo == "ctrl+right") {
         cursor.x += 1;
-    } else if (combo == "left") {
+    } else if (combo == "ctrl+left") {
         cursor.x -= 1;
-    } else if (combo == "down") {
+    } else if (combo == "ctrl+down") {
         cursor.y += 1;
-    } else if (combo == "up") {
+    } else if (combo == "ctrl+up") {
         cursor.y -= 1;
     }
 
     screenGrid.setCursor(cursor.x, cursor.y);
-
-    /*if (screenGrid.empty(cursor.x, cursor.y)) {
-        screenGrid.addRoom(cursor.x, cursor.y);
-    }*/
 
     screenDisplay.loadCurrentRoom();
     
     screenGrid.redraw();
 });
 
-mousetrap.bind('n', function(e, combo) {
+mousetrap.bind('ctrl+n', function(e, combo) {
     if (!screenGrid.getCurrentRoom()) {
         let cursor = screenGrid.getCursor();
         screenGrid.addRoom(cursor.x, cursor.y);
+        screenDisplay.loadCurrentRoom();    
+        screenGrid.redraw();
+    }
+});
+
+mousetrap.bind('ctrl+x', function(e, combo) {
+    if (screenGrid.getCurrentRoom()) {
+        screenGrid.removeCurrentRoom();
         screenDisplay.loadCurrentRoom();    
         screenGrid.redraw();
     }

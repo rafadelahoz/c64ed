@@ -39,8 +39,13 @@ function createRoom() {
     return room;
 }
 
+function deleteRoom(id) {
+    delete map.rooms[id];
+}
+
 module.exports = {
     init: init,
     getMap: getMap,
-    createRoom: createRoom
+    createRoom: createRoom,
+    deleteRoom: deleteRoom
 };

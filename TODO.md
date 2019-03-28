@@ -17,6 +17,10 @@
 - Copy room, paste room
     - Copy screen, paste screen
     - What about entities?
+- Moving the mouse in the map editor configures the current screen in the room
+- Don't allow extending over other rooms (fails for bigger ones)
+- After removing a room or resizing it, the grid may have extra empty space, tidy that up after removing a room
+- Ladders as solids? (remember to add a oneway on top on instantiation)
 - Map properties
 - Actors, entites, objects
     - DB
@@ -40,22 +44,6 @@
 
 ## Doing
 
-- Edit multiple scenes
-    - [DONE] Grid of rooms
-    - [DONE] Cursor in the grid, pointing to the current screen and owner room
-    - [DONE] Change the current screen by:
-        - Adding screen space left, right, top, or bottom of current screen
-        - Moving the screen cursor left, right, top, or bottom of current screen
-    - Moving the mouse in the map editor configures the current screen in the room
-        - So moving the screen would take you the appropriate screen considering the current one
-    - [DONE] Automatic management of the grid includes:
-        - Increasing grid size when new rooms are added
-            - Moving the whole grid when rooms are added left or top
-        - Decreasing grid size when rooms are deleted/redimensioned
-- Move room grid cursor independently of grid size
-    - [DONE] Display empty rooms as empty
-    - Press button to create a new room on empty spaces
-        - Fails when adding floaty rooms to the left (they get stuck to the leftmost room instead of floaty)
 
 ## Done
 
@@ -70,6 +58,22 @@
 - Generalize a bit the multilayer code
 - Bigger maps
 - Saving, loading (first draft)
+- Edit multiple scenes
+    - [DONE] Grid of rooms
+    - [DONE] Cursor in the grid, pointing to the current screen and owner room
+    - [DONE] Change the current screen by:
+        - Adding screen space left, right, top, or bottom of current screen
+        - Moving the screen cursor left, right, top, or bottom of current screen
+        - So moving the screen would take you the appropriate screen considering the current one
+    - [DONE] Automatic management of the grid includes:
+        - Increasing grid size when new rooms are added
+            - Moving the whole grid when rooms are added left or top
+        - Decreasing grid size when rooms are deleted/redimensioned
+- Move room grid cursor independently of grid size
+    - [DONE] Display empty rooms as empty
+    - [DONE] Press button to create a new room on empty spaces
+        - [DONE] Fails when adding floaty rooms to the left (they get stuck to the leftmost room instead of floaty)
+
 
 ## Not to be done
 
