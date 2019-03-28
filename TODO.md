@@ -14,23 +14,6 @@
         - A single json stores a map, with its rooms and screens
     - Maps are accessible through the world map (ingame)
     - Map browser (reads directory and loads all maps) (in-editor)
-- Edit multiple scenes
-    - Grid of rooms
-    - Cursor in the grid, pointing to the current screen and owner room
-    - Change the current screen by:
-        - Adding screen space left, right, top, or bottom of current screen
-        - Moving the screen cursor left, right, top, or bottom of current screen
-    - Moving the mouse in the map editor configures the current screen in the room
-        - So moving the screen would take you the appropriate screen considering the current one
-    - Automatic management of the grid includes:
-        - Increasing grid size when new rooms are added
-            - Moving the whole grid when rooms are added left or top
-        - Decreasing grid size when rooms are deleted/redimensioned
-
-- Move room grid cursor independently of grid size
-    - Display empty rooms as empty
-    - Press button to create a new room on empty spaces
-
 - Copy room, paste room
     - Copy screen, paste screen
     - What about entities?
@@ -56,6 +39,23 @@
 - Undo?
 
 ## Doing
+
+- Edit multiple scenes
+    - [DONE] Grid of rooms
+    - [DONE] Cursor in the grid, pointing to the current screen and owner room
+    - [DONE] Change the current screen by:
+        - Adding screen space left, right, top, or bottom of current screen
+        - Moving the screen cursor left, right, top, or bottom of current screen
+    - Moving the mouse in the map editor configures the current screen in the room
+        - So moving the screen would take you the appropriate screen considering the current one
+    - [DONE] Automatic management of the grid includes:
+        - Increasing grid size when new rooms are added
+            - Moving the whole grid when rooms are added left or top
+        - Decreasing grid size when rooms are deleted/redimensioned
+- Move room grid cursor independently of grid size
+    - [DONE] Display empty rooms as empty
+    - Press button to create a new room on empty spaces
+        - Fails when adding floaty rooms to the left (they get stuck to the leftmost room instead of floaty)
 
 ## Done
 

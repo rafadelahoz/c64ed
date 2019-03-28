@@ -190,20 +190,30 @@ function redraw() {
     g.empty();
 
     let str = "";
-    for (var row = 0; row < height; row++) {
+
+    var ox = Math.min(0, current.x);
+    var oy = Math.min(0, current.y);
+    var w = Math.max(width, current.x+1);
+    var h = Math.max(height, current.y+1);
+
+    for (var row = oy; row < h; row++) {
         str += "<p>";
-        for (var col = 0; col < width; col++) {
+        for (var col = ox; col < w; col++) {
             if (col == current.x && row == current.y)
                 str += "[";
-            if (empty(col, row)) {
+            else str += "&nbsp;";
+
+            if (col < 0 || row < 0 || col >= width || row >= height) {
+                str += ".";
+            } else if (empty(col, row)) {
                 str += "X"
             } else {
                 str += getId(col, row);
             }
+
             if (col == current.x && row == current.y)
                 str += "]";
-            if (col < width-1)
-                str += ", ";
+            else str += "&nbsp;";
         }
         str += "</p><br>";
     }
