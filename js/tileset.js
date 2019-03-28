@@ -1,5 +1,6 @@
 const globals = require('./globals.js');
-const tint = require('./tint.js')
+const roomGrid = require('./screenGrid');
+const tint = require('./tint.js');
 
 /* 
  * Tileset panel
@@ -37,9 +38,11 @@ function init(layer, readyCallback) {
     tilesetPanel.canvas = document.getElementById('tileset-' + layer);
     tilesetPanel.context = tilesetPanel.canvas.getContext('2d');
     tilesetPanel.context.imageSmoothingEnabled = false;
-
+ 
     tilesetPanel.canvas.addEventListener('mousedown', onMouseDown);
     tilesetPanel.canvas.addEventListener('mousemove', onMouseMove);
+
+    refreshColors();
 
     // After loading image, do things
     tilesetPanel.image.addEventListener('load', function() {
@@ -49,7 +52,7 @@ function init(layer, readyCallback) {
         that.sourceWidth = that.image.width;
         that.sourceHeight = that.image.height;
         that.widthInTiles = Math.floor((that.sourceWidth / globals.tileWidth));
-        globals.refreshColors();
+
         redraw(tilesetPanel);
         if (callback) {
             callback(tilesetPanel);
@@ -59,7 +62,19 @@ function init(layer, readyCallback) {
     return tilesetPanel;
 }
 
+function room() {
+    return roomGrid.getCurrentRoom();
+}
 
+function bgColor() {
+    return room().colors[0];
+}
+
+function fgColor(layer) {
+    if (layer == "bg")
+        return room().colors[1];
+    else return room().colors[2];
+}
 
 function buildTintedCanvas(tilesetPanel) {
     if (!tilesetPanel.tintedCanvas) {
@@ -71,12 +86,12 @@ function buildTintedCanvas(tilesetPanel) {
         // document.getElementById('secret').appendChild(tilesetPanel.tintedCanvas);
     } 
 
-    globals.refreshColors();
+    refreshColors();
 
     tilesetPanel.tintedContext.rect(0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
-    tilesetPanel.tintedContext.fillStyle = globals.getBgColor();
+    tilesetPanel.tintedContext.fillStyle = bgColor();
     tilesetPanel.tintedContext.fill();
-    tint.drawTintedImage(true, tilesetPanel.tintedContext, tilesetPanel.image, globals.getFgColor(tilesetPanel.layer), 0, 0, tilesetPanel.image.width, tilesetPanel.image.height);
+    tint.drawTintedImage(true, tilesetPanel.tintedContext, tilesetPanel.image, fgColor(tilesetPanel.layer), 0, 0, tilesetPanel.image.width, tilesetPanel.image.height);
 }
 
 function onMouseMove(e) {
@@ -131,9 +146,9 @@ function offsetY(tilesetPanel) {
 
 function redraw(tilesetPanel) {
     tilesetPanel.context.rect(0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
-    tilesetPanel.context.fillStyle = globals.getBgColor();
+    tilesetPanel.context.fillStyle = bgColor();
     tilesetPanel.context.fill();
-    tint.drawTintedImage(true, tilesetPanel.context, tilesetPanel.image, globals.getFgColor(tilesetPanel.layer), 0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
+    tint.drawTintedImage(true, tilesetPanel.context, tilesetPanel.image, fgColor(tilesetPanel.layer), 0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
     buildTintedCanvas(tilesetPanel);
 
     // Highlight current tile
@@ -156,6 +171,14 @@ function getTintedCanvas(tilesetPanel) {
     return tilesetPanel.tintedCanvas;
 }
 
+function refreshColors() {
+    if (room()) {
+        room().colors[2] = document.getElementById('fgColor-fg').value;
+        room().colors[1] = document.getElementById('fgColor-bg').value;
+        room().colors[0] = document.getElementById('bgColor').value;
+    }
+}
+
 module.exports = {
     init: init,
     redraw: redraw,
@@ -163,5 +186,6 @@ module.exports = {
     setCurrentTile: setCurrentTile,
     getTileX: getTileX,
     getTileY: getTileY,
-    getTintedCanvas: getTintedCanvas
+    getTintedCanvas: getTintedCanvas,
+    refreshColors: refreshColors
 }

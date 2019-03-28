@@ -44,31 +44,25 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 // Colors
 document.getElementById('fgColor-bg').addEventListener('change', function(ev) {
     let tileset = globals.getCurrentTilesetPanel();
-    globals.setFgColor("bg", ev.target.value);
+    screenGrid.getCurrentRoom().colors[1] = ev.target.value;
     tilesetPanel.redraw(tileset);
     screenDisplay.render();
 });
 
 document.getElementById('fgColor-fg').addEventListener('change', function(ev) {
     let tileset = globals.getCurrentTilesetPanel();
-    globals.setFgColor("fg", ev.target.value);
+    screenGrid.getCurrentRoom().colors[2] = ev.target.value;
     tilesetPanel.redraw(tileset);
     screenDisplay.render();
 });
 
 document.getElementById('bgColor').addEventListener('change', function(ev) {
-    globals.setBgColor(ev.target.value);
+    screenGrid.getCurrentRoom().colors[0] = ev.target.value;
     let tsets = globals.getTilesetPanels();
     for (var tset in tsets)
         tilesetPanel.redraw(tsets[tset]);
     screenDisplay.render();
 });
-
-function refreshColorInputs() {
-    document.getElementById('bgColor').value = globals.getBgColor();
-    document.getElementById('fgColor-bg').value = globals.getFgColor("bg");
-    document.getElementById('fgColor-fg').value = globals.getFgColor("fg");
-}
 
 // Solids
 $('#btn-toggle-solids').on('click', function(e) {
@@ -76,6 +70,15 @@ $('#btn-toggle-solids').on('click', function(e) {
     screenDisplay.render();
     e.target.textContent = (globals.getRenderSolids() ? "" : "!") + "Solids";
 });
+
+function refreshColorInputs() {
+    let room = screenGrid.getCurrentRoom();
+    if (room != null) {
+        document.getElementById('bgColor').value = room.colors[0];
+        document.getElementById('fgColor-bg').value = room.colors[1];
+        document.getElementById('fgColor-fg').value = room.colors[2];
+    }
+}
 
 $('#btn-load').on('click', function(e) {
     /*var data = filemanager.load("whatever-000.json");
@@ -190,6 +193,9 @@ mousetrap.bind(['ctrl+left', 'ctrl+right', 'ctrl+up', 'ctrl+down'], function (e,
     screenGrid.setCursor(cursor.x, cursor.y);
 
     screenDisplay.loadCurrentRoom();
+
+    refreshColorInputs();
+    tilesetPanel.refreshColors();
     
     screenGrid.redraw();
 });

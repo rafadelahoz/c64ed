@@ -231,7 +231,7 @@ function onMapMouseClick(e) {
 function renderFullMap() {
     mapContext.beginPath();
     mapContext.rect(0, 0, mapWidth, mapHeight);
-    mapContext.fillStyle = globals.getBgColor();
+    mapContext.fillStyle = room.colors[0];
     mapContext.fill();
 
     var srcTile, tsetX, tsetY;
@@ -441,4 +441,4 @@ module.exports = {
     load: load,
     resize: resize,
     loadCurrentRoom: loadCurrentRoom
-}
+};
