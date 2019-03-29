@@ -2,7 +2,7 @@ const mousetrap = require('mousetrap');
 
 const data = require('./data.js');
 
-var grid = [];
+var grid = undefined;
 var width = 1;
 var height = 1;
 
@@ -18,6 +18,7 @@ mousetrap.bind('g', function(e, combo) {
 });
 
 function init() {
+    grid = data.getMap().grid;
     addRoom(0, 0);
 }
 
@@ -50,6 +51,8 @@ function addRoom(x, y) {
     set(grid, width, x, y, room.id);
 
     setCursor(x, y);
+
+    data.getMap().grid = grid;
 
     debugPrint();
 
@@ -228,6 +231,8 @@ function refreshAllRoomPositions() {
             }
         }
     }
+
+    data.getMap.grid = grid;
 }
 
 function redraw() {

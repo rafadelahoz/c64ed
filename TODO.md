@@ -15,13 +15,16 @@
     - Maps are accessible through the world map (ingame)
     - Map browser (reads directory and loads all maps) (in-editor)
 
-- Copy room, paste room
+- Copy room, paste room (or copy screen, paste screen?)
     - Copy screen, paste screen
     - What about entities?
-- Moving the mouse in the map editor configures the current screen in the room?
-- Moving the screen cursor configures the scroll on big rooms?
+
+- Save maps
+- Load maps
+
 - Don't allow extending over other rooms (fails for bigger ones)
 - After removing a room or resizing it, the grid may have extra empty space, tidy that up after removing a room
+
 - Map properties
 - Actors, entites, objects
     - DB
@@ -38,9 +41,13 @@
         - Enemies
         - NPCS/Events?
         - Items
+- Moving the mouse in the map editor configures the current screen in the room?
+- Moving the screen cursor configures the scroll on big rooms?
 - Select multiple tiles
-    - On tileset
-    - On map
+    - Drag on tileset to select a bigger box
+    - Drag RMB on map to select the underlying tiles
+    - Click on map places the selected tiles
+        - While dragging, until the mouse does not leave the current placed area, no more is going to be placed
 - Undo?
 
 ## Doing

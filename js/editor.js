@@ -101,6 +101,9 @@ $('#btn-load').on('click', function(e) {
 $('#btn-save').on('click', function(e) {
     console.log("saving");
 
+    var map = data.getMap();
+    filemanager.save(map.id + ".json", map);
+
     /*var mapSize = globals.getMapSize();
     var screen = {
         id: "whatever-000",
