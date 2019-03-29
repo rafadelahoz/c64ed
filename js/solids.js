@@ -1,5 +1,3 @@
-const globals = require('./globals.js');
-const screenDisplay = require('./screenDisplay.js');
 
 let currentSolid = 0;
 
@@ -11,6 +9,7 @@ function init() {
             case "none": currentSolid = 0; break;
             case "solid": currentSolid = 1; break;
             case "oneway": currentSolid = 2; break;
+            case "ladder": currentSolid = 3; break;
         }
         refreshButtons();
     });

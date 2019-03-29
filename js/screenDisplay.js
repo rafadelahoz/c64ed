@@ -263,13 +263,18 @@ function renderFullMap() {
                 switch (solid) {
                     case 0: break; // none
                     case 1: // solid: full tile      
-                        mapContext.fillStyle = 'rgba(225,0,10,0.5)';
+                        mapContext.fillStyle = 'rgba(225, 0, 10, 0.3)';
                         mapContext.fillRect(tx*globals.tileWidth*zoom, ty*globals.tileHeight*zoom, globals.tileWidth*zoom, globals.tileHeight*zoom);
                         break;
                     case 2: // oneway: small rectangle
-                        mapContext.fillStyle = 'rgba(225,0,10,0.5)';
+                        mapContext.fillStyle = 'rgba(225, 0, 10, 0.3)';
                         mapContext.fillRect(tx*globals.tileWidth*zoom, ty*globals.tileHeight*zoom, globals.tileWidth*zoom, globals.tileHeight*0.25*zoom);
-
+                        break;
+                    case 3: // ladder: orange slimmer rectangle?
+                        mapContext.fillStyle = 'rgba(255, 163, 0, 0.3)';
+                        mapContext.fillRect((tx*globals.tileWidth+2)*zoom, ty*globals.tileHeight*zoom, (globals.tileWidth-4)*zoom, globals.tileHeight*zoom);
+                        break;
+                    default:
                 }
             }
         }

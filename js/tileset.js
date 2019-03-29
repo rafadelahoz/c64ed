@@ -42,8 +42,6 @@ function init(layer, readyCallback) {
     tilesetPanel.canvas.addEventListener('mousedown', onMouseDown);
     tilesetPanel.canvas.addEventListener('mousemove', onMouseMove);
 
-    refreshColors();
-
     // After loading image, do things
     tilesetPanel.image.addEventListener('load', function() {
         var that = tilesetPanel;
@@ -52,6 +50,8 @@ function init(layer, readyCallback) {
         that.sourceWidth = that.image.width;
         that.sourceHeight = that.image.height;
         that.widthInTiles = Math.floor((that.sourceWidth / globals.tileWidth));
+
+        refreshColors(true);
 
         redraw(tilesetPanel);
         if (callback) {
@@ -73,7 +73,8 @@ function bgColor() {
 function fgColor(layer) {
     if (layer == "bg")
         return room().colors[1];
-    else return room().colors[2];
+    else 
+        return room().colors[2];
 }
 
 function buildTintedCanvas(tilesetPanel) {
@@ -85,8 +86,6 @@ function buildTintedCanvas(tilesetPanel) {
         tilesetPanel.tintedContext = tilesetPanel.tintedCanvas.getContext('2d');
         // document.getElementById('secret').appendChild(tilesetPanel.tintedCanvas);
     } 
-
-    refreshColors();
 
     tilesetPanel.tintedContext.rect(0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
     tilesetPanel.tintedContext.fillStyle = bgColor();
@@ -171,11 +170,16 @@ function getTintedCanvas(tilesetPanel) {
     return tilesetPanel.tintedCanvas;
 }
 
-function refreshColors() {
+function refreshColors(avoidRedraw) {
     if (room()) {
         room().colors[2] = document.getElementById('fgColor-fg').value;
         room().colors[1] = document.getElementById('fgColor-bg').value;
         room().colors[0] = document.getElementById('bgColor').value;
+
+        if (!avoidRedraw) {
+            redraw(globals.getTilesetPanel("bg"));
+            redraw(globals.getTilesetPanel("fg"));
+        }
     }
 }
 

@@ -14,13 +14,14 @@
         - A single json stores a map, with its rooms and screens
     - Maps are accessible through the world map (ingame)
     - Map browser (reads directory and loads all maps) (in-editor)
+
 - Copy room, paste room
     - Copy screen, paste screen
     - What about entities?
-- Moving the mouse in the map editor configures the current screen in the room
+- Moving the mouse in the map editor configures the current screen in the room?
+- Moving the screen cursor configures the scroll on big rooms?
 - Don't allow extending over other rooms (fails for bigger ones)
 - After removing a room or resizing it, the grid may have extra empty space, tidy that up after removing a room
-- Ladders as solids? (remember to add a oneway on top on instantiation)
 - Map properties
 - Actors, entites, objects
     - DB
@@ -98,3 +99,4 @@
         - Clicking on them moves to the connected screen in that way
             - If no screen is present, a 1x1 one is created and linked
         - Increasing a screen size checks connections for coherence
+- Ladders as solids? (remember to add a oneway on top on instantiation)

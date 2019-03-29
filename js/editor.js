@@ -191,11 +191,11 @@ mousetrap.bind(['ctrl+left', 'ctrl+right', 'ctrl+up', 'ctrl+down'], function (e,
     }
 
     screenGrid.setCursor(cursor.x, cursor.y);
-
-    screenDisplay.loadCurrentRoom();
-
+    
     refreshColorInputs();
     tilesetPanel.refreshColors();
+
+    screenDisplay.loadCurrentRoom();
     
     screenGrid.redraw();
 });
@@ -203,7 +203,11 @@ mousetrap.bind(['ctrl+left', 'ctrl+right', 'ctrl+up', 'ctrl+down'], function (e,
 mousetrap.bind('ctrl+n', function(e, combo) {
     if (!screenGrid.getCurrentRoom()) {
         let cursor = screenGrid.getCursor();
-        screenGrid.addRoom(cursor.x, cursor.y);
+        let room = screenGrid.addRoom(cursor.x, cursor.y);
+        // Set colors to current ones
+        room.colors = [$('#bgColor').val(), $('#fgColor-bg').val(), $('#fgColor-fg').val()];
+        refreshColorInputs();
+        tilesetPanel.refreshColors();
         screenDisplay.loadCurrentRoom();    
         screenGrid.redraw();
     }
