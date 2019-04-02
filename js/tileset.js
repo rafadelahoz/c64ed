@@ -10,6 +10,8 @@ const tint = require('./tint.js');
  * 
  */
 
+var zoom = 1.5;
+
 function init(layer, readyCallback) {
     let callback = readyCallback;
 
@@ -45,8 +47,9 @@ function init(layer, readyCallback) {
     // After loading image, do things
     tilesetPanel.image.addEventListener('load', function() {
         var that = tilesetPanel;
-        that.canvas.setAttribute('width', that.image.width);
-        that.canvas.setAttribute('height', that.image.height);
+        that.canvas.setAttribute('width', that.image.width * zoom);
+        that.canvas.setAttribute('height', that.image.height * zoom);
+        that.context.imageSmoothingEnabled = false;
         that.sourceWidth = that.image.width;
         that.sourceHeight = that.image.height;
         that.widthInTiles = Math.floor((that.sourceWidth / globals.tileWidth));
@@ -81,9 +84,15 @@ function buildTintedCanvas(tilesetPanel) {
     if (!tilesetPanel.tintedCanvas) {
         tilesetPanel.tintedCanvas = document.createElement('canvas');
         tilesetPanel.tintedCanvas.id = 'tintedcanvas' + tilesetPanel.layer;
+        
         tilesetPanel.tintedCanvas.width = tilesetPanel.image.width;
         tilesetPanel.tintedCanvas.height = tilesetPanel.image.height;
+
+        tilesetPanel.tintedCanvas.setAttribute('width', tilesetPanel.image.width);
+        tilesetPanel.tintedCanvas.setAttribute('height', tilesetPanel.image.height);
+
         tilesetPanel.tintedContext = tilesetPanel.tintedCanvas.getContext('2d');
+        tilesetPanel.tintedContext.imageSmoothingEnabled = false;
         // document.getElementById('secret').appendChild(tilesetPanel.tintedCanvas);
     } 
 
@@ -99,15 +108,15 @@ function onMouseMove(e) {
     let x = e.clientX - offsetX(that);
     let y = e.clientY - offsetY(that);
     let gridX, gridY;
-    gridX = Math.floor(x / globals.tileWidth) * globals.tileWidth;
-    gridY = Math.floor(y / globals.tileHeight) * globals.tileHeight;
+    gridX = Math.floor(x / (globals.tileWidth*zoom)) * globals.tileWidth * zoom;
+    gridY = Math.floor(y / (globals.tileHeight*zoom)) * globals.tileHeight * zoom;
 
     redraw(that);
     
     // Draw cursor
     that.context.beginPath();
     that.context.strokeStyle = 'blue';
-    that.context.rect(gridX, gridY, globals.tileWidth, globals.tileHeight);
+    that.context.rect(gridX, gridY, globals.tileWidth*zoom, globals.tileHeight*zoom);
     that.context.stroke();
 }
 
@@ -119,8 +128,8 @@ function onMouseDown(e) {
     let x = e.clientX - offsetX(that);
     let y = e.clientY - offsetY(that);
 
-    let tileX = Math.floor(x / globals.tileWidth);
-    let tileY = Math.floor(y / globals.tileHeight);
+    let tileX = Math.floor(x / (globals.tileWidth*zoom));
+    let tileY = Math.floor(y / (globals.tileHeight*zoom));
     setCurrentTile(that, tileY * (that.sourceWidth / globals.tileWidth) + tileX);
     
     redraw(that);
@@ -144,17 +153,17 @@ function offsetY(tilesetPanel) {
 }
 
 function redraw(tilesetPanel) {
-    tilesetPanel.context.rect(0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
+    tilesetPanel.context.rect(0, 0, tilesetPanel.sourceWidth*zoom, tilesetPanel.sourceHeight*zoom);
     tilesetPanel.context.fillStyle = bgColor();
     tilesetPanel.context.fill();
-    tint.drawTintedImage(true, tilesetPanel.context, tilesetPanel.image, fgColor(tilesetPanel.layer), 0, 0, tilesetPanel.sourceWidth, tilesetPanel.sourceHeight);
+    tint.drawTintedImage(true, tilesetPanel.context, tilesetPanel.image, fgColor(tilesetPanel.layer), 0, 0, tilesetPanel.sourceWidth*zoom, tilesetPanel.sourceHeight*zoom);
     buildTintedCanvas(tilesetPanel);
 
     // Highlight current tile
     let ct = tilesetPanel.currentTile;
     tilesetPanel.context.beginPath();
     tilesetPanel.context.strokeStyle = 'red';
-    tilesetPanel.context.rect(getTileX(tilesetPanel, ct), getTileY(tilesetPanel, ct), globals.tileWidth, globals.tileHeight);
+    tilesetPanel.context.rect(getTileX(tilesetPanel, ct)*zoom, getTileY(tilesetPanel, ct)*zoom, globals.tileWidth*zoom, globals.tileHeight*zoom);
     tilesetPanel.context.stroke();
 }
 
