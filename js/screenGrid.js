@@ -3,8 +3,6 @@ const mousetrap = require('mousetrap');
 const data = require('./data.js');
 
 var grid = undefined;
-var width = 1;
-var height = 1;
 
 var current = {
     x: 0,
@@ -19,28 +17,35 @@ mousetrap.bind('g', function(e, combo) {
 
 function init() {
     grid = data.getMap().grid;
-    addRoom(0, 0);
+    if (empty(0, 0))
+        addRoom(0, 0);
+}
+
+function reload() {
+    grid = data.getMap().grid;
+    setCursor(0, 0);
+    redraw();
 }
 
 function addRoom(x, y) {
     var room = data.createRoom();
     
-    if (x >= width) {
-        grid = resizeKeepData(grid, x+1, height, width, height, 0, 0);
-        width = x + 1;
+    if (x >= data.getMap().size.x) {
+        grid = resizeKeepData(grid, x+1, data.getMap().size.y, data.getMap().size.x, data.getMap().size.y, 0, 0);
+        data.getMap().size.x = x + 1;
     } else if (x < 0) {
-        grid = resizeKeepData(grid, width+Math.abs(x), height, width, height, Math.abs(x), 0);
-        width = width+Math.abs(x);
+        grid = resizeKeepData(grid, data.getMap().size.x+Math.abs(x), data.getMap().size.y, data.getMap().size.x, data.getMap().size.y, Math.abs(x), 0);
+        data.getMap().size.x = data.getMap().size.x+Math.abs(x);
         room.gridX = 0;
         x = 0;
     }
 
-    if (y >= height) {
-        grid = resizeKeepData(grid, width, y+1, width, height, 0, 0);
-        height = y + 1;
+    if (y >= data.getMap().size.y) {
+        grid = resizeKeepData(grid, data.getMap().size.x, y+1, data.getMap().size.x, data.getMap().size.y, 0, 0);
+        data.getMap().size.y = y + 1;
     } else if (y < 0) {
-        grid = resizeKeepData(grid, width, height+Math.abs(y), width, height, 0, Math.abs(y));
-        height = height+Math.abs(y);
+        grid = resizeKeepData(grid, data.getMap().size.x, data.getMap().size.y+Math.abs(y), data.getMap().size.x, data.getMap().size.y, 0, Math.abs(y));
+        data.getMap().size.y = data.getMap().size.y+Math.abs(y);
         room.gridY = 0;
         y = 0;
     }
@@ -48,7 +53,7 @@ function addRoom(x, y) {
     room.gridX = x;
     room.gridY = y;
 
-    set(grid, width, x, y, room.id);
+    set(grid, data.getMap().size.x, x, y, room.id);
 
     setCursor(x, y);
 
@@ -64,7 +69,7 @@ function removeCurrentRoom() {
     if (room) {
         for (var col = room.gridX; col < room.gridX + screensWidth(room.columns); col++)
             for (var row = room.gridY; row < room.gridY + screensHeight(room.rows); row++)
-                set(grid, width, col, row, undefined);
+                set(grid, data.getMap().size.x, col, row, undefined);
         
         data.deleteRoom(room.id);
     }
@@ -79,13 +84,13 @@ function screensHeight(heightInTiles) {
 }
 
 function debugPrint() {
-    console.log(width + ", " + height);
+    console.log(data.getMap().size.x + ", " + data.getMap().size.y);
     console.log(grid);
     console.log(current);
 }
 
 function getId(x, y) {
-    return get(grid, width, x, y);
+    return get(grid, data.getMap().size.x, x, y);
 }
 
 function getRoom(x, y) {
@@ -111,7 +116,7 @@ function set(arr, cols, col, row , value) {
 }
 
 function get(arr, cols, col, row) {
-    if (col >= 0 && col < width && row >= 0 && row < height)
+    if (col >= 0 && col < data.getMap().size.x && row >= 0 && row < data.getMap().size.y)
         return arr[col + cols*row];
     else
         return undefined;
@@ -176,31 +181,24 @@ function refreshCurrentRoomSize() {
     var originX = (room.gridX > 0 ? room.gridX : 0);
     if (room.gridX < 0) {
         var delta = -room.gridX;
-        grid = resizeKeepData(grid, width + delta, height, width, height, delta, 0);
-        width = width + delta;
-    } else if (originX + roomScreenWidth > width) {
-        var delta = (originX + roomScreenWidth) - width;
-        grid = resizeKeepData(grid, width + delta, height, width, height, 0, 0);
-        width = width + delta;
+        grid = resizeKeepData(grid, data.getMap().size.x + delta, data.getMap().size.y, data.getMap().size.x, data.getMap().size.y, delta, 0);
+        data.getMap().size.x = data.getMap().size.x + delta;
+    } else if (originX + roomScreenWidth > data.getMap().size.x) {
+        var delta = (originX + roomScreenWidth) - data.getMap().size.x;
+        grid = resizeKeepData(grid, data.getMap().size.x + delta, data.getMap().size.y, data.getMap().size.x, data.getMap().size.y, 0, 0);
+        data.getMap().size.x = data.getMap().size.x + delta;
     }
 
     var originY = (room.gridY > 0 ? room.gridY : 0);
     if (room.gridY < 0) {
         var delta = -room.gridY;
-        grid = resizeKeepData(grid, width, height + delta, width, height, 0, delta);
-        height = height + delta;
-    } else if (originY + roomScreenHeight > height) {
-        var delta = (originY + roomScreenHeight) - height;
-        grid = resizeKeepData(grid, width, height + delta, width, height, 0, 0);
-        height = height + delta;
+        grid = resizeKeepData(grid, data.getMap().size.x, data.getMap().size.y + delta, data.getMap().size.x, data.getMap().size.y, 0, delta);
+        data.getMap().size.y = data.getMap().size.y + delta;
+    } else if (originY + roomScreenHeight > data.getMap().size.y) {
+        var delta = (originY + roomScreenHeight) - data.getMap().size.y;
+        grid = resizeKeepData(grid, data.getMap().size.x, data.getMap().size.y + delta, data.getMap().size.x, data.getMap().size.y, 0, 0);
+        data.getMap().size.y = data.getMap().size.y + delta;
     }
-
-    /*for (var col = 0; col < roomScreenWidth; col++) {
-        for (var row = 0; row < roomScreenHeight; row++) {
-            // failsafe here?
-            set(grid, width, originX+col, originY+row, room.id);
-        }
-    }*/
 
     room.gridX = originX;
     room.gridY = originY;
@@ -214,9 +212,9 @@ function refreshAllRoomPositions() {
     let rooms = data.getMap().rooms;
     
     // Clear grid
-    for (let col = 0; col < width; col++)
-        for (let row = 0; row < height; row++)
-            set(grid, width, col, row, undefined);
+    for (let col = 0; col < data.getMap().size.x; col++)
+        for (let row = 0; row < data.getMap().size.y; row++)
+            set(grid, data.getMap().size.x, col, row, undefined);
     
     // Refill grid
     for (roomId in rooms) {
@@ -226,13 +224,13 @@ function refreshAllRoomPositions() {
             let roomScreenHeight = screensHeight(room.rows);
             for (var col = 0; col < roomScreenWidth; col++) {
                 for (var row = 0; row < roomScreenHeight; row++) {           
-                    set(grid, width, room.gridX+col, room.gridY+row, room.id);
+                    set(grid, data.getMap().size.x, room.gridX+col, room.gridY+row, room.id);
                 }
             }
         }
     }
 
-    data.getMap.grid = grid;
+    data.getMap().grid = grid;
 }
 
 function redraw() {
@@ -243,8 +241,8 @@ function redraw() {
 
     var ox = Math.min(0, current.x);
     var oy = Math.min(0, current.y);
-    var w = Math.max(width, current.x+1);
-    var h = Math.max(height, current.y+1);
+    var w = Math.max(data.getMap().size.x, current.x+1);
+    var h = Math.max(data.getMap().size.y, current.y+1);
 
     for (var row = oy; row < h; row++) {
         str += "<p>";
@@ -253,7 +251,7 @@ function redraw() {
                 str += "[";
             else str += "&nbsp;";
 
-            if (col < 0 || row < 0 || col >= width || row >= height) {
+            if (col < 0 || row < 0 || col >= data.getMap().size.x || row >= data.getMap().size.y) {
                 str += ".";
             } else if (empty(col, row)) {
                 str += "X"
@@ -274,6 +272,7 @@ function redraw() {
 
 module.exports = {
     init: init,
+    reload: reload,
     addRoom: addRoom,
     removeCurrentRoom: removeCurrentRoom,
     getId: getId,

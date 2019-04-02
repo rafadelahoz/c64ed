@@ -4,7 +4,8 @@ var map = {
     id: undefined,
     name: undefined,
     rooms: {}, // map of id-rooms
-    grid: []
+    grid: [],
+    size: {x: 0, y: 0}
 };
 
 function init() {
@@ -13,8 +14,13 @@ function init() {
         id: 'id-' + Math.round(Math.random()*120),
         name: "Wisconsin",
         rooms: [],
-        grid: []
+        grid: [],
+        size: {x: 0, y: 0}
     }
+}
+
+function load(mapData) {
+    map = mapData;
 }
 
 function getMap() {
@@ -45,6 +51,7 @@ function deleteRoom(id) {
 
 module.exports = {
     init: init,
+    load: load,
     getMap: getMap,
     createRoom: createRoom,
     deleteRoom: deleteRoom

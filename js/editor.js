@@ -81,6 +81,13 @@ function refreshColorInputs() {
 }
 
 $('#btn-load').on('click', function(e) {
+    console.log("loading");
+
+    var loadedData = filemanager.load("map.json");
+    data.load(loadedData);
+    screenGrid.reload();
+    screenDisplay.loadCurrentRoom();
+
     /*var data = filemanager.load("whatever-000.json");
     
     console.log(data);
@@ -102,24 +109,8 @@ $('#btn-save').on('click', function(e) {
     console.log("saving");
 
     var map = data.getMap();
-    filemanager.save(map.id + ".json", map);
-
-    /*var mapSize = globals.getMapSize();
-    var screen = {
-        id: "whatever-000",
-        width: mapSize.columns,
-        height: mapSize.rows,
-        colors: [globals.getBgColor(), globals.getFgColor("bg"), globals.getFgColor("fg")]
-    };
-
-    var screenData = screenDisplay.serialize();
-    for (id in screenData) {
-        screen[id] = screenData[id];
-    }
-
-    console.log(screen);
-
-    filemanager.save(screen.id + ".json", screen);*/
+    // filemanager.save(map.id + ".json", map);
+    filemanager.save("map.json", map);
 });
 
 $('.btn-size-add').on('click', function(e) {
