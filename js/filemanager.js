@@ -5,7 +5,7 @@ var path = "./";
 
 function save(filename, data) {
     console.log(pathlib.join(process.cwd(), path + filename));
-    var sdata = JSON.stringify(data);
+    var sdata = JSON.stringify(data, null, '\t');
     try {
         fs.writeFileSync(path + filename, sdata, 'utf-8');
     } catch (e) {
