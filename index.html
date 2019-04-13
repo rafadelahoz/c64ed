@@ -17,7 +17,7 @@
         </div>
 
         <label for="bgColor">BG</label>
-        <input id="bgColor" type="color" list="presetColors" value="#ffffff">
+        <input id="bgColor" type="color" list="c64-colors" value="#ffffff">
         
         <ul class="nav nav-tabs" id="sidebarTab" role="tablist">
           <li class="nav-item">
@@ -40,22 +40,18 @@
               <canvas id="tileset-bg" width='600' height='600'></canvas>
               <div id="secret"></div>
               <label for="fgColor-bg">Color</label>
-              <input id="fgColor-bg" type="color" list="presetColors" value="#000000">
-              <datalist>
-                <option>rgb(0,0,0)</option>
-                <option>rgb(255,255,255)</option>
-              </datalist>
+              <input id="fgColor-bg" type="color" list="c64-colors" value="#000000">
+
+              <!-- palette conversor leftovers -->
+              <!--<textarea id="palette"></textarea>
+              <button id="btnPalette">GOGOGO</button>-->
           </div>
           <div class="tab-pane fade" id="tiles-fg" role="tabpanel" aria-labelledby="tiles-fg-tab">
               <p>FG Tile</p>
               <canvas id="tileset-fg" width='600' height='600'></canvas>
               <div id="secret"></div>
               <label for="fgColor-fg">Color</label>
-              <input id="fgColor-fg" type="color" list="presetColors" value="#666666">
-              <datalist>
-                <option>rgb(0,0,0)</option>
-                <option>rgb(255,255,255)</option>
-              </datalist>
+              <input id="fgColor-fg" type="color" list="c64-colors" value="#666666">
           </div>
           <div class="tab-pane fade" id="solids" role="tabpanel" aria-labelledby="solids-tab">
             <p>Solids</p>
@@ -128,6 +124,25 @@
       </div>
     </div>
   </footer>
+
+  <datalist id="c64-colors">
+    <option>#000000</option>
+    <option>#626262</option>
+    <option>#898989</option>
+    <option>#adadad</option>
+    <option>#ffffff</option>
+    <option>#9f4e44</option>
+    <option>#cb7e75</option>
+    <option>#6d5412</option>
+    <option>#a1683c</option>
+    <option>#c9d487</option>
+    <option>#9ae29b</option>
+    <option>#5cab5e</option>
+    <option>#6abfc6</option>
+    <option>#887ecb</option>
+    <option>#50459b</option>
+    <option>#a057a3</option>
+  </datalist>
   
   <!--<script src="js/lib/jquery-3.3.1.min.js"></script>
   <script src="js/lib/popper.min.js"></script>

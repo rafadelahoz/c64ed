@@ -19,8 +19,28 @@
     - Copy screen, paste screen
     - What about entities?
 
-- Save maps
-- Load maps
+- Map management:
+ - Specify a folder to act as the editor base
+ - Maps are located in that location and user can select one to edit at a time from a list
+ - Saving and loading is done automatically in the folder
+ - Backup folder before starting
+
+- Entities placement
+    - List of available entities
+        - Start with player spawn, exit
+    - Select from list, place on map
+    - When on map, click to select current
+    - Drag to move it (!)
+    - Double click or whatever for properties
+        - A panel appears with the properties
+            - Id (set up automatically)
+            - Color: set by default?
+            - Extra properties given type?
+        - Non-overwritten properties are read from entities db
+        
+- Entities database
+    - List of all available entities
+    - Can add, or change defaults for all?
 
 - Don't allow extending over other rooms (fails for bigger ones)
 - After removing a room or resizing it, the grid may have extra empty space, tidy that up after removing a room
@@ -48,6 +68,7 @@
     - Drag RMB on map to select the underlying tiles
     - Click on map places the selected tiles
         - While dragging, until the mouse does not leave the current placed area, no more is going to be placed
+
 - Undo?
 
 ## Doing
@@ -81,7 +102,10 @@
     - [DONE] Display empty rooms as empty
     - [DONE] Press button to create a new room on empty spaces
         - [DONE] Fails when adding floaty rooms to the left (they get stuck to the leftmost room instead of floaty)
-
+- Save maps
+    - [DONE] Save to file
+- Load maps
+    - [DONE] Read from file
 
 ## Not to be done
 

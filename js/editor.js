@@ -214,3 +214,23 @@ mousetrap.bind('ctrl+x', function(e, combo) {
         screenGrid.redraw();
     }
 });
+
+$('#btnPalette').on('click', function() {
+    var lines = $('#palette').val().split('\n');
+
+    var colors = "";
+    for (var line of lines) {
+        if (!line || line.length == 0)
+            continue;
+
+        var ll = line.split(' ');
+        colors += '#' + componentToHex(ll[0]) + componentToHex(ll[1]) + componentToHex(ll[2]) + "\n";    
+    }
+
+    $('#palette').val(colors);
+});
+
+function componentToHex(c) {
+    var hex = parseInt(c).toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+};
