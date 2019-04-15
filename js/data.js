@@ -36,7 +36,8 @@ function createRoom() {
         columns: globals.baseColumns,
         rows: globals.baseRows,
         tiles: {},
-        solids: []
+        solids: [],
+        actors: []
     };
 
     // Add it to the map

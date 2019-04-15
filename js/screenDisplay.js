@@ -4,6 +4,7 @@ const data = require('./data.js');
 const screenGrid = require('./screenGrid.js');
 const tileset = require('./tileset.js');
 const solidsPanel = require('./solids.js');
+const actors = require('./actors.js');
 
 var room;
 
@@ -123,6 +124,8 @@ function onMapMouseDown(e) {
         case "solids":
             handleSolidsMouseDown(e);
             break;
+        case "actors":
+            break;
         default:
             console.log("Moving in " + globals.getCurrentLayer() + " layer");
     }
@@ -225,6 +228,17 @@ function onMapMouseClick(e) {
         case "solids":
             setSolid(e);
             break;
+        case "actors":
+            let x = e.clientX - mapX();
+            let y = e.clientY - mapY();
+            if (y < mapHeight && x < mapWidth) { // target
+                let mapTileX = Math.floor(x / (globals.tileWidth * zoom));
+                let mapTileY = Math.floor(y / (globals.tileHeight * zoom));
+                actors.onClick(e, mapTileX, mapTileY, room, zoom);
+                renderFullMap();
+            }
+
+        break;
     }
 }
 
@@ -279,6 +293,9 @@ function renderFullMap() {
             }
         }
     }
+
+    // Draw actors
+    actors.render(mapContext, room, zoom);
 
     // Draw the grid
     for (let i = 0; i <= room.columns; i++) {

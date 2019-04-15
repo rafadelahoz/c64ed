@@ -7,6 +7,7 @@ const screenGrid = require('./js/screenGrid.js');
 const screenDisplay = require('./js/screenDisplay.js');
 const tilesetPanel = require('./js/tileset.js');
 const solidsPanel = require('./js/solids.js');
+const actors = require('./js/actors.js');
 const filemanager = require('./js/filemanager.js');
 
 document.addEventListener('contextmenu', event => event.preventDefault());
@@ -26,13 +27,14 @@ tilesetPanel.init("fg", function(tilesetPanel) {
 });
 
 solidsPanel.init();
+actors.init();
 
 // Tab switching
 $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     let newTabLayer = getTabLayer(e.target);
     let prevTabLayer = getTabLayer(e.relatedTarget);
     
-    if (newTabLayer == "fg" || newTabLayer == "bg" || newTabLayer == "solids")
+    if (newTabLayer == "fg" || newTabLayer == "bg" || newTabLayer == "solids" || newTabLayer == "actors")
         globals.setCurrentLayer(newTabLayer);
     else
         console.log("Doing nothing for " + newTabLayer);
@@ -87,22 +89,6 @@ $('#btn-load').on('click', function(e) {
     data.load(loadedData);
     screenGrid.reload();
     screenDisplay.loadCurrentRoom();
-
-    /*var data = filemanager.load("whatever-000.json");
-    
-    console.log(data);
-
-    globals.setMapSize(data.width, data.height);
-    screenDisplay.init();
-
-    globals.setBgColor(data.colors[0]);
-
-    globals.setFgColor("bg", data.colors[1]);
-    globals.setFgColor("fg", data.colors[2]);
-
-    refreshColorInputs();
-
-    screenDisplay.load(data);*/
 });
 
 $('#btn-save').on('click', function(e) {

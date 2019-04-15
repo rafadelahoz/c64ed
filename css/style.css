@@ -16,6 +16,7 @@ body {
     min-width: 300px;
     max-width: 300px;
     min-height: 90vh;
+    max-height: 90vh;
 }
 
 #sidebar.active {
@@ -26,6 +27,10 @@ body {
     padding: 5px;
 }
 
+.tab-content {
+    height: 90%;
+}
+
 canvas {
     display: block;
 }
@@ -33,4 +38,39 @@ canvas {
 .footer {
     border-top: 1px solid darkgray;
     line-height: 50px;
+}
+
+#actors {
+    height: 100%;
+}
+
+#actors-database-panel {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 5px;
+    border-bottom: 1px dashed black;
+    max-height: 30%;
+    overflow-y: scroll;
+}
+
+#room-actors-panel {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 5px;
+    border-bottom: 1px dashed black;
+    max-height: 30%;
+    overflow-y: scroll;
+}
+
+.actor-db-card, .actor-room-card {
+    border: 1px dotted gray;
+    padding: 5px;
+}
+
+.card-selected {
+    background: lightgoldenrodyellow;
+}
+
+#room-actors-panel > .card-selected {
+    border: 1px dashed sandybrown;
 }
