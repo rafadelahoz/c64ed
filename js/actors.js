@@ -1,5 +1,8 @@
 
 const globals = require('./globals.js');
+const data = require('./data.js');
+const roomGrid = require('./screenGrid.js');
+const mousetrap = require('mousetrap');
 
 var database = {
 };
@@ -27,6 +30,11 @@ function init() {
     };
 
     $('.actor-db-card').on('click', handleActorDatabaseEntryCardClick);
+    $('.actor-room-card').on('click', handleActorRoomEntryCardClick);
+
+    mousetrap.bind('del', function(e, combo) {
+        deleteCurrentActor();
+    });
 }
 
 function buildDatabaseEntryCard(type, entry) {
@@ -56,11 +64,29 @@ function handleActorDatabaseEntryCardClick(e) {
     }
 }
 
+function handleActorRoomEntryCardClick(event) {
+    let $comp = $(event.target);
+    while ($comp && !$comp.is('div.actor-room-card')) {
+        $comp = $comp.parent();
+    }
+
+    if (!$comp)
+        return;
+
+    let room = roomGrid.getCurrentRoom();
+
+    let actorId = $comp.attr("id");
+    let actor = findActorById(actorId, room);
+    selectedActor = actor;
+    rebuildActorsList(room);
+    triggerRoomRender();
+}
+
 function handleMapClick(event, mapTileX, mapTileY, room, zoom) {
     
     let overActor = getActorAt(mapTileX, mapTileY, room);
     if (overActor == null) {
-        if (selectedDbEntry)
+        if (selectedDbEntry && canCreateEntry(selectedDbEntry, mapTileX, mapTileY))
             room.actors.push(createActor(mapTileX, mapTileY, selectedDbEntry));
     } else {
         // Select actor!
@@ -68,6 +94,7 @@ function handleMapClick(event, mapTileX, mapTileY, room, zoom) {
     }
 
     rebuildActorsList(room);
+    triggerRoomRender();
 }
 
 function rebuildActorsList(room) {
@@ -78,6 +105,8 @@ function rebuildActorsList(room) {
     for (actor of room.actors) {
         panel.append(buildRoomActorCard(actor));
     }
+
+    $('.actor-room-card').on('click', handleActorRoomEntryCardClick);
 }
 
 function buildRoomActorCard(actor) {
@@ -91,6 +120,15 @@ function buildRoomActorCard(actor) {
 function getActorAt(mapX, mapY, room) {
     for (actor of room.actors) {
         if (actor.x == mapX && actor.y == mapY)
+            return actor;
+    }
+
+    return null;
+}
+
+function findActorById(id, room) {
+    for (actor of room.actors) {
+        if (actor.id == id)
             return actor;
     }
 
@@ -114,6 +152,16 @@ function createActor(mapX, mapY, type) {
     return actor;
 }
 
+function deleteCurrentActor() {
+    if (selectedActor != null) {
+        let room = roomGrid.getCurrentRoom();
+        room.actors.splice(room.actors.indexOf(selectedActor), 1);
+        selectedActor = null;
+        rebuildActorsList(room);
+        triggerRoomRender();
+    }
+}
+
 function render(context, room, zoom) {
 
     if (!room || !room.actors)
@@ -130,11 +178,38 @@ function render(context, room, zoom) {
 
     if (selectedActor != null) {
         context.beginPath();
-        context.lineWidth = 1;
+        context.lineWidth = 2;
         context.strokeStyle = 'yellow';
+        context.setLineDash([2]);
         context.rect(selectedActor.x * globals.tileWidth * zoom - 1, selectedActor.y * globals.tileHeight * zoom - 1, globals.tileWidth*zoom + 2, globals.tileHeight*zoom + 2);
         context.stroke();
     }
+}
+
+function triggerRoomRender() {
+    let event = new CustomEvent("render-room", {"this": "can be used for something?"});
+    document.dispatchEvent(event);
+}
+
+/**
+ * Checks if the given actor type can be created
+ * @param {String} type Type to instantiate
+ * @param {int} x Map tile X
+ * @param {int} y Map tile Y
+ * @returns {boolean} True if the instance of the actor can be created
+ */
+function canCreateEntry(type, x, y) {
+    if (type == "spawn") {
+        // Only 1 spawn allowed
+        for (room of data.getMap().rooms) {
+            for (actor of room.actors) {
+                if (actor.type == "spawn")
+                    return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 module.exports = {

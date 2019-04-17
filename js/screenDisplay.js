@@ -43,6 +43,11 @@ function init() {
         tileset.redraw(tilesetPanel);
         renderFullMap();
     });
+
+    /* Custom re-render event */
+    document.addEventListener('render-room', function(e) {
+        renderFullMap();
+    });
 }
 
 function loadCurrentRoom() {
@@ -235,7 +240,7 @@ function onMapMouseClick(e) {
                 let mapTileX = Math.floor(x / (globals.tileWidth * zoom));
                 let mapTileY = Math.floor(y / (globals.tileHeight * zoom));
                 actors.onClick(e, mapTileX, mapTileY, room, zoom);
-                renderFullMap();
+                // renderFullMap();
             }
 
         break;

@@ -65,6 +65,7 @@ canvas {
 .actor-db-card, .actor-room-card {
     border: 1px dotted gray;
     padding: 5px;
+    cursor: pointer;
 }
 
 .card-selected {
