@@ -25,6 +25,11 @@
  - Saving and loading is done automatically in the folder
  - Backup folder before starting
 
+- When loading a map
+    - Check if all rooms are well formed?
+    - Check if all rooms are in grid
+    - Check that only one entry is present?
+
 - Entities placement
     - List of available entities
         - Start with player spawn, exit

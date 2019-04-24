@@ -21,6 +21,11 @@ function init() {
 
 function load(mapData) {
     map = mapData;
+    // TODO: checks over loaded map (for compatibility)
+    for (room of map.rooms) {
+        if (!room.actors)
+            room.actors = [];
+    }
 }
 
 function getMap() {
