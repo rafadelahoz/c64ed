@@ -24,6 +24,12 @@ function init() {
         }
     }
 
+    database["spikes"] = {
+        label: "Spikes",
+        w: 1,
+        h: 1
+    }
+
     $('#actors-database-panel').append('<b>Actors palette</b>');
     for (type in database) {
         $('#actors-database-panel').append(buildDatabaseEntryCard(type, database[type]));
