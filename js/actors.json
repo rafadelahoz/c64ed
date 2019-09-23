@@ -1,0 +1,29 @@
+{
+    "spawn": {
+        "label": "Player spawn",
+        "w": 1,
+        "h": 1
+    },
+
+    "exit": {
+        "label": "Map exit",
+        "w": 1,
+        "h": 1,
+        "properties": {
+            "name": "exit"
+        }
+    },
+
+    "spikes": {
+        "label": "Spikes",
+        "w": 1,
+        "h": 1
+    },
+
+    "item": {
+        "label": "Item",
+        "properties": {
+            "type": "@configurable"
+        }
+    }
+}

@@ -1,34 +1,11 @@
-
 const globals = require('./globals.js');
 const data = require('./data.js');
 const roomGrid = require('./screenGrid.js');
 const mousetrap = require('mousetrap');
 
-var database = {
-};
+const database = require('./actors.json');
 
 function init() {
-    // Populates the database (reading from file?)
-    database["spawn"] = {
-        label: "Player spawn",
-        w: 1,
-        h: 1
-    };
-
-    database["exit"] = {
-        label: "Map exit",
-        w: 1,
-        h: 1,
-        properties: {
-            name: "exit"
-        }
-    }
-
-    database["spikes"] = {
-        label: "Spikes",
-        w: 1,
-        h: 1
-    }
 
     $('#actors-database-panel').append('<b>Actors palette</b>');
     for (type in database) {
@@ -40,6 +17,10 @@ function init() {
 
     mousetrap.bind('del', function(e, combo) {
         deleteCurrentActor();
+    });
+
+    mousetrap.bind('p', function(e, combo) {
+        editCurrentActorProperties();
     });
 }
 
@@ -165,6 +146,12 @@ function deleteCurrentActor() {
         selectedActor = null;
         rebuildActorsList(room);
         triggerRoomRender();
+    }
+}
+
+function editCurrentActorProperties() {
+    if (selectedActor) {
+        alert("Editing current actor: " + selectedActor);
     }
 }
 
