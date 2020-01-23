@@ -1,4 +1,3 @@
-
 const globals = require('./globals.js');
 const data = require('./data.js');
 const roomGrid = require('./screenGrid.js');
