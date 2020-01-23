@@ -117,9 +117,9 @@ function rebuildActorsList(room) {
 
 function buildRoomActorCard(actor) {
     return "<div id='" + actor.id + "' class='actor-room-card " + (actor == selectedActor ? "card-selected": "") + "'>" +
-            "<label>type</label>&nbsp<span>" + actor.type +  "</span><br/>" + 
-            "<label>id</label>&nbsp<span>" + actor.id +  "</span><br/>" + 
-            "<label>pos</label>&nbsp<span>" + actor.x + ", " + actor.y + "</span>" +
+            "<label><b>type</b></label>&nbsp<span>" + actor.type +  "</span><br/>" + 
+            "<label><b>id</b></label>&nbsp<span>" + actor.id +  "</span><br/>" + 
+            "<label><b>pos</b></label>&nbsp<span>" + actor.x + ", " + actor.y + "</span>" +
         "</div>";
 }
 
