@@ -20,6 +20,12 @@
         "h": 1
     },
 
+    "pointy": {
+        "label": "Pointy",
+        "w": 1,
+        "h": 1
+    },
+
     "item": {
         "label": "Item",
         "properties": {
