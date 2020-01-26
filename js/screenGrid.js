@@ -148,20 +148,22 @@ function resizeKeepData(arr, nw, nh, w, h, ox, oy) {
     let roomId = undefined;
     let done = false;
     for (room of data.getMap().rooms) {
-        roomId = room.id;
-        done = false;
-        for (let row = 0; row < nh; row++) {
-            for (let col = 0; col < nw; col++) {
-                if (get(newmap, nw, col, row) == roomId) {
-                    room.gridX = col;
-                    room.gridY = row;
-                    done = true;
-                    break;
+        if (room) {
+            roomId = room.id;
+            done = false;
+            for (let row = 0; row < nh; row++) {
+                for (let col = 0; col < nw; col++) {
+                    if (get(newmap, nw, col, row) == roomId) {
+                        room.gridX = col;
+                        room.gridY = row;
+                        done = true;
+                        break;
+                    }
                 }
+                // Next room!
+                if (done)
+                break;
             }
-            // Next room!
-            if (done)
-               break;
         }
     }
 
