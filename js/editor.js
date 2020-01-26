@@ -95,6 +95,7 @@ $('#btn-save').on('click', function(e) {
     console.log("saving");
 
     var map = data.getMap();
+    screenGrid.recomputeGridPositionForEachRoom(map);
     // filemanager.save(map.id + ".json", map);
     filemanager.save("map.json", map);
 });

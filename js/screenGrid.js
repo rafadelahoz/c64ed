@@ -144,6 +144,12 @@ function resizeKeepData(arr, nw, nh, w, h, ox, oy) {
         }
     }
 
+    recomputeGridPositionForEachRoom(newmap);
+
+    return newmap;
+}
+
+function recomputeGridPositionForEachRoom(map) {
     // Recompute grid position for each room
     let roomId = undefined;
     let done = false;
@@ -151,9 +157,9 @@ function resizeKeepData(arr, nw, nh, w, h, ox, oy) {
         if (room) {
             roomId = room.id;
             done = false;
-            for (let row = 0; row < nh; row++) {
-                for (let col = 0; col < nw; col++) {
-                    if (get(newmap, nw, col, row) == roomId) {
+            for (let row = 0; row < data.getMap().size.y; row++) {
+                for (let col = 0; col < data.getMap().size.x; col++) {
+                    if (get(map, data.getMap().size.x, col, row) == roomId) {
                         room.gridX = col;
                         room.gridY = row;
                         done = true;
@@ -166,8 +172,6 @@ function resizeKeepData(arr, nw, nh, w, h, ox, oy) {
             }
         }
     }
-
-    return newmap;
 }
 
 function empty(x, y) {
@@ -305,6 +309,7 @@ module.exports = {
     setCursor: setCursor,
     canResizeCurrent: canResizeCurrent,
     refreshCurrentRoomSize: refreshCurrentRoomSize,
+    recomputeGridPositionForEachRoom: recomputeGridPositionForEachRoom,
     empty: empty,
     redraw: redraw,
     debugPrint: debugPrint
