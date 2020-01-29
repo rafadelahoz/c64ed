@@ -16,8 +16,14 @@
             <h3>Sidebar</h3>
         </div>
 
+        <label for="map-name">Name</label>
+        <input type="text" id="map-name"><br/>
+
         <label for="bgColor">BG</label>
         <input id="bgColor" type="color" list="c64-colors" value="#ffffff">
+
+        <label for="hazardsColor">Hazards</label>
+        <input id="hazardsColor" type="color" list="c64-colors" value="#898989">
         
         <ul class="nav nav-tabs" id="sidebarTab" role="tablist">
           <li class="nav-item">
@@ -79,6 +85,12 @@
       <div class="btn-group" role="group" aria-label="Solid button">
         <button type="button" class="btn btn-secondary" id="btn-toggle-solids">Solids</button>
       </div>
+
+      <div class="btn-group" role="group" aria-label="Solid button">
+        <label for="room-name">Room name</label>
+        <input type="text" id="room-name">
+      </div>
+
       <hr/>
       <div class="container">
         <div class="row">

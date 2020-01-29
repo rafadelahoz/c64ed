@@ -12,7 +12,7 @@ function init() {
     // Load or whatever, for now just init empty
     map = {
         id: 'id-' + Math.round(Math.random()*120),
-        name: "Wisconsin",
+        name: "MAP NAME",
         rooms: [],
         grid: [],
         size: {x: 0, y: 0}

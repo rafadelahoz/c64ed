@@ -55,6 +55,11 @@ function loadCurrentRoom() {
 }
 
 function loadRoom(thisRoom) {
+    // Store current room data before switching rooms
+    if (room != null) {
+        room.name = $('#room-name').val();
+    }
+
     if (thisRoom) {
         room = thisRoom;
         
@@ -64,12 +69,16 @@ function loadRoom(thisRoom) {
         }
 
         setZoom();
+
+        $('#room-name').val(room.name);
     } else {
         room = undefined;
         mapContext.fillStyle = '#aaaaaa';
         mapContext.fillRect(0, 0, mapWidth, mapHeight);
         mapContext.fillStyle = '#111111';
         mapContext.fillText("x EMPTY x", 10, 10);
+        
+        $('#room-name').val('');
     }
 }
 
@@ -378,22 +387,6 @@ function serializeData() {
     };
 }
 
-function load(data) {
-    if (!data["tiles-bg"] || !data["tiles-fg"] || !data["solids"])
-        throw "Unreadable map";
-
-    room.columns = data.width;
-    room.rows = data.height;
-    
-    room.tiles["bg"] = data["tiles-bg"];
-    room.tiles["fg"] = data["tiles-fg"];
-    room.solids = data["solids"];
-
-    tileset.redraw(globals.getTilesetPanel("bg"));
-    tileset.redraw(globals.getTilesetPanel("fg"));
-    renderFullMap();
-}
-
 function resize(delta, dir) {
     
     var nw = room.columns;
@@ -465,7 +458,6 @@ module.exports = {
     setZoom: setZoom,
     render: renderFullMap,
     serialize: serializeData,
-    load: load,
     resize: resize,
     loadCurrentRoom: loadCurrentRoom
 };

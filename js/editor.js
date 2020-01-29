@@ -13,6 +13,8 @@ const filemanager = require('./js/filemanager.js');
 document.addEventListener('contextmenu', event => event.preventDefault());
 
 data.init();
+$('#map-name').val(data.getMap().name);
+
 screenGrid.init();
 screenDisplay.init();
 tilesetPanel.init("bg", function(tilesetPanel) {
@@ -87,6 +89,7 @@ $('#btn-load').on('click', function(e) {
 
     var loadedData = filemanager.load("map.json");
     data.load(loadedData);
+    $('#map-name').val(data.getMap().name);
     screenGrid.reload();
     screenDisplay.loadCurrentRoom();
 
@@ -95,6 +98,9 @@ $('#btn-load').on('click', function(e) {
 
 $('#btn-save').on('click', function(e) {
     console.log("saving");
+
+    // Update map data
+    data.getMap().name = $('#map-name').val();
 
     var map = data.getMap();
     screenGrid.recomputeGridPositionForEachRoom(map);
