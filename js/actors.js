@@ -325,10 +325,12 @@ function render(context, room, zoom) {
 
     for (actor of room.actors) {
         context.beginPath();
-        context.lineWidth = 2;
+        context.lineWidth = 4;
         context.strokeStyle = 'blue';
         context.fillStyle = '#2a70ff';
+        // context.globalAlpha = 0.5;
         context.rect(actor.x * globals.tileWidth * zoom, actor.y * globals.tileHeight * zoom, actor.w*globals.tileWidth*zoom, actor.h*globals.tileHeight*zoom);
+        // context.globalAlpha = 1;
         context.stroke();
     }
 
@@ -339,6 +341,7 @@ function render(context, room, zoom) {
         context.setLineDash([2]);
         context.rect(selectedActor.x * globals.tileWidth * zoom - 1, selectedActor.y * globals.tileHeight * zoom - 1, selectedActor.w * globals.tileWidth * zoom + 2, selectedActor.h * globals.tileHeight * zoom + 2);
         context.stroke();
+        context.setLineDash([]);
     }
 }
 
