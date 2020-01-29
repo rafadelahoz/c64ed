@@ -101,6 +101,10 @@ function buildRoomActorCard(actor) {
             "<label><b>type</b></label>&nbsp<span>" + actor.type +  "</span><br/>" + 
             "<label><b>id</b></label>&nbsp<span>" + actor.id +  "</span><br/>" + 
             "<label><b>pos</b></label>&nbsp<span>" + actor.x + ", " + actor.y + "</span>" +
+            "<div>" + 
+                "<button type='button' class='btn btn-primary' id='btn-properties-" + actor.id + "'>properties</button>" + 
+                "<button type='button' class='btn' id='btn-delete-" + actor.id + "'>delete</button>" + 
+            "</div>" + 
         "</div>";
 }
 
@@ -171,8 +175,8 @@ function render(context, room, zoom) {
 
     if (selectedActor != null) {
         context.beginPath();
-        context.lineWidth = 2;
-        context.strokeStyle = 'yellow';
+        context.lineWidth = 4;
+        context.strokeStyle = 'red';
         context.setLineDash([2]);
         context.rect(selectedActor.x * globals.tileWidth * zoom - 1, selectedActor.y * globals.tileHeight * zoom - 1, globals.tileWidth*zoom + 2, globals.tileHeight*zoom + 2);
         context.stroke();
@@ -208,5 +212,6 @@ function canCreateEntry(type, x, y) {
 module.exports = {
     init: init,
     render: render,
+    rebuildActorsList: rebuildActorsList,
     onClick: handleMapClick
 }

@@ -89,6 +89,8 @@ $('#btn-load').on('click', function(e) {
     data.load(loadedData);
     screenGrid.reload();
     screenDisplay.loadCurrentRoom();
+
+    handleAfterRoomChange();
 });
 
 $('#btn-save').on('click', function(e) {
@@ -173,12 +175,7 @@ mousetrap.bind(['ctrl+left', 'ctrl+right', 'ctrl+up', 'ctrl+down'], function (e,
 
     screenGrid.setCursor(cursor.x, cursor.y);
     
-    refreshColorInputs();
-    tilesetPanel.refreshColors();
-
-    screenDisplay.loadCurrentRoom();
-    
-    screenGrid.redraw();
+    handleAfterRoomChange();
 });
 
 mousetrap.bind('ctrl+n', function(e, combo) {
@@ -221,3 +218,15 @@ function componentToHex(c) {
     var hex = parseInt(c).toString(16);
     return hex.length == 1 ? "0" + hex : hex;
 };
+
+function handleAfterRoomChange() {
+    refreshColorInputs();
+    tilesetPanel.refreshColors();
+
+    screenDisplay.loadCurrentRoom();
+    
+    screenGrid.redraw();
+
+    let room = screenGrid.getCurrentRoom();
+    actors.rebuildActorsList(room);
+}
