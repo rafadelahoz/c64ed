@@ -51,6 +51,11 @@ function handleActorDatabaseEntryCardClick(e) {
     }
 }
 
+function clearActorDatabaseEntrySelection() {
+    selectedDbEntry = null;
+    $('.actor-db-card').removeClass('card-selected');
+}
+
 function handleActorRoomEntryCardClick(event) {
     let $comp = $(event.target);
     while ($comp && !$comp.is('div.actor-room-card')) {
@@ -67,6 +72,22 @@ function handleActorRoomEntryCardClick(event) {
     selectedActor = actor;
     rebuildActorsList(room);
     triggerRoomRender();
+
+    clearActorDatabaseEntrySelection();
+}
+
+function handleActorRoomEntryCardPropertiesClick(event) {
+    // Set selected actor
+    handleActorRoomEntryCardClick(event);
+    // And edit it!
+    editCurrentActorProperties();
+}
+
+function handleActorRoomEntryCardDeleteClick(event) {
+    // Set selected actor
+    handleActorRoomEntryCardClick(event);
+    // And delete it!
+    deleteCurrentActor();
 }
 
 function handleMapClick(event, mapTileX, mapTileY, room, zoom) {
@@ -78,6 +99,7 @@ function handleMapClick(event, mapTileX, mapTileY, room, zoom) {
     } else {
         // Select actor!
         selectedActor = overActor;
+        clearActorDatabaseEntrySelection();
     }
 
     rebuildActorsList(room);
@@ -94,6 +116,8 @@ function rebuildActorsList(room) {
     }
 
     $('.actor-room-card').on('click', handleActorRoomEntryCardClick);
+    $('.btn-actor-properties').on('click', handleActorRoomEntryCardPropertiesClick);
+    $('.btn-actor-delete').on('click', handleActorRoomEntryCardDeleteClick);
 }
 
 function buildRoomActorCard(actor) {
@@ -102,8 +126,8 @@ function buildRoomActorCard(actor) {
             "<label><b>id</b></label>&nbsp<span>" + actor.id +  "</span><br/>" + 
             "<label><b>pos</b></label>&nbsp<span>" + actor.x + ", " + actor.y + "</span>" +
             "<div>" + 
-                "<button type='button' class='btn btn-primary' id='btn-properties-" + actor.id + "'>properties</button>" + 
-                "<button type='button' class='btn' id='btn-delete-" + actor.id + "'>delete</button>" + 
+                "<button type='button' class='btn btn-primary btn-actor-properties' id='btn-properties-" + actor.id + "'>properties</button>" + 
+                "<button type='button' class='btn btn-actor-delete' id='btn-delete-" + actor.id + "'>delete</button>" + 
             "</div>" + 
         "</div>";
 }
@@ -137,7 +161,7 @@ function createActor(mapX, mapY, type) {
         w: data.w,
         h: data.h,
         // other props?
-        properites: data.properties
+        properties: data.properties
     };
 
     return actor;
@@ -155,8 +179,133 @@ function deleteCurrentActor() {
 
 function editCurrentActorProperties() {
     if (selectedActor) {
-        alert("Editing current actor: " + selectedActor);
+        
+        let title = selectedActor.type + " - " + selectedActor.id;
+        
+        // Build the form body considering actor properties
+        let body = $("<div/>");
+        // Standard properties
+        let editableProperties = [];
+
+        for (let sprop in actor) {
+            if (sprop == "properties")
+                continue;
+
+            if (sprop == "id" || sprop == "type")
+                body.append(buildPropertyField(sprop, selectedActor[sprop], true));
+            else {
+                body.append(buildPropertyField(sprop, selectedActor[sprop]));
+                editableProperties.push(sprop);
+            }
+        }
+
+        body.append('<hr/>');
+
+        // Custom properties
+        for (let property in selectedActor.properties) {
+            body.append(buildPropertyField(property, selectedActor.properties[property]));
+            editableProperties.push("properties." + property);
+        }
+
+        function savePropertiesEdition() {
+            let elem = null;
+            let customProperty = false;
+            for (prop of editableProperties) {
+                customProperty = false;
+                if (prop.indexOf("properties.") > -1) {
+                    customProperty = true;
+                    prop = prop.substring("properties.".length);
+                }
+
+                elem = body.find("#field-" + prop);
+                if (customProperty)
+                    selectedActor.properties[prop] = elem.val();
+                else
+                    selectedActor[prop] = elem.val();
+            }
+
+            rebuildActorsList(roomGrid.getCurrentRoom())
+            triggerRoomRender();
+        }
+        
+        buildModal(title, body, savePropertiesEdition);
     }
+}
+
+function buildPropertyField(property, value, readonly) {
+    let fieldId = 'field-' + property;
+    let element = '<label for="' + fieldId + '">' + property +': </label>';
+    if (!readonly) {
+        element += '<input id="' + fieldId + '" type="text" value="' + value + '" >';
+    } else {
+        element += '<span>' + value + '</span>';
+    }
+
+    element += '<br/>';
+
+    return element;
+}
+
+function buildModal(title, body, saveCallback, cancelCallback) {
+    if (!body)
+        return;
+    
+    var modalDiv = 
+        '<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">' + 
+            '<div class="modal-dialog modal-dialog-centered" role="document">' + 
+                '<div class="modal-content">' + 
+                    '<div class="modal-header">' + 
+                        '<h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>' + 
+                        '<button type="button" class="close" data-dismiss="modal" aria-label="Close">' + 
+                        '    <span aria-hidden="true">&times;</span>' + 
+                        '</button>' + 
+                    '</div>' + 
+                    '<div class="modal-body">' + 
+                    // Content will be here
+                    '</div>' + 
+                    '<div class="modal-footer">' + 
+                        '<button type="button" class="btn btn-secondary" id="btn-modal-close">Close</button>' + 
+                        '<button type="button" class="btn btn-primary" id="btn-modal-save">Save changes</button>' + 
+                    '</div>' + 
+                '</div>' + 
+            '</div>' + 
+        '</div>';
+    
+    // Prepare the DOM element
+    let $modal = $(modalDiv);
+    // Title
+    $modal.find('.modal-title').text(title);
+    // Include the body
+    $modal.find('.modal-body').append(body);
+
+    // Show the dialogue
+    $modal.modal();
+
+    if (saveCallback) {
+        // Save callback
+        $modal.find('#btn-modal-save').on('click', function (event) {
+            if (saveCallback)
+                saveCallback();
+
+            $modal.modal('hide');
+        });
+    } else {
+        // Avoid showing the save button if there's no save forseen
+        $modal.find('#btn-modal-save').hide();
+    }
+
+    // Cancel callback (this would be called also on success :()
+    $modal.find('#btn-modal-close').on('click', function (event) {
+        if (cancelCallback)
+            cancelCallback();
+
+        $modal.modal('hide');
+    });
+
+    // Destroy on close
+    $modal.on('hidden.bs.modal', function (event) {
+        $modal.modal('dispose');
+    });
 }
 
 function render(context, room, zoom) {
