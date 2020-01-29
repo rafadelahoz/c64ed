@@ -116,7 +116,7 @@ function rebuildActorsList(room) {
             panel.append(buildRoomActorCard(actor));
         }
 
-        if (selectedActor != null)
+        if (selectedActor != null && room.actors.includes(selectedActor))
             document.getElementById(selectedActor.id).scrollIntoView();
     }
 
@@ -164,10 +164,19 @@ function createActor(mapX, mapY, type) {
         y: mapY,
         type: type,
         w: data.w,
-        h: data.h,
-        // other props?
-        properties: data.properties
+        h: data.h
     };
+
+    if (data.properties) {
+        actor.properties = {};
+        for (prop in data.properties) {
+            // Set the first element of arrays as the value of properties
+            if (Array.isArray(data.properties[prop]))
+                actor.properties[prop] = data.properties[prop][0];
+            else
+                actor.properties[prop] = data.properties[prop];
+        }
+    }
 
     return actor;
 }
@@ -210,7 +219,12 @@ function editCurrentActorProperties() {
 
         // Custom properties
         for (let property in selectedActor.properties) {
-            body.append(buildPropertyField(property, selectedActor.properties[property]));
+            if (Array.isArray(database[selectedActor.type].properties[property])) {
+                body.append(buildPropertyCombobox(property, selectedActor.properties[property], database[selectedActor.type].properties[property]))
+            } else {
+                body.append(buildPropertyField(property, selectedActor.properties[property]));
+            }
+
             editableProperties.push("properties." + property);
         }
 
@@ -247,6 +261,22 @@ function buildPropertyField(property, value, readonly) {
     } else {
         element += '<span>' + value + '</span>';
     }
+
+    element += '<br/>';
+
+    return element;
+}
+
+function buildPropertyCombobox(property, value, options) {
+    let fieldId = 'field-' + property;
+    let element = '<label for="' + fieldId + '">' + property +': </label>';
+
+    element += '<select id="' + fieldId + '">';
+    for (option of options) {
+        element += '<option value="' + option + '" ' + 
+            (value == option ? 'selected' : '') + '>' + option + '</option>';
+    }
+    element += "</select>";
 
     element += '<br/>';
 
@@ -334,7 +364,7 @@ function render(context, room, zoom) {
         context.stroke();
     }
 
-    if (selectedActor != null) {
+    if (selectedActor != null && room.actors.includes(selectedActor)) {
         context.beginPath();
         context.lineWidth = 4;
         context.strokeStyle = 'red';
