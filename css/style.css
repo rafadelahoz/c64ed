@@ -60,6 +60,7 @@ canvas {
     border-bottom: 1px dashed black;
     max-height: 30%;
     overflow-y: scroll;
+    scroll-behavior: smooth;
 }
 
 .actor-db-card, .actor-room-card {

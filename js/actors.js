@@ -111,8 +111,13 @@ function rebuildActorsList(room) {
     panel.empty();
     panel.append('<b>Room actors</b>');
     
-    for (actor of room.actors) {
-        panel.append(buildRoomActorCard(actor));
+    if (room && room.actors) {
+        for (actor of room.actors) {
+            panel.append(buildRoomActorCard(actor));
+        }
+
+        if (selectedActor != null)
+            document.getElementById(selectedActor.id).scrollIntoView();
     }
 
     $('.actor-room-card').on('click', handleActorRoomEntryCardClick);
@@ -177,8 +182,10 @@ function deleteCurrentActor() {
     }
 }
 
+var currentModal = null;
+
 function editCurrentActorProperties() {
-    if (selectedActor) {
+    if (selectedActor && !currentModal) {
         
         let title = selectedActor.type + " - " + selectedActor.id;
         
@@ -228,7 +235,7 @@ function editCurrentActorProperties() {
             triggerRoomRender();
         }
         
-        buildModal(title, body, savePropertiesEdition);
+        currentModal = buildModal(title, body, savePropertiesEdition);
     }
 }
 
@@ -305,7 +312,10 @@ function buildModal(title, body, saveCallback, cancelCallback) {
     // Destroy on close
     $modal.on('hidden.bs.modal', function (event) {
         $modal.modal('dispose');
+        currentModal = null;
     });
+
+    return $modal;
 }
 
 function render(context, room, zoom) {
@@ -318,7 +328,7 @@ function render(context, room, zoom) {
         context.lineWidth = 2;
         context.strokeStyle = 'blue';
         context.fillStyle = '#2a70ff';
-        context.rect(actor.x * globals.tileWidth * zoom, actor.y * globals.tileHeight * zoom, globals.tileWidth*zoom, globals.tileHeight*zoom);
+        context.rect(actor.x * globals.tileWidth * zoom, actor.y * globals.tileHeight * zoom, actor.w*globals.tileWidth*zoom, actor.h*globals.tileHeight*zoom);
         context.stroke();
     }
 
@@ -327,7 +337,7 @@ function render(context, room, zoom) {
         context.lineWidth = 4;
         context.strokeStyle = 'red';
         context.setLineDash([2]);
-        context.rect(selectedActor.x * globals.tileWidth * zoom - 1, selectedActor.y * globals.tileHeight * zoom - 1, globals.tileWidth*zoom + 2, globals.tileHeight*zoom + 2);
+        context.rect(selectedActor.x * globals.tileWidth * zoom - 1, selectedActor.y * globals.tileHeight * zoom - 1, selectedActor.w * globals.tileWidth * zoom + 2, selectedActor.h * globals.tileHeight * zoom + 2);
         context.stroke();
     }
 }
