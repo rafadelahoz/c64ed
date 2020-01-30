@@ -81,3 +81,7 @@ canvas {
 #room-actors-panel > .card-selected {
     border: 1px dashed sandybrown;
 }
+
+#current-tile-position {
+    font-family: monospace;
+}

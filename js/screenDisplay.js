@@ -212,14 +212,24 @@ function onMapMouseMove(e) {
     // Render current tile where mouse is placed
     let x = e.clientX - mapX();
     let y = e.clientY - mapY();
-    let mapTileX = "-";
-    let mapTileY = "-";
+    let coordinatesText = "-";
+
     if (y < mapHeight && x < mapWidth) { // target
-        mapTileX = Math.floor(x / (globals.tileWidth * zoom));
-        mapTileY = Math.floor(y / (globals.tileHeight * zoom));
+        let mapTileX = Math.floor(x / (globals.tileWidth * zoom));
+        let mapTileY = Math.floor(y / (globals.tileHeight * zoom));
+
+        coordinatesText = mapTileX + ", " + mapTileY;
+        if (mapTileX >= globals.baseColumns || mapTileY >= globals.baseRows) {
+            let screenX = Math.floor(mapTileX / globals.baseColumns);
+            let screenY = Math.floor(mapTileY / globals.baseRows);
+            let screenTileX = (mapTileX - (globals.baseColumns * screenX));
+            let screenTileY = (mapTileY - (globals.baseRows * screenY));
+            
+            coordinatesText += " - " + screenTileX + ", " + screenTileY + "@[" + screenX + ", " + screenY + "]"
+        }
     }
 
-    $('#current-tile-position').text(mapTileX + ", " + mapTileY);
+    $('#current-tile-position').text(coordinatesText);
 }
 
 function renderCursor(e) {
