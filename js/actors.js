@@ -7,7 +7,7 @@ const database = require('./actors.json');
 
 function init() {
 
-    $('#actors-database-panel').append('<b>Actors palette</b>');
+    $('#actors-database-panel').append('<b>Actors palette</b><br/>');
     for (type in database) {
         $('#actors-database-panel').append(buildDatabaseEntryCard(type, database[type]));
     };

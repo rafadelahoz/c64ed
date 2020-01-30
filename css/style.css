@@ -69,6 +69,11 @@ canvas {
     cursor: pointer;
 }
 
+.actor-db-card {
+    width: 50%;
+    float: left;
+}
+
 .card-selected {
     background: lightgoldenrodyellow;
 }
