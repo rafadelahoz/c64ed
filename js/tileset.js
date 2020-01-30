@@ -153,6 +153,9 @@ function offsetY(tilesetPanel) {
 }
 
 function redraw(tilesetPanel) {
+    if (!tilesetPanel || !tilesetPanel.context)
+        return;
+        
     tilesetPanel.context.rect(0, 0, tilesetPanel.sourceWidth*zoom, tilesetPanel.sourceHeight*zoom);
     tilesetPanel.context.fillStyle = bgColor();
     tilesetPanel.context.fill();
