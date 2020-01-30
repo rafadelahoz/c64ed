@@ -208,6 +208,18 @@ function onMapMouseMove(e) {
             break;
         default:
     }
+
+    // Render current tile where mouse is placed
+    let x = e.clientX - mapX();
+    let y = e.clientY - mapY();
+    let mapTileX = "-";
+    let mapTileY = "-";
+    if (y < mapHeight && x < mapWidth) { // target
+        mapTileX = Math.floor(x / (globals.tileWidth * zoom));
+        mapTileY = Math.floor(y / (globals.tileHeight * zoom));
+    }
+
+    $('#current-tile-position').text(mapTileX + ", " + mapTileY);
 }
 
 function renderCursor(e) {
