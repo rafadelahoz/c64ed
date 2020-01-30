@@ -31,6 +31,12 @@ body {
     height: 90%;
 }
 
+#map-canvas-panel {
+    max-width: 75ch;
+    max-height: 75ch;
+    overflow: scroll;
+}
+
 canvas {
     display: block;
 }

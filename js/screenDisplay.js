@@ -497,11 +497,23 @@ function get(arr, cols, col, row) {
     return arr[col + cols*row];
 }
 
+function focusOnCurrentScreen() {
+    let cursor = screenGrid.getCursor();
+    let room = screenGrid.getCurrentRoom();
+    
+    if (cursor && room) {
+     $('#map-canvas-panel')[0].scrollTo(
+         (cursor.x - room.gridX) * globals.baseColumns * globals.tileWidth * zoom, 
+         (cursor.y - room.gridY) * globals.baseRows * globals.tileHeight * zoom);
+     }
+}
+
 module.exports = {
     init: init,
     setZoom: setZoom,
     render: renderFullMap,
     serialize: serializeData,
     resize: resize,
-    loadCurrentRoom: loadCurrentRoom
+    loadCurrentRoom: loadCurrentRoom,
+    focusOnCurrentScreen: focusOnCurrentScreen
 };

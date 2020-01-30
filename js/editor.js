@@ -235,4 +235,7 @@ function handleAfterRoomChange() {
 
     let room = screenGrid.getCurrentRoom();
     actors.rebuildActorsList(room);
+
+    // Focus on the current screen dude
+    screenDisplay.focusOnCurrentScreen();
 }
