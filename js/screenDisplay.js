@@ -268,6 +268,8 @@ function onMapMouseClick(e) {
     }
 }
 
+var renderScreens = true;
+
 function renderFullMap() {
     mapContext.beginPath();
     mapContext.rect(0, 0, mapWidth, mapHeight);
@@ -323,21 +325,41 @@ function renderFullMap() {
     // Draw actors
     actors.render(mapContext, room, zoom);
 
+    mapContext.beginPath();
+    mapContext.strokeStyle = 'gray';
+    mapContext.lineWidth = 0.5;
     // Draw the grid
     for (let i = 0; i <= room.columns; i++) {
         mapContext.moveTo(i * globals.tileWidth * zoom, 0);
         mapContext.lineTo(i * globals.tileWidth * zoom, mapHeight);
     }
+    mapContext.stroke();
+
+    mapContext.beginPath();
     mapContext.strokeStyle = 'gray';
     mapContext.lineWidth = 0.5;
-    mapContext.stroke();
     for (let i = 0; i <= room.rows; i++) {
         mapContext.moveTo(0, i * globals.tileHeight * zoom);
         mapContext.lineTo(mapWidth, i * globals.tileHeight * zoom);
     }
-    // mapContext.strokeStyle = '#00ff00';
-    mapContext.lineWidth = 0.5;
     mapContext.stroke();
+
+    // Render screen boundaries for bigger rooms
+    if (renderScreens && (room.columns > globals.baseColumns || room.rows > globals.baseRows)) {
+        var screensX = room.columns / globals.baseColumns;
+        var screensY = room.rows / globals.baseRows;
+        mapContext.lineWidth = 2.0;
+        mapContext.strokeStyle = "red";
+
+        for (var xx = 0; xx < screensX; xx++) {
+            for (var yy = 0; yy < screensY; yy++) {
+                mapContext.beginPath();
+                mapContext.rect(xx * globals.baseColumns * globals.tileWidth * zoom, yy * globals.tileHeight * globals.baseRows * zoom,
+                                globals.baseColumns * globals.tileWidth * zoom, globals.baseRows * globals.tileHeight * zoom);
+                mapContext.stroke();
+            }
+        }
+    }
 }
 
 function setTile(e) {
