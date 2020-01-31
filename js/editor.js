@@ -68,6 +68,15 @@ document.getElementById('bgColor').addEventListener('change', function(ev) {
     screenDisplay.render();
 });
 
+document.getElementById('hazardsColor').addEventListener('change', function(ev) {
+    screenGrid.getCurrentRoom().colors[3] = ev.target.value;
+    // No need to redraw (yet)
+    /*let tsets = globals.getTilesetPanels();
+    for (var tset in tsets)
+        tilesetPanel.redraw(tsets[tset]);
+    screenDisplay.render();*/
+});
+
 // Solids
 $('#btn-toggle-solids').on('click', function(e) {
     globals.switchRenderSolids();
@@ -81,6 +90,9 @@ function refreshColorInputs() {
         document.getElementById('bgColor').value = room.colors[0];
         document.getElementById('fgColor-bg').value = room.colors[1];
         document.getElementById('fgColor-fg').value = room.colors[2];
+        if (room.colors[3] == null || room.colors[3] == undefined)
+            room.colors[3] = "#ffffff";
+        document.getElementById('hazardsColor').value = room.colors[3];
     }
 }
 
@@ -189,7 +201,7 @@ mousetrap.bind('ctrl+n', function(e, combo) {
         let cursor = screenGrid.getCursor();
         let room = screenGrid.addRoom(cursor.x, cursor.y);
         // Set colors to current ones
-        room.colors = [$('#bgColor').val(), $('#fgColor-bg').val(), $('#fgColor-fg').val()];
+        room.colors = [$('#bgColor').val(), $('#fgColor-bg').val(), $('#fgColor-fg').val(), $('#hazardsColor').val()];
         refreshColorInputs();
         tilesetPanel.refreshColors();
         screenDisplay.loadCurrentRoom();    

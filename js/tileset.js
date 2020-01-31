@@ -187,6 +187,7 @@ function refreshColors(avoidRedraw) {
         room().colors[2] = document.getElementById('fgColor-fg').value;
         room().colors[1] = document.getElementById('fgColor-bg').value;
         room().colors[0] = document.getElementById('bgColor').value;
+        room().colors[3] = document.getElementById('hazardsColor').value;
 
         if (!avoidRedraw) {
             redraw(globals.getTilesetPanel("bg"));
