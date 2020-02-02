@@ -17,6 +17,8 @@ var mapContext;
 
 var mouseDown;
 
+var currentTool = "draw"; // fill
+
 function init() {
 
     mapCanvas = document.getElementById('map-canvas');
@@ -36,6 +38,20 @@ function init() {
     $('.btn-zoom').on('click', function(ev) {
         let factor = ev.target.textContent.substr(0,1);
         setZoom(factor);
+    });
+
+    $('#btn-tool-draw').on('click', function (e) {
+        currentTool = "draw";
+        $('.btn-tool').removeClass('btn-success');
+        $('.btn-tool').addClass('btn-secondary');
+        $('#btn-tool-draw').addClass('btn-success');
+    });
+    
+    $('#btn-tool-fill').on('click', function (e) {
+        currentTool = "fill";
+        $('.btn-tool').removeClass('btn-success');
+        $('.btn-tool').addClass('btn-secondary');
+        $('#btn-tool-fill').addClass('btn-success');
     });
 
     document.getElementById('redraw').addEventListener('click', function(ev) {
@@ -200,8 +216,13 @@ function onMapMouseMove(e) {
     switch (globals.getCurrentLayer()) {
         case "bg":
         case "fg":
-            // Paint if painting
-            if (mouseDown) setTile(e);
+            if (currentTool == "draw")
+                // Paint if painting
+                if (mouseDown) setTile(e);
+            else if (currentTool == "fill") {
+                // Nop!
+            }
+
             break;
         case "solids":
             if (mouseDown) setSolid(e);
@@ -259,7 +280,13 @@ function onMapMouseClick(e) {
     switch (globals.getCurrentLayer()) {
         case "bg":
         case "fg":
-            setTile(e);
+            if (currentTool == "draw")
+                setTile(e);
+            else if (currentTool == "fill") {
+                // Fill!
+                console.log("fill");
+                fillTile(e);
+            }
             break;
         case "solids":
             setSolid(e);
@@ -382,6 +409,32 @@ function setTile(e) {
         let tilesetPanel = globals.getCurrentTilesetPanel();        
         room.tiles[globals.getCurrentLayer()][targetMapTile] = tileset.getCurrentTile(tilesetPanel);
         renderFullMap();
+    }
+}
+
+function fillTile(e) {
+    let x = e.clientX - mapX();
+    let y = e.clientY - mapY();
+    if (y < mapHeight && x < mapWidth) { // target
+        let mapTileX = Math.floor(x / (globals.tileWidth * zoom));
+        let mapTileY = Math.floor(y / (globals.tileHeight * zoom));
+        let tilesetPanel = globals.getTilesetPanel(globals.getCurrentLayer());
+        // flood fill!
+        let fillOverTile = get(room.tiles[globals.getCurrentLayer()], room.columns, mapTileX, mapTileY);
+        floodFill(mapTileX, mapTileY, fillOverTile, tileset.getCurrentTile(tilesetPanel))
+        renderFullMap();
+    }
+}
+
+function floodFill(col, row, srcTile, newTile) {
+    if (col >= 0 && col < room.columns && row >= 0 && row < room.rows && newTile != srcTile) {
+        if (get(room.tiles[globals.getCurrentLayer()], room.columns, col, row) == srcTile) {
+            set(room.tiles[globals.getCurrentLayer()], room.columns, col, row, newTile);
+            let neighbours = [{x: col-1, y: row}, {x: col+1, y: row}, {x: col, y: row-1}, {x: col, y: row+1}];
+            for (neighbour of neighbours) {
+                floodFill(neighbour.x, neighbour.y, srcTile, newTile);
+            }
+        }
     }
 }
 
