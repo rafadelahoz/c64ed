@@ -5,6 +5,7 @@ const screenGrid = require('./screenGrid.js');
 const tileset = require('./tileset.js');
 const solidsPanel = require('./solids.js');
 const actors = require('./actors.js');
+const history = require('./history.js');
 
 var room;
 
@@ -281,15 +282,19 @@ function onMapMouseClick(e) {
         case "bg":
         case "fg":
             if (currentTool == "draw")
-                setTile(e);
+                history.executeCommand("Paint tile", function() {
+                    setTile(e);
+                });
             else if (currentTool == "fill") {
-                // Fill!
-                console.log("fill");
-                fillTile(e);
+                history.executeCommand("Flood fill", function() {
+                    fillTile(e);
+                });
             }
             break;
         case "solids":
-            setSolid(e);
+            history.executeCommand("Put solid", function() {
+                setSolid(e);
+            });
             break;
         case "actors":
             let x = e.clientX - mapX();

@@ -19,6 +19,10 @@ function init() {
     }
 }
 
+/**
+ * Loads the provided data as the current map data
+ * @param {map} mapData Data to use
+ */
 function load(mapData) {
     map = mapData;
     // TODO: checks over loaded map (for compatibility)
@@ -28,10 +32,23 @@ function load(mapData) {
     }
 }
 
+/**
+ * Returns a reference to the current map data
+ */
 function getMap() {
     return map;
 }
 
+/**
+ * Returns a deep copy of the current map data (hopefully)
+ */
+function getMapStamp() {
+    return JSON.parse(JSON.stringify(map));
+}
+
+/**
+ * Creates a new empty room in the map, and returns a reference to it
+ */
 function createRoom() {
     // Initialize a new room
     var room = {
@@ -51,6 +68,10 @@ function createRoom() {
     return room;
 }
 
+/**
+ * Deletes the room with the provided id from the map
+ * @param {int} id Id of the room to remove
+ */
 function deleteRoom(id) {
     delete map.rooms[id];
 }
@@ -59,6 +80,7 @@ module.exports = {
     init: init,
     load: load,
     getMap: getMap,
+    getMapStamp: getMapStamp,
     createRoom: createRoom,
     deleteRoom: deleteRoom
 };

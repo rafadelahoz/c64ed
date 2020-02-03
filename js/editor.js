@@ -9,6 +9,7 @@ const tilesetPanel = require('./js/tileset.js');
 const solidsPanel = require('./js/solids.js');
 const actors = require('./js/actors.js');
 const filemanager = require('./js/filemanager.js');
+const history = require('./js/history.js');
 
 document.addEventListener('contextmenu', event => event.preventDefault());
 
@@ -47,29 +48,37 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 
 // Colors
 document.getElementById('fgColor-bg').addEventListener('change', function(ev) {
-    let tileset = globals.getCurrentTilesetPanel();
-    screenGrid.getCurrentRoom().colors[1] = ev.target.value;
-    tilesetPanel.redraw(tileset);
-    screenDisplay.render();
+    history.executeCommand('Change tiles BG color', function() {
+        let tileset = globals.getCurrentTilesetPanel();
+        screenGrid.getCurrentRoom().colors[1] = ev.target.value;
+        tilesetPanel.redraw(tileset);
+        screenDisplay.render();
+    });
 });
 
 document.getElementById('fgColor-fg').addEventListener('change', function(ev) {
-    let tileset = globals.getCurrentTilesetPanel();
-    screenGrid.getCurrentRoom().colors[2] = ev.target.value;
-    tilesetPanel.redraw(tileset);
-    screenDisplay.render();
+    history.executeCommand('Change tiles FG color', function() {
+        let tileset = globals.getCurrentTilesetPanel();
+        screenGrid.getCurrentRoom().colors[2] = ev.target.value;
+        tilesetPanel.redraw(tileset);
+        screenDisplay.render();
+    });
 });
 
 document.getElementById('bgColor').addEventListener('change', function(ev) {
-    screenGrid.getCurrentRoom().colors[0] = ev.target.value;
-    let tsets = globals.getTilesetPanels();
-    for (var tset in tsets)
-        tilesetPanel.redraw(tsets[tset]);
-    screenDisplay.render();
+    history.executeCommand('Change background color', function() {
+        screenGrid.getCurrentRoom().colors[0] = ev.target.value;
+        let tsets = globals.getTilesetPanels();
+        for (var tset in tsets)
+            tilesetPanel.redraw(tsets[tset]);
+        screenDisplay.render();
+    });
 });
 
 document.getElementById('hazardsColor').addEventListener('change', function(ev) {
-    screenGrid.getCurrentRoom().colors[3] = ev.target.value;
+    history.executeCommand('Change hazards color', function() {
+        screenGrid.getCurrentRoom().colors[3] = ev.target.value;
+    });
     // No need to redraw (yet)
     /*let tsets = globals.getTilesetPanels();
     for (var tset in tsets)
@@ -130,12 +139,14 @@ $('.btn-size-add').on('click', function(e) {
         delta = globals.baseRows;
     
     if (screenGrid.canResizeCurrent(delta, dir)) {
-        screenDisplay.resize(delta, dir);
-        if (dir == "left")
-            screenGrid.getCurrentRoom().gridX -= 1;
-        else if (dir == "top")
-            screenGrid.getCurrentRoom().gridY -= 1;
-        screenGrid.refreshCurrentRoomSize();
+        history.executeCommand('Increase room size', function() {
+            screenDisplay.resize(delta, dir);
+            if (dir == "left")
+                screenGrid.getCurrentRoom().gridX -= 1;
+            else if (dir == "top")
+                screenGrid.getCurrentRoom().gridY -= 1;
+            screenGrid.refreshCurrentRoomSize();
+        });
     } else {
         alert("There's already a room there! Size increase forbidden!");
     }
@@ -151,19 +162,23 @@ $('.btn-size-remove').on('click', function(e) {
 
     if (dir == "right" || dir == "left") {
         if (currentRoom.columns > globals.baseColumns) {
-            screenDisplay.resize(-globals.baseColumns, dir);
-            if (dir == "left") {
-                currentRoom.gridX += 1;
-            }
-            screenGrid.refreshCurrentRoomSize();
+            history.executeCommand('Decrease room size horizontally', function() {
+                screenDisplay.resize(-globals.baseColumns, dir);
+                if (dir == "left") {
+                    currentRoom.gridX += 1;
+                }
+                screenGrid.refreshCurrentRoomSize();
+            });
         }
     } else if (dir == "top" || dir == "bottom") {
         if (currentRoom.rows > globals.baseRows) {
-            screenDisplay.resize(-globals.baseRows, dir);
-            if (dir == "top") {
-                currentRoom.gridY += 1;
-            }
-            screenGrid.refreshCurrentRoomSize();
+            history.executeCommand('Decrease room size vertically', function() {
+                screenDisplay.resize(-globals.baseRows, dir);
+                if (dir == "top") {
+                    currentRoom.gridY += 1;
+                }
+                screenGrid.refreshCurrentRoomSize();
+            });
         }
     }
 });
@@ -198,22 +213,42 @@ mousetrap.bind(['ctrl+left', 'ctrl+right', 'ctrl+up', 'ctrl+down'], function (e,
 
 mousetrap.bind('ctrl+n', function(e, combo) {
     if (!screenGrid.getCurrentRoom()) {
-        let cursor = screenGrid.getCursor();
-        let room = screenGrid.addRoom(cursor.x, cursor.y);
-        // Set colors to current ones
-        room.colors = [$('#bgColor').val(), $('#fgColor-bg').val(), $('#fgColor-fg').val(), $('#hazardsColor').val()];
-        refreshColorInputs();
-        tilesetPanel.refreshColors();
-        screenDisplay.loadCurrentRoom();    
-        screenGrid.redraw();
+        history.executeCommand("Create room", function() {
+            let cursor = screenGrid.getCursor();
+            let room = screenGrid.addRoom(cursor.x, cursor.y);
+            // Set colors to current ones
+            room.colors = [$('#bgColor').val(), $('#fgColor-bg').val(), $('#fgColor-fg').val(), $('#hazardsColor').val()];
+            refreshColorInputs();
+            tilesetPanel.refreshColors();
+            screenDisplay.loadCurrentRoom();
+            screenGrid.redraw();
+        });
     }
 });
 
 mousetrap.bind('ctrl+x', function(e, combo) {
     if (screenGrid.getCurrentRoom()) {
-        screenGrid.removeCurrentRoom();
-        screenDisplay.loadCurrentRoom();    
+        history.executeCommand("Delete room", function() {
+            screenGrid.removeCurrentRoom();
+            screenDisplay.loadCurrentRoom();    
+            screenGrid.redraw();
+        });
+    }
+});
+
+mousetrap.bind('ctrl+z', function(e, combo) {    
+    if (history.undo()) {
         screenGrid.redraw();
+        screenDisplay.loadCurrentRoom();
+        screenGrid.refreshCurrentRoomSize();
+    }
+});
+
+mousetrap.bind('ctrl+y', function (e, combo) {
+    if (history.redo()) {
+        screenGrid.redraw();
+        screenDisplay.loadCurrentRoom();
+        screenGrid.refreshCurrentRoomSize();
     }
 });
 

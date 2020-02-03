@@ -1,5 +1,6 @@
 const globals = require('./globals.js');
 const data = require('./data.js');
+const history = require('./history.js');
 const roomGrid = require('./screenGrid.js');
 const mousetrap = require('mousetrap');
 
@@ -94,8 +95,11 @@ function handleMapClick(event, mapTileX, mapTileY, room, zoom) {
     
     let overActor = getActorAt(mapTileX, mapTileY, room);
     if (overActor == null) {
-        if (selectedDbEntry && canCreateEntry(selectedDbEntry, mapTileX, mapTileY))
-            room.actors.push(createActor(mapTileX, mapTileY, selectedDbEntry));
+        if (selectedDbEntry && canCreateEntry(selectedDbEntry, mapTileX, mapTileY)) {
+            history.executeCommand("Put actor", function() {
+                room.actors.push(createActor(mapTileX, mapTileY, selectedDbEntry));
+            });
+        }
     } else {
         // Select actor!
         selectedActor = overActor;
@@ -183,11 +187,13 @@ function createActor(mapX, mapY, type) {
 
 function deleteCurrentActor() {
     if (selectedActor != null) {
-        let room = roomGrid.getCurrentRoom();
-        room.actors.splice(room.actors.indexOf(selectedActor), 1);
-        selectedActor = null;
-        rebuildActorsList(room);
-        triggerRoomRender();
+        history.executeCommand('Delete actor', function() {
+            let room = roomGrid.getCurrentRoom();
+            room.actors.splice(room.actors.indexOf(selectedActor), 1);
+            selectedActor = null;
+            rebuildActorsList(room);
+            triggerRoomRender();
+        });
     }
 }
 

@@ -101,6 +101,15 @@ function getCurrentRoom() {
     return getRoom(current.x, current.y);
 }
 
+/*function getCurrentRoomStamp() {
+    return JSON.parse(JSON.stringify(getCurrentRoom()));
+}
+
+function loadCurrentRoom(roomData) {
+    data.getMap().rooms[getId(current.x, current.y)] = roomData;
+    redraw();
+}*/
+
 function getCursor() {
     return current;
 }
