@@ -10,6 +10,7 @@ const solidsPanel = require('./js/solids.js');
 const actors = require('./js/actors.js');
 const filemanager = require('./js/filemanager.js');
 const history = require('./js/history.js');
+const palette = require('./js/palette.js');
 
 document.addEventListener('contextmenu', event => event.preventDefault());
 
@@ -65,13 +66,19 @@ document.getElementById('fgColor-fg').addEventListener('change', function(ev) {
     });
 });
 
-document.getElementById('bgColor').addEventListener('change', function(ev) {
+/*document.getElementById('bgColor').addEventListener('change', function(ev) {
     history.executeCommand('Change background color', function() {
         screenGrid.getCurrentRoom().colors[0] = ev.target.value;
         let tsets = globals.getTilesetPanels();
         for (var tset in tsets)
             tilesetPanel.redraw(tsets[tset]);
         screenDisplay.render();
+    });
+});*/
+
+$('#bgColor-picker').on('click', function() {
+    palette.showPicker(function(color) {
+        alert("CHOSE " + color);
     });
 });
 
