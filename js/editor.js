@@ -47,38 +47,45 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         screenDisplay.render();
 });
 
-// Colors
-document.getElementById('fgColor-bg').addEventListener('change', function(ev) {
-    history.executeCommand('Change tiles BG color', function() {
-        let tileset = globals.getCurrentTilesetPanel();
-        screenGrid.getCurrentRoom().colors[1] = ev.target.value;
-        tilesetPanel.redraw(tileset);
-        screenDisplay.render();
+/* Color pickers */
+$('#fgColor-bg-picker').on('click', function() {
+    palette.showPicker(screenGrid.getCurrentRoom().colors[1], function(color) {
+        history.executeCommand('Change tiles FG color', function() {
+            $('#fgColor-bg-picker').css("background-color", color);
+
+            let tileset = globals.getCurrentTilesetPanel();
+            screenGrid.getCurrentRoom().colors[1] = color;
+            tilesetPanel.redraw(tileset);
+            screenDisplay.render();
+        });
     });
 });
 
-document.getElementById('fgColor-fg').addEventListener('change', function(ev) {
-    history.executeCommand('Change tiles FG color', function() {
-        let tileset = globals.getCurrentTilesetPanel();
-        screenGrid.getCurrentRoom().colors[2] = ev.target.value;
-        tilesetPanel.redraw(tileset);
-        screenDisplay.render();
+$('#fgColor-fg-picker').on('click', function() {
+    palette.showPicker(screenGrid.getCurrentRoom().colors[2], function(color) {
+        history.executeCommand('Change tiles FG color', function() {
+            $('#fgColor-fg-picker').css("background-color", color);
+
+            let tileset = globals.getCurrentTilesetPanel();
+            screenGrid.getCurrentRoom().colors[2] = color;
+            tilesetPanel.redraw(tileset);
+            screenDisplay.render();
+        });
     });
 });
-
-/*document.getElementById('bgColor').addEventListener('change', function(ev) {
-    history.executeCommand('Change background color', function() {
-        screenGrid.getCurrentRoom().colors[0] = ev.target.value;
-        let tsets = globals.getTilesetPanels();
-        for (var tset in tsets)
-            tilesetPanel.redraw(tsets[tset]);
-        screenDisplay.render();
-    });
-});*/
 
 $('#bgColor-picker').on('click', function() {
-    palette.showPicker(function(color) {
-        alert("CHOSE " + color);
+    palette.showPicker(screenGrid.getCurrentRoom().colors[0], function(color) {
+        history.executeCommand('Change tiles FG color', function() {
+            screenGrid.getCurrentRoom().colors[0] = color;
+
+            $('#bgColor-picker').css("background-color", color);
+
+            let tsets = globals.getTilesetPanels();
+            for (var tset in tsets)
+                tilesetPanel.redraw(tsets[tset]);
+            screenDisplay.render();
+        });
     });
 });
 
@@ -103,9 +110,10 @@ $('#btn-toggle-solids').on('click', function(e) {
 function refreshColorInputs() {
     let room = screenGrid.getCurrentRoom();
     if (room != null) {
-        document.getElementById('bgColor').value = room.colors[0];
-        document.getElementById('fgColor-bg').value = room.colors[1];
-        document.getElementById('fgColor-fg').value = room.colors[2];
+        $('#bgColor-picker').css("background-color", room.colors[0]);
+        $('#fgColor-bg-picker').css("background-color", room.colors[1]);
+        $('#fgColor-fg-picker').css("background-color", room.colors[2]);
+
         if (room.colors[3] == null || room.colors[3] == undefined)
             room.colors[3] = "#ffffff";
         document.getElementById('hazardsColor').value = room.colors[3];
@@ -132,9 +140,37 @@ $('#btn-save').on('click', function(e) {
 
     var map = data.getMap();
     screenGrid.recomputeGridPositionForEachRoom(map);
+    // Handle color formats
+    handleColorFormats(map);
     // filemanager.save(map.id + ".json", map);
     filemanager.save("map.json", map);
 });
+
+/**
+ * Fixes the room color formats to avoid rgb(), and use hex instead
+ * @param {MapData} map 
+ */
+function handleColorFormats(map) {
+    let matcher = /^rgb\(([0-9]+), ?([0-9]+), ?([0-9]+)\)/i;
+    let members = null;
+    for (room of map.rooms) {
+        for (i in room.colors) {
+            if (room.colors[i].startsWith("rgb")) {
+                members = matcher.exec(room.colors[i]);
+                room.colors[i] = rgbToHex(members[1], members[2], members[3]);
+            }
+        }
+    }
+}
+
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+ 
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
 
 $('.btn-size-add').on('click', function(e) {
     let id = e.target.id;
@@ -224,7 +260,11 @@ mousetrap.bind('ctrl+n', function(e, combo) {
             let cursor = screenGrid.getCursor();
             let room = screenGrid.addRoom(cursor.x, cursor.y);
             // Set colors to current ones
-            room.colors = [$('#bgColor').val(), $('#fgColor-bg').val(), $('#fgColor-fg').val(), $('#hazardsColor').val()];
+            room.colors = [$('#bgColor-picker').css("background-color"), 
+                            $('#fgColor-bg-picker').css("background-color"), 
+                            $('#fgColor-fg-picker').css("background-color"),
+                            $('#hazardsColor').val()];
+
             refreshColorInputs();
             tilesetPanel.refreshColors();
             screenDisplay.loadCurrentRoom();

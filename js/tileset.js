@@ -184,9 +184,9 @@ function getTintedCanvas(tilesetPanel) {
 
 function refreshColors(avoidRedraw) {
     if (room()) {
-        room().colors[2] = document.getElementById('fgColor-fg').value;
-        room().colors[1] = document.getElementById('fgColor-bg').value;
-        room().colors[0] = document.getElementById('bgColor').value;
+        room().colors[2] = $('#fgColor-fg-picker').css("background-color");
+        room().colors[1] = $('#fgColor-bg-picker').css("background-color");
+        room().colors[0] = $('#bgColor-picker').css("background-color");
         room().colors[3] = document.getElementById('hazardsColor').value;
 
         if (!avoidRedraw) {

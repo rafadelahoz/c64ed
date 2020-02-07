@@ -18,6 +18,13 @@ var lightgreen  = ["#004202", "#086222", "#278242", "#47a262", "#67c282", "#87e2
 
 let palette = allColors();
 
+
+let paletteColorsHorizontal = 8;
+let paletteColorsVertical = 16;
+
+let colorCellWidth = 0;
+let colorCellHeight = 0;
+
 let chosenColor = '#000000';
 
 function allColors() {
@@ -38,65 +45,90 @@ function allColors() {
  * which invokes the provided callback when closed
  * @param {function(color)} callback 
  */
-function showPicker(callback) {
-    let title = "COLOR PICKER";
+function showPicker(originalColor, callback) {
     
-    let body = $('#palette-div');
-    if (body.length <= 0) {
-        body = "<div id='palette-div'>" + 
-                    "<canvas id='palette-canvas' width='300' height='300'></canvas>" +
-                    "<span id='chosen-color'></span>" +
-               "</div>";
-    }
+        let title = "COLOR PICKER";
 
-    buildModal(title, body, function() {
-        callback(chosenColor)
-    });
-
-    // body = $('.sidebar-header').append(body);
-
-    setTimeout(function() {
-        let canvas = $("#palette-canvas")[0];
-        
-        canvas.width = $('#palette-canvas').parent().width();
-
-        let context = canvas.getContext('2d');
-        context.imageSmoothingEnabled = false;
-
-        let w = 8;
-        let h = 16;
-
-        let cw = Math.floor(canvas.width / w);
-        let ch = Math.floor(canvas.height / h);
-
-        for (let y = 0; y < h; y++) {
-            for (let x = 0; x < w; x++) {
-                // context.beginPath();
-                context.fillStyle = palette[x + y * w];
-                context.fillRect(x * cw, y * ch, cw, ch);
-                context.fill();
-                // context.stroke();
-            }
+        let body = $('#palette-div');
+        if (body.length <= 0) {
+            body = "<div id='palette-div'>" + 
+                        "<canvas id='palette-canvas' width='300' height='300'></canvas>" +
+                        "<span id='chosen-color'></span>" +
+                "</div>";
         }
 
-        canvas.addEventListener('mouseup', onPaletteMouseUp);
-    }, 500);
+        buildModal(title, body, function() {
+            callback(chosenColor)
+        });
+
+        setTimeout(function() {
+            let canvas = $("#palette-canvas")[0];
+            
+            canvas.width = $('#palette-canvas').parent().width();
+
+            let context = canvas.getContext('2d');
+            context.imageSmoothingEnabled = false;
+
+            colorCellWidth = Math.floor(canvas.width / paletteColorsHorizontal);
+            colorCellHeight = Math.floor(canvas.height / paletteColorsVertical);
+
+            for (let y = 0; y < paletteColorsVertical; y++) {
+                for (let x = 0; x < paletteColorsHorizontal; x++) {
+                    context.fillStyle = palette[x + y * paletteColorsHorizontal];
+                    context.fillRect(x * colorCellWidth, y * colorCellHeight, colorCellWidth, colorCellHeight);
+                    context.fill();
+                }
+            }
+
+            canvas.addEventListener('mousedown', onPaletteMouseDown);
+            canvas.addEventListener('mousemove', onPaletteMouseMove);
+            canvas.addEventListener('mouseup', onPaletteMouseUp);
+            canvas.addEventListener('mouseleave', onPaletteMouseLeave);
+
+            if (originalColor) {
+                chosenColor = originalColor;
+                $('#chosen-color').css('background', chosenColor).text(chosenColor);
+            }
+        }, 500);
+}
+
+let pressed = false;
+
+function onPaletteMouseDown(e) {
+    pressed = true;
+    pickColor(e);
+}
+
+function onPaletteMouseMove(e) {
+    if (pressed) {
+        pickColor(e);
+    }
 }
 
 function onPaletteMouseUp(e) {
+    if (pressed) {
+        pressed = false;
+
+        pickColor(e);
+
+        console.log("UP!");
+        console.log($('#btn-modal-save'));
+        $('#btn-modal-save').trigger('click');
+    }
+}
+
+function onPaletteMouseLeave(e) {
+    pressed = false;
+}
+
+function pickColor(e) {
     let canvas = $('#palette-canvas')[0];
     let x = e.clientX - canvas.getClientRects()[0].x;
     let y = e.clientY - canvas.getClientRects()[0].y;
     
-    let w = 8;
-    let h = 16;
-
-    let cw = Math.floor(canvas.width / w);
-    let ch = Math.floor(canvas.height / h);
-
-    let cx = Math.floor(x / cw);
-    let cy = Math.floor(y / ch);
-    let targetColor = cy * 8 + cx;
+    let cx = Math.floor(x / colorCellWidth);
+    let cy = Math.floor(y / colorCellHeight);
+    let targetColor = cy * paletteColorsHorizontal + cx;
 
     chosenColor = palette[targetColor]; 
     
@@ -162,7 +194,7 @@ function buildModal(title, body, saveCallback, cancelCallback) {
     // Destroy on close
     $modal.on('hidden.bs.modal', function (event) {
         $modal.modal('dispose');
-        currentModal = null;
+        $modal.parent()[0].removeChild($modal[0]);        
     });
 
     return $modal;

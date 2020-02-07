@@ -348,6 +348,7 @@ function buildModal(title, body, saveCallback, cancelCallback) {
     // Destroy on close
     $modal.on('hidden.bs.modal', function (event) {
         $modal.modal('dispose');
+        $modal.parent()[0].removeChild($modal[0]);
         currentModal = null;
     });
 

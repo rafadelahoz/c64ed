@@ -19,9 +19,8 @@
         <label for="map-name">Name</label>
         <input type="text" id="map-name"><br/>
 
-        <label for="bgColor">BG</label>
-        <input id="bgColor" type="color" list="c64-colors" value="#ffffff">
-        <button id="bgColor-picker">PICKER</button>
+        <label for="bgColor-picker">BG</label>
+        <button id="bgColor-picker" style="background: #fff;">PICKER</button>
 
         <ul class="nav nav-tabs" id="sidebarTab" role="tablist">
           <li class="nav-item">
@@ -43,19 +42,15 @@
               <p>BG Tiles</p>
               <canvas id="tileset-bg" width='600' height='600'></canvas>
               <div id="secret"></div>
-              <label for="fgColor-bg">Color</label>
-              <input id="fgColor-bg" type="color" list="c64-colors" value="#000000">
-
-              <!-- palette conversor leftovers -->
-              <!--<textarea id="palette"></textarea>
-              <button id="btnPalette">GOGOGO</button>-->
+              <label for="fgColor-bg-picker">Color</label>
+              <button id="fgColor-bg-picker" style="background: #000;">PICKER</button>
           </div>
           <div class="tab-pane fade" id="tiles-fg" role="tabpanel" aria-labelledby="tiles-fg-tab">
               <p>FG Tile</p>
               <canvas id="tileset-fg" width='600' height='600'></canvas>
               <div id="secret"></div>
-              <label for="fgColor-fg">Color</label>
-              <input id="fgColor-fg" type="color" list="c64-colors" value="#666666">
+              <label for="fgColor-fg-picker">Color</label>
+              <button id="fgColor-fg-picker" style="background: #666;">PICKER</button>
           </div>
           <div class="tab-pane fade" id="solids" role="tabpanel" aria-labelledby="solids-tab">
             <p>Solids</p>
