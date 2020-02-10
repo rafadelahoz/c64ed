@@ -24,6 +24,21 @@ let roomClipboard = {
     actors: []
 }
 
+let copyLayers = {
+    // bg: true,
+    tbg: true,
+    tfg: true,
+    sol: true,
+    col: true,
+    act: true
+}
+
+function checkLayers() {
+    for (layer in copyLayers) {
+        copyLayers[layer] = $('#toggle-clipboard-' + layer).hasClass("active");
+    }
+}
+
 /**
  * Copies current room data into the clipboard
  * @param {Room data} sourceRoom 
@@ -90,14 +105,17 @@ function pasteRoom() {
     if (!room || !cursor || !roomClipboard.hasData)
         return;
 
-    // Copy colors
-    // TODO: Only if required
-    room.colors = [];
-    for (color of roomClipboard.colors) {
-        room.colors.push(color);
+    checkLayers();
+
+    // Paste colors
+    if (copyLayers.col) {
+        room.colors = [];
+        for (color of roomClipboard.colors) {
+            room.colors.push(color);
+        }
     }
 
-    // Copy tiles, only for the cursor!
+    // Paste tiles, only for the cursor!
     let screenX = (cursor.x - room.gridX);
     let screenY = (cursor.y - room.gridY);
     let startTileX = screenX * globals.baseColumns;
@@ -106,30 +124,39 @@ function pasteRoom() {
     let rows = globals.baseRows;
 
     // Background tiles
-    for (let col = 0; col < columns; col++) {
-        for (let row = 0; row < rows; row++) {
-            set(room.tiles["bg"], room.columns, startTileX + col, startTileY + row, 
-                get(roomClipboard.tiles["bg"], columns, col, row));
+    if (copyLayers.tbg) {
+        for (let col = 0; col < columns; col++) {
+            for (let row = 0; row < rows; row++) {
+                set(room.tiles["bg"], room.columns, startTileX + col, startTileY + row, 
+                    get(roomClipboard.tiles["bg"], columns, col, row));
+            }
         }
     }
 
     // Foreground tiles
-    for (let col = 0; col < columns; col++) {
-        for (let row = 0; row < rows; row++) {
-            set(room.tiles["fg"], room.columns, startTileX + col, startTileY + row, 
-                get(roomClipboard.tiles["fg"], columns, col, row));
+    if (copyLayers.tfg) {
+        for (let col = 0; col < columns; col++) {
+            for (let row = 0; row < rows; row++) {
+                set(room.tiles["fg"], room.columns, startTileX + col, startTileY + row, 
+                    get(roomClipboard.tiles["fg"], columns, col, row));
+            }
         }
     }
 
     // Solids
-    for (let col = 0; col < columns; col++) {
-        for (let row = 0; row < rows; row++) {
-            set(room.solids, room.columns, startTileX + col, startTileY + row, 
-                get(roomClipboard.solids, columns, col, row));            
+    if (copyLayers.sol) {
+        for (let col = 0; col < columns; col++) {
+            for (let row = 0; row < rows; row++) {
+                set(room.solids, room.columns, startTileX + col, startTileY + row, 
+                    get(roomClipboard.solids, columns, col, row));            
+            }
         }
     }
 
-    // TODO: Actors
+    // Actors
+    if (copyLayers.act) {
+        // TODO: restore actors
+    }
 }
 
 function get(array, columns, column, row) {

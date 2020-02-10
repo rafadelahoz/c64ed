@@ -108,21 +108,30 @@ $('#btn-toggle-solids').on('click', function(e) {
     e.target.textContent = (globals.getRenderSolids() ? "" : "!") + "Solids";
 });
 
-$('#btn-clipboard-copy').on('click', function(e) {
-    clipboard.copyRoom();
-});
+$('#btn-clipboard-copy').on('click', copyRoom);
+$('#btn-clipboard-paste').on('click', pasteRoom);
+mousetrap.bind('ctrl+c', copyRoom);
+mousetrap.bind('ctrl+v', pasteRoom);
 
-$('#btn-clipboard-paste').on('click', function(e) {
+function copyRoom(e) {
+    clipboard.copyRoom();
+}
+
+function pasteRoom(e) {
+    // Paste!
     clipboard.pasteRoom();
-    // TODO: Update color displays
     
+    // Update color displays
+    refreshColorInputs();
+
     // Update tileset panels colors
     let tsets = globals.getTilesetPanels();
         for (var tset in tsets)
             tilesetPanel.redraw(tsets[tset]);
+    
     // Redraw the screen with the new colors + data
     screenDisplay.render();
-});
+}
 
 function refreshColorInputs() {
     let room = screenGrid.getCurrentRoom();
@@ -168,25 +177,13 @@ $('#btn-save').on('click', function(e) {
  * @param {MapData} map 
  */
 function handleColorFormats(map) {
-    let matcher = /^rgb\(([0-9]+), ?([0-9]+), ?([0-9]+)\)/i;
-    let members = null;
     for (room of map.rooms) {
-        for (i in room.colors) {
-            if (room.colors[i].startsWith("rgb")) {
-                members = matcher.exec(room.colors[i]);
-                room.colors[i] = rgbToHex(members[1], members[2], members[3]);
+        if (room) {
+            for (i in room.colors) {
+                room.colors[i] = palette.hex(room.colors[i]);
             }
         }
     }
-}
-
-function rgbToHex(r, g, b) {
-    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-}
- 
-function componentToHex(c) {
-    var hex = c.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
 }
 
 $('.btn-size-add').on('click', function(e) {

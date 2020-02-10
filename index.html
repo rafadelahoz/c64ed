@@ -19,8 +19,9 @@
         <label for="map-name">Name</label>
         <input type="text" id="map-name"><br/>
 
-        <label for="bgColor-picker">BG</label>
-        <button id="bgColor-picker" style="background: #fff;">PICKER</button>
+        <button id="bgColor-picker" style="background: #fff; mix-blend-mode: difference;">BG</button>
+        <button id="fgColor-bg-picker" style="background: #000; mix-blend-mode: difference;">TBG</button>
+        <button id="fgColor-fg-picker" style="background: #666; mix-blend-mode: difference;">FG</button>
 
         <ul class="nav nav-tabs" id="sidebarTab" role="tablist">
           <li class="nav-item">
@@ -42,15 +43,11 @@
               <p>BG Tiles</p>
               <canvas id="tileset-bg" width='600' height='600'></canvas>
               <div id="secret"></div>
-              <label for="fgColor-bg-picker">Color</label>
-              <button id="fgColor-bg-picker" style="background: #000;">PICKER</button>
           </div>
           <div class="tab-pane fade" id="tiles-fg" role="tabpanel" aria-labelledby="tiles-fg-tab">
               <p>FG Tile</p>
               <canvas id="tileset-fg" width='600' height='600'></canvas>
               <div id="secret"></div>
-              <label for="fgColor-fg-picker">Color</label>
-              <button id="fgColor-fg-picker" style="background: #666;">PICKER</button>
           </div>
           <div class="tab-pane fade" id="solids" role="tabpanel" aria-labelledby="solids-tab">
             <p>Solids</p>
@@ -69,17 +66,17 @@
         </div>
     </nav>
     <div class="container">
-      <div class="btn-group" role="group" aria-label="Zoom buttons">
+      <div class="btn-group btn-group-sm" role="group" aria-label="Zoom buttons">
         <button type="button" class="btn btn-secondary btn-zoom" id="btn-zoom-1">1x</button>
         <button type="button" class="btn btn-secondary btn-zoom" id="btn-zoom-2">2x</button>
         <button type="button" class="btn btn-secondary btn-zoom" id="btn-zoom-3">3x</button>
         <button type="button" class="btn btn-secondary btn-zoom" id="btn-zoom-4">4x</button>
       </div>
-      <div class="btn-group" role="group" aria-label="Solid button">
+      <div class="btn-group btn-group-sm" role="group" aria-label="Solid button">
         <button type="button" class="btn btn-secondary" id="btn-toggle-solids">Solids</button>
       </div>
 
-      <div class="btn-group" role="group" aria-label="Solid button">
+      <div class="btn-group btn-group-sm" role="group" aria-label="Solid button">
         <label for="room-name">Room name</label>
         <input type="text" id="room-name">
 
@@ -87,9 +84,20 @@
         <input id="hazardsColor" type="color" list="c64-colors" value="#898989">
       </div>
 
-      <div class="btn-group" role="group" aria-label="Clipboard">
+      <div class="btn-group btn-group-sm" role="group" aria-label="Clipboard">
         <button type="button" class="btn btn-secondary" id="btn-clipboard-copy">⤴</button>
         <button type="button" class="btn btn-secondary" id="btn-clipboard-paste">⤵</button>
+
+        <!--<button type="button" class="btn btn-info active" id="toggle-clipboard-bg" data-toggle="button" aria-pressed="true">BG</button>-->
+        <button type="button" class="btn btn-info active" id="toggle-clipboard-tbg" data-toggle="button" aria-pressed="true">TBG</button>
+        <button type="button" class="btn btn-info active" id="toggle-clipboard-tfg" data-toggle="button" aria-pressed="true">TFG</button>
+        <button type="button" class="btn btn-info active" id="toggle-clipboard-sol" data-toggle="button" aria-pressed="true">SOL</button>
+        <button type="button" class="btn btn-info active" id="toggle-clipboard-col" data-toggle="button" aria-pressed="true">COL</button>
+        <button type="button" class="btn btn-info active" id="toggle-clipboard-act" data-toggle="button" aria-pressed="true">ACT</button>
+      </div>
+
+      <div class="btn-group-sm">
+          
       </div>
 
       <hr/>

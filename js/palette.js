@@ -1,3 +1,4 @@
+const screenGrid = require('./screenGrid.js');
 
 var black       = ['#000000', '#000000', '#000000', '#000000', '#000000', '#000000', '#000000', '#000000'];
 var white       = ['#202020', '#404040', '#606060', '#808080', '#9f9f9f', '#bfbfbf', '#dfdfdf', '#ffffff'];
@@ -62,6 +63,8 @@ function showPicker(originalColor, callback) {
         });
 
         setTimeout(function() {
+            let room = screenGrid.getCurrentRoom();
+
             let canvas = $("#palette-canvas")[0];
             
             canvas.width = $('#palette-canvas').parent().width();
@@ -77,6 +80,33 @@ function showPicker(originalColor, callback) {
                     context.fillStyle = palette[x + y * paletteColorsHorizontal];
                     context.fillRect(x * colorCellWidth, y * colorCellHeight, colorCellWidth, colorCellHeight);
                     context.fill();
+
+                    if (hex(room.colors[0]) == hex(palette[x + y * paletteColorsHorizontal])) {
+                        context.fillStyle = '#111111';
+                        context.strokeStyle = 'red';
+                        context.fillText("BG", x * colorCellWidth + colorCellWidth / 2, y * colorCellHeight + colorCellHeight / 2);
+                        context.strokeText("BG", x * colorCellWidth + colorCellWidth / 2, y * colorCellHeight + colorCellHeight / 2);
+                        context.fill();
+                        context.stroke();
+                    } 
+                    
+                    if (hex(room.colors[1]) == hex(palette[x + y * paletteColorsHorizontal])) {
+                        context.fillStyle = '#111111';
+                        context.strokeStyle = 'red';
+                        context.fillText("TBG", x * colorCellWidth + colorCellWidth / 2, y * colorCellHeight + colorCellHeight / 2);
+                        context.strokeText("TBG", x * colorCellWidth + colorCellWidth / 2, y * colorCellHeight + colorCellHeight / 2);
+                        context.fill();
+                        context.stroke();
+                    }
+
+                    if (hex(room.colors[2]) == hex(palette[x + y * paletteColorsHorizontal])) {
+                        context.fillStyle = '#111111';
+                        context.strokeStyle = 'red';
+                        context.fillText("TFG", x * colorCellWidth + colorCellWidth / 2, y * colorCellHeight + colorCellHeight / 2);
+                        context.strokeText("TFG", x * colorCellWidth + colorCellWidth / 2, y * colorCellHeight + colorCellHeight / 2);
+                        context.fill();
+                        context.stroke();
+                    } 
                 }
             }
 
@@ -200,7 +230,32 @@ function buildModal(title, body, saveCallback, cancelCallback) {
     return $modal;
 }
 
+let matcher = /^rgb\(([0-9]+), ?([0-9]+), ?([0-9]+)\)/i;
+function hex(value) {
+    if (!value)
+        return value;
+    
+    if (value.startsWith("rgb")) {
+        members = matcher.exec(value);
+        return rgbToHex(members[1], members[2], members[3]);
+    } else if (value.startsWith("#")) {
+        return value;
+    }
+
+    return value;
+}
+
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+ 
+function componentToHex(c) {
+    var hex = parseInt(c).toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
 module.exports = {
     palette: palette,
-    showPicker: showPicker
+    showPicker: showPicker,
+    hex: hex
 };
