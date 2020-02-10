@@ -11,6 +11,7 @@ const actors = require('./js/actors.js');
 const filemanager = require('./js/filemanager.js');
 const history = require('./js/history.js');
 const palette = require('./js/palette.js');
+const clipboard = require('./js/clipboard.js');
 
 document.addEventListener('contextmenu', event => event.preventDefault());
 
@@ -105,6 +106,22 @@ $('#btn-toggle-solids').on('click', function(e) {
     globals.switchRenderSolids();
     screenDisplay.render();
     e.target.textContent = (globals.getRenderSolids() ? "" : "!") + "Solids";
+});
+
+$('#btn-clipboard-copy').on('click', function(e) {
+    clipboard.copyRoom();
+});
+
+$('#btn-clipboard-paste').on('click', function(e) {
+    clipboard.pasteRoom();
+    // TODO: Update color displays
+    
+    // Update tileset panels colors
+    let tsets = globals.getTilesetPanels();
+        for (var tset in tsets)
+            tilesetPanel.redraw(tsets[tset]);
+    // Redraw the screen with the new colors + data
+    screenDisplay.render();
 });
 
 function refreshColorInputs() {
