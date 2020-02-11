@@ -17,6 +17,17 @@
         }
     },
 
+    "teleport": {
+        "label": "Teleport",
+        "w": 1,
+        "h": 1,
+        "properties":{
+            "target": "(room id)",
+            "tileX": 5,
+            "tileY": 10
+        }
+    },
+
     "spikes": {
         "label": "Spikes",
         "w": 1,
@@ -29,32 +40,30 @@
         "h": 1
     },
 
+    "door": {
+        "label": "Door",
+        "w": 1,
+        "h": 2,
+        "properties": {
+            "color": ["NONE", "CHERRY", "LAPIS", "ROSE", "PEAR", "LILAC", "HONEY"]
+        }
+    },
+
+    "key": {
+        "label": "Key",
+        "w": 1,
+        "h": 1,
+        "properties": {
+            "flavour": ["NONE", "CHERRY", "LAPIS", "ROSE", "PEAR", "LILAC", "HONEY"]
+        }
+    },
+
     "item": {
         "label": "Item",
         "w": 1,
         "h": 1,
         "properties": {
             "type": ["STAR", "POTION", "KEY", "SHRIMP"]
-        }
-    },
-
-    "door": {
-        "label": "Door",
-        "w": 1,
-        "h": 2,
-        "properties": {
-            "color": ["A", "B", "C"]
-        }
-    },
-
-    "teleport": {
-        "label": "Teleport",
-        "w": 1,
-        "h": 1,
-        "properties":{
-            "target": "(room id)",
-            "tileX": 5,
-            "tileY": 10
         }
     }
 }
