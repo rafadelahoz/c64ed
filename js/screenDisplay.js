@@ -301,9 +301,15 @@ function onMapMouseClick(e) {
             }
             break;
         case "solids":
-            history.executeCommand("Put solid", function() {
-                setSolid(e);
-            });
+            if (currentTool == "draw")
+                history.executeCommand("Put solid", function() {
+                    setSolid(e);
+                });
+            else if (currentTool = "fill") {
+                history.executeCommand("Flood fill solids", function () {
+                    fillSolid(e);
+                });
+            }
             break;
         case "actors":
             let x = e.clientX - mapX();
@@ -435,18 +441,31 @@ function fillTile(e) {
         let tilesetPanel = globals.getTilesetPanel(globals.getCurrentLayer());
         // flood fill!
         let fillOverTile = get(room.tiles[globals.getCurrentLayer()], room.columns, mapTileX, mapTileY);
-        floodFill(mapTileX, mapTileY, fillOverTile, tileset.getCurrentTile(tilesetPanel))
+        floodFill(room.tiles[globals.getCurrentLayer()], room.columns, mapTileX, mapTileY, fillOverTile, tileset.getCurrentTile(tilesetPanel))
         renderFullMap();
     }
 }
 
-function floodFill(col, row, srcTile, newTile) {
+function fillSolid(e) {
+    let x = e.clientX - mapX();
+    let y = e.clientY - mapY();
+    if (y < mapHeight && x < mapWidth) { // target
+        let mapTileX = Math.floor(x / (globals.tileWidth * zoom));
+        let mapTileY = Math.floor(y / (globals.tileHeight * zoom));
+        // flood fill!
+        let fillOverTile = get(room.solids, room.columns, mapTileX, mapTileY);
+        floodFill(room.solids, room.columns, mapTileX, mapTileY, fillOverTile, solidsPanel.getCurrentSolid())
+        renderFullMap();
+    }
+}
+
+function floodFill(array, columns, col, row, srcTile, newTile) {
     if (col >= 0 && col < room.columns && row >= 0 && row < room.rows && newTile != srcTile) {
-        if (get(room.tiles[globals.getCurrentLayer()], room.columns, col, row) == srcTile) {
-            set(room.tiles[globals.getCurrentLayer()], room.columns, col, row, newTile);
+        if (get(array, columns, col, row) == srcTile) {
+            set(array, columns, col, row, newTile);
             let neighbours = [{x: col-1, y: row}, {x: col+1, y: row}, {x: col, y: row-1}, {x: col, y: row+1}];
             for (neighbour of neighbours) {
-                floodFill(neighbour.x, neighbour.y, srcTile, newTile);
+                floodFill(array, columns, neighbour.x, neighbour.y, srcTile, newTile);
             }
         }
     }
