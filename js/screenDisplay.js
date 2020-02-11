@@ -6,6 +6,7 @@ const tileset = require('./tileset.js');
 const solidsPanel = require('./solids.js');
 const actors = require('./actors.js');
 const history = require('./history.js');
+const mousetrap = require('mousetrap');
 
 var room;
 
@@ -53,6 +54,14 @@ function init() {
         $('.btn-tool').removeClass('btn-success');
         $('.btn-tool').addClass('btn-secondary');
         $('#btn-tool-fill').addClass('btn-success');
+    });
+
+    mousetrap.bind('a', function(e) {
+        $('#btn-tool-draw').trigger('click');
+    });
+
+    mousetrap.bind('s', function(e) {
+        $('#btn-tool-fill').trigger('click');
     });
 
     document.getElementById('redraw').addEventListener('click', function(ev) {
