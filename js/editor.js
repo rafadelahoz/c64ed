@@ -38,7 +38,22 @@ actors.init();
 $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     let newTabLayer = getTabLayer(e.target);
     let prevTabLayer = getTabLayer(e.relatedTarget);
-    
+    switchCurrentLayer(prevTabLayer, newTabLayer);
+});
+
+mousetrap.bind(['1', '2', '3', '4'], function(e, combo) {
+    let newTabNav = "";
+    switch (combo) {
+        case "1": newTabNav = "tiles-bg-tab"; break;
+        case "2": newTabNav = "tiles-fg-tab"; break;
+        case "3": newTabNav = "solids-tab"; break;
+        case "4": newTabNav = "actors-tab"; break;
+    }
+
+    $('.nav-tabs a[id="' + newTabNav + '"]').tab('show');
+});
+
+function switchCurrentLayer(prevTabLayer, newTabLayer) {
     if (newTabLayer == "fg" || newTabLayer == "bg" || newTabLayer == "solids" || newTabLayer == "actors")
         globals.setCurrentLayer(newTabLayer);
     else
@@ -46,7 +61,7 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 
     if (newTabLayer == "solids" || prevTabLayer == "solids")
         screenDisplay.render();
-});
+}
 
 /* Color pickers */
 $('#fgColor-bg-picker').on('click', function() {
@@ -118,19 +133,21 @@ function copyRoom(e) {
 }
 
 function pasteRoom(e) {
-    // Paste!
-    clipboard.pasteRoom();
-    
-    // Update color displays
-    refreshColorInputs();
+    history.executeCommand('Paste room data', function() {
+        // Paste!
+        clipboard.pasteRoom();
+        
+        // Update color displays
+        refreshColorInputs();
 
-    // Update tileset panels colors
-    let tsets = globals.getTilesetPanels();
-        for (var tset in tsets)
-            tilesetPanel.redraw(tsets[tset]);
-    
-    // Redraw the screen with the new colors + data
-    screenDisplay.render();
+        // Update tileset panels colors
+        let tsets = globals.getTilesetPanels();
+            for (var tset in tsets)
+                tilesetPanel.redraw(tsets[tset]);
+        
+        // Redraw the screen with the new colors + data
+        screenDisplay.render();
+    });
 }
 
 function refreshColorInputs() {
