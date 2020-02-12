@@ -398,10 +398,11 @@ function canCreateEntry(type, x, y) {
     if (type == "spawn") {
         // Only 1 spawn allowed
         for (room of data.getMap().rooms) {
-            for (actor of room.actors) {
-                if (actor.type == "spawn")
-                    return false;
-            }
+            if (room)
+                for (actor of room.actors) {
+                    if (actor.type == "spawn")
+                        return false;
+                }
         }
     }
 
