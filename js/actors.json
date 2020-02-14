@@ -24,7 +24,9 @@
         "properties":{
             "target": "(room id)",
             "tileX": 5,
-            "tileY": 10
+            "tileY": 10,
+            "visible": false,
+            "color": "#ffffff"
         }
     },
 
