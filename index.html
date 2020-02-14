@@ -13,7 +13,7 @@
   <div class="wrapper">
     <nav id="sidebar" class="side-panel">
         <div class="sidebar-header">
-            <h3>Sidebar</h3>
+            <h3>C64ED</h3>
         </div>
 
         <label for="map-name">Name</label>
@@ -34,7 +34,10 @@
             <a class="nav-link" id="solids-tab" data-toggle="tab" href="#solids" role="tab" aria-controls="solids" aria-selected="false">Solids</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" id="actors-tab" data-toggle="tab" href="#actors" role="tab" aria-controls="contact" aria-selected="false">Actors</a>
+            <a class="nav-link" id="actors-tab" data-toggle="tab" href="#actors" role="tab" aria-controls="actors" aria-selected="false">Actors</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="help-tab" data-toggle="tab" href="#help" role="tab" aria-controls="help" aria-selected="false">Help</a>
           </li>
         </ul>
 
@@ -62,6 +65,22 @@
             <p>Actors</p>
             <div id="actors-database-panel"></div>
             <div id="room-actors-panel"></div>
+          </div>
+          <div class="tab-pane" id="help" role="tabpanel" aria-labelledby="help-tab">
+            <h2>Help</h2>
+            <h3>Keyboard</h3>
+            <h4>Grid and rooms</h4>
+              <p><b>CTRL + arrows</b>: Move room cursor</p>
+              <p><b>CTRL + N</b>: Create room</p>
+              <p><b>CTRL + X</b>: Delete room</p>
+              <p><b>CTRL + C</b>: Copy current room</p>
+              <p><b>CTRL + V</b>: Paste room in cursor</p>
+              <p><b>CTRL + N</b>: Create room</p>
+            <h3>Quick concepts</h3>
+            <h4>Map, rooms, and screens</h4>
+            <p>A map is divided in rooms, which are built of screens. 
+              A room can be as small as 1 screen, or bigger.
+            </p>
           </div>
         </div>
     </nav>
