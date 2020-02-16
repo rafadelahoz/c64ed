@@ -13,8 +13,8 @@ body {
 }
 
 #sidebar {
-    min-width: 300px;
-    max-width: 300px;
+    min-width: 350px;
+    max-width: 350px;
     min-height: 90vh;
     max-height: 90vh;
 }
