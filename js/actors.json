@@ -67,5 +67,15 @@
         "properties": {
             "type": ["STAR", "POTION", "KEY", "SHRIMP"]
         }
+    },
+
+    "falling": {
+        "label": "Falling block",
+        "w": 1,
+        "h": 1,
+        "properties":{
+            "color": "#7869c4",
+            "oneway": false
+        }
     }
 }
