@@ -65,7 +65,7 @@
         "w": 1,
         "h": 1,
         "properties": {
-            "type": ["STAR", "POTION", "KEY", "SHRIMP"]
+            "type": "string"
         }
     },
 
@@ -76,6 +76,23 @@
         "properties":{
             "color": "#7869c4",
             "oneway": false
+        }
+    },
+
+    "enemy-plant": {
+        "label": "Enemy Plant",
+        "w": 1,
+        "h": 1,
+        "properties": {
+            "color": "#7869c4"
+        }
+    },
+
+    "enemy-skeleton": {
+        "label": "Enemy Skeleton",
+        "w": 1, "h": 1,
+        "properties": {
+            "type": ["NORMAL", "RED"]
         }
     }
 }

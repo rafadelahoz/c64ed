@@ -91,6 +91,13 @@ function handleActorRoomEntryCardDeleteClick(event) {
     deleteCurrentActor();
 }
 
+function handleActorRoomEntryCardSourceClick(event) {
+    // Set selected actor
+    handleActorRoomEntryCardClick(event);
+    // And edit its source!
+    editCurrentActorSource();
+}
+
 function handleMapClick(event, mapTileX, mapTileY, room, zoom) {
     
     let overActor = getActorAt(mapTileX, mapTileY, room);
@@ -127,6 +134,7 @@ function rebuildActorsList(room) {
     $('.actor-room-card').on('click', handleActorRoomEntryCardClick);
     $('.btn-actor-properties').on('click', handleActorRoomEntryCardPropertiesClick);
     $('.btn-actor-delete').on('click', handleActorRoomEntryCardDeleteClick);
+    $('.btn-actor-source').on('click', handleActorRoomEntryCardSourceClick);
 }
 
 function buildRoomActorCard(actor) {
@@ -137,6 +145,7 @@ function buildRoomActorCard(actor) {
             "<div>" + 
                 "<button type='button' class='btn btn-primary btn-actor-properties' id='btn-properties-" + actor.id + "'>properties</button>" + 
                 "<button type='button' class='btn btn-actor-delete' id='btn-delete-" + actor.id + "'>delete</button>" + 
+                "<button type='button' class='btn btn-actor-source' id='btn-source-" + actor.id + "'>source</button>" + 
             "</div>" + 
         "</div>";
 }
@@ -287,6 +296,34 @@ function buildPropertyCombobox(property, value, options) {
     element += '<br/>';
 
     return element;
+}
+
+function editCurrentActorSource() {
+    if (selectedActor && !currentModal) {
+
+        let title = selectedActor.type + " - " + selectedActor.id;
+        
+        // Build the form body considering actor properties
+        let body = $("<div/>");
+        
+        body.append('<textarea id="entity-source-textarea" class="form-control"></textarea>');
+        var tarea = body.find('#entity-source-textarea');
+        tarea.val(JSON.stringify(selectedActor, undefined, 2));
+
+        function saveSourceEdition() {
+            elem = body.find("#entity-source-textarea");
+            var actorData = JSON.parse(elem.val());
+            
+            deleteCurrentActor();
+            room.actors.push(actorData);
+            selectedActor = findActorById(actorData.id, room);
+            
+            rebuildActorsList(roomGrid.getCurrentRoom());
+            triggerRoomRender();
+        }
+        
+        currentModal = buildModal(title, body, saveSourceEdition);
+    }
 }
 
 function buildModal(title, body, saveCallback, cancelCallback) {
