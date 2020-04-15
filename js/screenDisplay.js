@@ -189,8 +189,13 @@ function pickTile(e) {
         let tileY = Math.floor(y / (globals.tileHeight*zoom));
         let targetTile = tileY * room.columns + tileX;
         
-        let tilesetPanel = globals.getCurrentTilesetPanel();
-        tileset.setCurrentTile(tilesetPanel, room.tiles[globals.getCurrentLayer()][targetTile]);
+        // let tilesetPanel = globals.getCurrentTilesetPanel();
+        // tileset.setCurrentTile(tilesetPanel, room.tiles[globals.getCurrentLayer()][targetTile]);
+        tileset.getTileCursor().x = 0;
+        tileset.getTileCursor().y = 0;
+        tileset.getTileCursor().w = 1;
+        tileset.getTileCursor().h = 1;
+        tileset.getTileCursor().tiles = [room.tiles[globals.getCurrentLayer()][targetTile]];
     }
 }
 
