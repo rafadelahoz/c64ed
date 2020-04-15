@@ -19,6 +19,9 @@ var mapContext;
 
 var mouseDown;
 
+var pressed = false;
+var dragging = false;
+
 var currentTool = "draw"; // fill
 
 function init() {
@@ -145,7 +148,13 @@ function onMapMouseUp(e) {
     switch (globals.getCurrentLayer()) {
         case "bg":
         case "fg":
-            // document.getElementById('result').innerHTML = "Current " + globals.getCurrentLayer().toUpperCase() + " tile: " + globalsº.getCurrentTilesetPanel().getCurrentTile();
+
+            pressed = false;
+            if (dragging) {
+                dragging = false;
+                // onDragEnd
+            }
+
             break;
         default: 
             document.getElementById('result').innerHTML = "Current layer: " + globals.getCurrentLayer();
@@ -173,6 +182,9 @@ function onMapMouseDown(e) {
 
 function handleTilesMouseDown(e) {
     mouseDown = false;
+
+    pressed = true;
+
     if (e.button == 0) {
         mouseDown = true;
     } else if (e.button == 2) {
@@ -231,11 +243,18 @@ function onMapMouseMove(e) {
     switch (globals.getCurrentLayer()) {
         case "bg":
         case "fg":
-            if (currentTool == "draw")
-                // Paint if painting
-                if (mouseDown) setTile(e);
-            else if (currentTool == "fill") {
-                // Nop!
+            if (e.button == 0) {
+                if (currentTool == "draw")
+                    // Paint if painting
+                    if (mouseDown) setTile(e);
+                else if (currentTool == "fill") {
+                    // Nop!
+                }
+            } else  if (button == 2) {
+                if (pressed && !dragging) {
+                    // onDragStart
+                    dragging = true;
+                }
             }
 
             break;
