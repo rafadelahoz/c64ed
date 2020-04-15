@@ -306,9 +306,14 @@ function editCurrentActorSource() {
         // Build the form body considering actor properties
         let body = $("<div/>");
         
-        body.append('<textarea id="entity-source-textarea" class="form-control"></textarea>');
+        let stringifiedActor = JSON.stringify(selectedActor, undefined, 2);
+        let lines = stringifiedActor.split('\n').length;
+
+        body.append('<textarea id="entity-source-textarea" class="form-control code" ' +
+                        'rows="' + Math.max(lines, 4) + '">' + 
+                    '"</textarea>');
         var tarea = body.find('#entity-source-textarea');
-        tarea.val(JSON.stringify(selectedActor, undefined, 2));
+        tarea.val(stringifiedActor);
 
         function saveSourceEdition() {
             elem = body.find("#entity-source-textarea");

@@ -91,3 +91,7 @@ canvas {
 #current-tile-position {
     font-family: monospace;
 }
+
+#entity-source-textarea {
+    font-family: monospace;
+}
