@@ -269,17 +269,23 @@ function renderCursor(e) {
     if (x > 0 && x < mapWidth && y > 0 && y < mapHeight) {
         let tileX = Math.floor(x / (globals.tileWidth*zoom))*globals.tileWidth*zoom;
         let tileY = Math.floor(y / (globals.tileHeight*zoom))*globals.tileWidth*zoom;
+
+        // Fetch the current tile cursor
+        let tileCursor = tileset.getTileCursor();
+        if (!tileCursor)
+            tileCursor = { x: -1, y: -1, w: 1, h: 1};
+
         // Outer cursor
         mapContext.beginPath();
         mapContext.lineWidth = 2;
         mapContext.strokeStyle = 'blue';
-        mapContext.rect(tileX, tileY, globals.tileWidth*zoom, globals.tileHeight*zoom);
+        mapContext.rect(tileX, tileY, tileCursor.w*globals.tileWidth*zoom, tileCursor.h*globals.tileHeight*zoom);
         mapContext.stroke();
         // Inner cursor
         mapContext.beginPath();
         mapContext.lineWidth = 1;
         mapContext.strokeStyle = 'white';
-        mapContext.rect(tileX+1, tileY+1, globals.tileWidth*zoom-1, globals.tileHeight*zoom-1);
+        mapContext.rect(tileX+1, tileY+1, tileCursor.w*globals.tileWidth*zoom-1, tileCursor.h*globals.tileHeight*zoom-1);
         mapContext.stroke();
     }
 }

@@ -43,6 +43,7 @@ function init(layer, readyCallback) {
  
     tilesetPanel.canvas.addEventListener('mousedown', onMouseDown);
     tilesetPanel.canvas.addEventListener('mousemove', onMouseMove);
+    tilesetPanel.canvas.addEventListener('mouseup', onMouseUp);
 
     // After loading image, do things
     tilesetPanel.image.addEventListener('load', function() {
@@ -63,6 +64,15 @@ function init(layer, readyCallback) {
     });
 
     return tilesetPanel;
+}
+
+var pressed = false;
+var dragging = false;
+
+var tcursor = {
+    x: 0, y: 0,
+    w: 0, h: 0,
+    tiles: []
 }
 
 function room() {
@@ -113,15 +123,61 @@ function onMouseMove(e) {
 
     redraw(that);
     
-    // Draw cursor
+    if (pressed && !dragging) {
+        // onDragstart
+        dragging = true;
+
+        let tileX = Math.floor(x / (globals.tileWidth*zoom));
+        let tileY = Math.floor(y / (globals.tileHeight*zoom));
+
+        tcursor.x = tileX;
+        tcursor.y = tileY;
+        tcursor.w = 1;
+        tcursor.h = 1;
+
+        refreshTileCursorData(that);
+        // tcursor.tiles = [getTileX()]
+    }
+    
+    if (pressed && dragging) {
+        $('bg-status').text((pressed ? 'P':'-') + " " + (dragging ? "D":"-"));
+
+        let endTileX = Math.floor(x / (globals.tileWidth*zoom));
+        let endTileY = Math.floor(y / (globals.tileHeight*zoom));
+
+        if (endTileX < tcursor.x) {
+            let tmpX = endTileX;
+            endTileX = tcursor.x;
+            tcursor.x = tmpX;
+        }
+
+        if (endTileY < tcursor.y) {
+            let tmpY = endTileY;
+            endTileY = tcursor.y;
+            tcursor.y = tmpY;
+        }
+
+        tcursor.w = endTileX - tcursor.x + 1;
+        tcursor.h = endTileY - tcursor.y + 1;
+
+        refreshTileCursorData(that);
+    }
+
     that.context.beginPath();
     that.context.strokeStyle = 'blue';
     that.context.rect(gridX, gridY, globals.tileWidth*zoom, globals.tileHeight*zoom);
+    that.context.stroke();
+
+    that.context.beginPath();
+    that.context.strokeStyle = 'orange';
+    that.context.rect(tcursor.x*globals.tileWidth*zoom, tcursor.y*globals.tileHeight*zoom, tcursor.w*globals.tileWidth*zoom, tcursor.h*globals.tileHeight*zoom);
     that.context.stroke();
 }
 
 function onMouseDown(e) {
     mouseDown = false; // from another module
+
+    pressed = true;
 
     let that = globals.getCurrentTilesetPanel();
 
@@ -130,9 +186,47 @@ function onMouseDown(e) {
 
     let tileX = Math.floor(x / (globals.tileWidth*zoom));
     let tileY = Math.floor(y / (globals.tileHeight*zoom));
+
     setCurrentTile(that, tileY * (that.sourceWidth / globals.tileWidth) + tileX);
     
     redraw(that);
+
+    tcursor.x = tileX;
+    tcursor.y = tileY;
+    tcursor.w = 1;
+    tcursor.h = 1;
+
+    refreshTileCursorData(that);
+
+    that.context.beginPath();
+    that.context.strokeStyle = 'orange';
+    that.context.rect(tcursor.x*globals.tileWidth*zoom, tcursor.y*globals.tileHeight*zoom, tcursor.w*globals.tileWidth*zoom, tcursor.h*globals.tileHeight*zoom);
+    that.context.stroke();
+
+    $('bg-status').text((pressed ? 'P':'-') + " " + (dragging ? "D":"-"));
+}
+
+function onMouseUp(e) {
+    pressed = false;
+    if (dragging) {
+        dragging = false;
+        // onDragEnd
+        $('bg-status').text((pressed ? 'P':'-') + " " + (dragging ? "D":"-"));
+    }
+}
+
+function refreshTileCursorData(tilesetPanel) {
+    tcursor.tiles = [];
+    for (var y = 0; y < tcursor.h; y++) {
+        for (var x = 0; x < tcursor.w; x++) {
+            tcursor.tiles.push(tcursor.y + y * (tilesetPanel.sourceWidth / globals.tileWidth) + tcursor.x + x);
+        }
+    }
+    
+}
+
+function getTileCursor() {
+    return tcursor;
 }
 
 function setCurrentTile(tilesetPanel, tileId) {
@@ -201,6 +295,7 @@ module.exports = {
     redraw: redraw,
     getCurrentTile: getCurrentTile,
     setCurrentTile: setCurrentTile,
+    getTileCursor: getTileCursor,
     getTileX: getTileX,
     getTileY: getTileY,
     getTintedCanvas: getTintedCanvas,
