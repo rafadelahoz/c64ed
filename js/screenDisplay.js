@@ -271,9 +271,10 @@ function renderCursor(e) {
         let tileY = Math.floor(y / (globals.tileHeight*zoom))*globals.tileWidth*zoom;
 
         // Fetch the current tile cursor
-        let tileCursor = tileset.getTileCursor();
-        if (!tileCursor)
-            tileCursor = { x: -1, y: -1, w: 1, h: 1};
+        let tileCursor = { x: -1, y: -1, w: 1, h: 1};
+        let layer = globals.getCurrentLayer();
+        if (layer == "bg" || layer == "fg")
+            tileCursor = tileset.getTileCursor();
 
         // Outer cursor
         mapContext.beginPath();
@@ -431,9 +432,16 @@ function setTile(e) {
     if (y < mapHeight && x < mapWidth) { // target
         let mapTileX = Math.floor(x / (globals.tileWidth * zoom));
         let mapTileY = Math.floor(y / (globals.tileHeight * zoom));
-        let targetMapTile = mapTileY * room.columns + mapTileX;
-        let tilesetPanel = globals.getCurrentTilesetPanel();        
-        room.tiles[globals.getCurrentLayer()][targetMapTile] = tileset.getCurrentTile(tilesetPanel);
+        
+        let tileCursor = tileset.getTileCursor();
+
+        let targetMapTile = 0;
+        for (let ty = 0; ty < tileCursor.h; ty++)
+            for (let tx = 0; tx < tileCursor.w; tx++) {
+                targetMapTile = (mapTileY + ty) * room.columns + mapTileX + tx;
+                room.tiles[globals.getCurrentLayer()][targetMapTile] = tileCursor.tiles[ty * tileCursor.w + tx];
+            }
+        
         renderFullMap();
     }
 }

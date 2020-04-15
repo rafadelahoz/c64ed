@@ -140,7 +140,7 @@ function onMouseMove(e) {
     }
     
     if (pressed && dragging) {
-        $('bg-status').text((pressed ? 'P':'-') + " " + (dragging ? "D":"-"));
+        $('#bg-status').text((pressed ? 'P':'-') + " " + (dragging ? "D":"-"));
 
         let endTileX = Math.floor(x / (globals.tileWidth*zoom));
         let endTileY = Math.floor(y / (globals.tileHeight*zoom));
@@ -203,7 +203,7 @@ function onMouseDown(e) {
     that.context.rect(tcursor.x*globals.tileWidth*zoom, tcursor.y*globals.tileHeight*zoom, tcursor.w*globals.tileWidth*zoom, tcursor.h*globals.tileHeight*zoom);
     that.context.stroke();
 
-    $('bg-status').text((pressed ? 'P':'-') + " " + (dragging ? "D":"-"));
+    $('#bg-status').text((pressed ? 'P':'-') + " " + (dragging ? "D":"-"));
 }
 
 function onMouseUp(e) {
@@ -211,18 +211,19 @@ function onMouseUp(e) {
     if (dragging) {
         dragging = false;
         // onDragEnd
-        $('bg-status').text((pressed ? 'P':'-') + " " + (dragging ? "D":"-"));
+        $('#bg-status').text((pressed ? 'P':'-') + " " + (dragging ? "D":"-"));
     }
 }
 
 function refreshTileCursorData(tilesetPanel) {
     tcursor.tiles = [];
-    for (var y = 0; y < tcursor.h; y++) {
-        for (var x = 0; x < tcursor.w; x++) {
-            tcursor.tiles.push(tcursor.y + y * (tilesetPanel.sourceWidth / globals.tileWidth) + tcursor.x + x);
+    for (var y = tcursor.y; y < (tcursor.y + tcursor.h); y++) {
+        for (var x = tcursor.x; x < (tcursor.x + tcursor.w); x++) {
+            tcursor.tiles.push(y * (tilesetPanel.sourceWidth / globals.tileWidth) + x);
         }
     }
-    
+
+    // $('#bg-status').text(tcursor.tiles);  
 }
 
 function getTileCursor() {
