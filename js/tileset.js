@@ -72,6 +72,7 @@ var dragging = false;
 var tcursor = {
     x: 0, y: 0,
     w: 0, h: 0,
+    fromTileset: true,
     tiles: []
 }
 
@@ -140,8 +141,6 @@ function onMouseMove(e) {
     }
     
     if (pressed && dragging) {
-        $('#bg-status').text((pressed ? 'P':'-') + " " + (dragging ? "D":"-"));
-
         let endTileX = Math.floor(x / (globals.tileWidth*zoom));
         let endTileY = Math.floor(y / (globals.tileHeight*zoom));
 
@@ -187,7 +186,7 @@ function onMouseDown(e) {
     let tileX = Math.floor(x / (globals.tileWidth*zoom));
     let tileY = Math.floor(y / (globals.tileHeight*zoom));
 
-    setCurrentTile(that, tileY * (that.sourceWidth / globals.tileWidth) + tileX);
+    // setCurrentTile(that, tileY * (that.sourceWidth / globals.tileWidth) + tileX);
     
     redraw(that);
 
@@ -202,8 +201,6 @@ function onMouseDown(e) {
     that.context.strokeStyle = 'orange';
     that.context.rect(tcursor.x*globals.tileWidth*zoom, tcursor.y*globals.tileHeight*zoom, tcursor.w*globals.tileWidth*zoom, tcursor.h*globals.tileHeight*zoom);
     that.context.stroke();
-
-    $('#bg-status').text((pressed ? 'P':'-') + " " + (dragging ? "D":"-"));
 }
 
 function onMouseUp(e) {
@@ -211,7 +208,6 @@ function onMouseUp(e) {
     if (dragging) {
         dragging = false;
         // onDragEnd
-        $('#bg-status').text((pressed ? 'P':'-') + " " + (dragging ? "D":"-"));
     }
 }
 
@@ -223,6 +219,7 @@ function refreshTileCursorData(tilesetPanel) {
         }
     }
 
+    tcursor.fromTileset = true;
     // $('#bg-status').text(tcursor.tiles);  
 }
 
@@ -240,11 +237,17 @@ function getCurrentTile(tilesetPanel) {
 }
 
 function offsetX(tilesetPanel) {
-    return tilesetPanel.canvas.getClientRects()[0].x;
+    if (tilesetPanel)
+        return tilesetPanel.canvas.getClientRects()[0].x;
+    else
+        return 0;
 }
 
 function offsetY(tilesetPanel) {
-    return tilesetPanel.canvas.getClientRects()[0].y;
+    if (tilesetPanel)
+        return tilesetPanel.canvas.getClientRects()[0].y;
+    else
+        return 0;
 }
 
 function redraw(tilesetPanel) {

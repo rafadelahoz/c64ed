@@ -150,9 +150,25 @@ function onMapMouseUp(e) {
         case "fg":
 
             pressed = false;
-            if (dragging) {
+            if (e.button == 2 && dragging) {
                 dragging = false;
                 // onDragEnd
+                refreshTileCursorData();
+            } else if (e.button == 2) {
+                let x = e.clientX - mapX();
+                let y = e.clientY - mapY();
+                if (x > 0 && x < mapWidth && y > 0 && y < mapHeight) {
+                    let tileX = Math.floor(x / (globals.tileWidth*zoom));
+                    let tileY = Math.floor(y / (globals.tileHeight*zoom));
+                    
+                    tileset.getTileCursor().x = tileX;
+                    tileset.getTileCursor().y = tileY;
+                    tileset.getTileCursor().w = 1;
+                    tileset.getTileCursor().h = 1;
+                    tileset.getTileCursor().fromTileset = false;
+
+                    refreshTileCursorData();
+                }
             }
 
             break;
@@ -160,6 +176,19 @@ function onMapMouseUp(e) {
             document.getElementById('result').innerHTML = "Current layer: " + globals.getCurrentLayer();
             break;
     }
+}
+
+function refreshTileCursorData()
+{
+    tileset.getTileCursor().tiles = [];
+
+    let tc = tileset.getTileCursor();
+    for (let yy = tc.y; yy < (tc.y+tc.h); yy++)
+        for (let xx = tc.x; xx < (tc.x+tc.w); xx++)
+        {
+            let targetTile = yy * room.columns + xx;
+            tileset.getTileCursor().tiles.push(room.tiles[globals.getCurrentLayer()][targetTile]);
+        }
 }
 
 function onMapMouseDown(e) {
@@ -188,26 +217,22 @@ function handleTilesMouseDown(e) {
     if (e.button == 0) {
         mouseDown = true;
     } else if (e.button == 2) {
-        pickTile(e);
-    }
-}
+        // pickTile(e);
+        // Right mouse button: pick tile
+        let x = e.clientX - mapX();
+        let y = e.clientY - mapY();
+        if (x > 0 && x < mapWidth && y > 0 && y < mapHeight) {
+            let tileX = Math.floor(x / (globals.tileWidth*zoom));
+            let tileY = Math.floor(y / (globals.tileHeight*zoom));
 
-function pickTile(e) {
-    // Right mouse button: pick tile
-    let x = e.clientX - mapX();
-    let y = e.clientY - mapY();
-    if (x > 0 && x < mapWidth && y > 0 && y < mapHeight) {
-        let tileX = Math.floor(x / (globals.tileWidth*zoom));
-        let tileY = Math.floor(y / (globals.tileHeight*zoom));
-        let targetTile = tileY * room.columns + tileX;
-        
-        // let tilesetPanel = globals.getCurrentTilesetPanel();
-        // tileset.setCurrentTile(tilesetPanel, room.tiles[globals.getCurrentLayer()][targetTile]);
-        tileset.getTileCursor().x = 0;
-        tileset.getTileCursor().y = 0;
-        tileset.getTileCursor().w = 1;
-        tileset.getTileCursor().h = 1;
-        tileset.getTileCursor().tiles = [room.tiles[globals.getCurrentLayer()][targetTile]];
+            tileset.getTileCursor().x = tileX;
+            tileset.getTileCursor().y = tileY;
+            tileset.getTileCursor().w = 1;
+            tileset.getTileCursor().h = 1;
+            tileset.getTileCursor().fromTileset = false;
+            
+            refreshTileCursorData();
+        } 
     }
 }
 
@@ -240,20 +265,72 @@ function onMapMouseMove(e) {
     // Render cursor
     renderCursor(e);
 
+    heldButton = e.which - 1;
+
     switch (globals.getCurrentLayer()) {
         case "bg":
         case "fg":
-            if (e.button == 0) {
+            if (heldButton == 0) {
                 if (currentTool == "draw")
                     // Paint if painting
                     if (mouseDown) setTile(e);
                 else if (currentTool == "fill") {
                     // Nop!
                 }
-            } else  if (button == 2) {
+            } else  if (heldButton == 2) {
+                let x = e.clientX - mapX();
+                let y = e.clientY - mapY();
+
                 if (pressed && !dragging) {
                     // onDragStart
                     dragging = true;
+
+                    
+                    if (x > 0 && x < mapWidth && y > 0 && y < mapHeight) {
+                        let tileX = Math.floor(x / (globals.tileWidth*zoom));
+                        let tileY = Math.floor(y / (globals.tileHeight*zoom));
+                        // let targetTile = tileY * room.columns + tileX;
+                        
+                        tileset.getTileCursor().x = tileX;
+                        tileset.getTileCursor().y = tileY;
+                        tileset.getTileCursor().w = 1;
+                        tileset.getTileCursor().h = 1;
+                        tileset.getTileCursor().fromTileset = false;
+                        // TODO: ?? refresh tile data
+                    }
+                }
+
+                if (pressed && dragging) {
+                    let endTileX = Math.floor(x / (globals.tileWidth*zoom));
+                    let endTileY = Math.floor(y / (globals.tileHeight*zoom));
+
+                    let tmpW = endTileX - tileset.getTileCursor().x + 1;
+                    let tmpH = endTileY - tileset.getTileCursor().y + 1;
+
+                    if (tmpW == 0)
+                        tmpW = 1;
+
+                    if (tmpH == 0)
+                        tmpH = 1;
+
+                    if (tmpW < 0)
+                    {
+                        tileset.getTileCursor().x = endTileX;
+                        tileset.getTileCursor().w = 1;
+                    }
+                    else
+                        tileset.getTileCursor().w = tmpW;
+
+                    if (tmpH < 0)
+                    {
+                        tileset.getTileCursor().y = endTileY;
+                        tileset.getTileCursor().h = 1;
+                    }
+                    else
+                        tileset.getTileCursor().h = tmpH;
+                    
+                    tileset.getTileCursor().fromTileset = false;
+                    // TODO: refresh tile data?
                 }
             }
 
@@ -304,13 +381,21 @@ function renderCursor(e) {
         mapContext.beginPath();
         mapContext.lineWidth = 2;
         mapContext.strokeStyle = 'blue';
-        mapContext.rect(tileX, tileY, tileCursor.w*globals.tileWidth*zoom, tileCursor.h*globals.tileHeight*zoom);
+        if (dragging)
+            mapContext.rect(tileCursor.x*globals.tileWidth*zoom, tileCursor.y*globals.tileHeight*zoom, tileCursor.w*globals.tileWidth*zoom, tileCursor.h*globals.tileHeight*zoom);
+        else
+            mapContext.rect(tileX, tileY, tileCursor.w*globals.tileWidth*zoom, tileCursor.h*globals.tileHeight*zoom);
+
         mapContext.stroke();
         // Inner cursor
         mapContext.beginPath();
         mapContext.lineWidth = 1;
         mapContext.strokeStyle = 'white';
-        mapContext.rect(tileX+1, tileY+1, tileCursor.w*globals.tileWidth*zoom-1, tileCursor.h*globals.tileHeight*zoom-1);
+        if (dragging)
+            mapContext.rect(tileCursor.x*globals.tileWidth*zoom+1, tileCursor.y*globals.tileHeight*zoom+1, tileCursor.w*globals.tileWidth*zoom-1, tileCursor.h*globals.tileHeight*zoom-1);
+        else
+            mapContext.rect(tileX+1, tileY+1, tileCursor.w*globals.tileWidth*zoom-1, tileCursor.h*globals.tileHeight*zoom-1);
+
         mapContext.stroke();
     }
 }
@@ -476,10 +561,12 @@ function fillTile(e) {
     if (y < mapHeight && x < mapWidth) { // target
         let mapTileX = Math.floor(x / (globals.tileWidth * zoom));
         let mapTileY = Math.floor(y / (globals.tileHeight * zoom));
-        let tilesetPanel = globals.getTilesetPanel(globals.getCurrentLayer());
+        // let tilesetPanel = globals.getTilesetPanel(globals.getCurrentLayer());
         // flood fill!
         let fillOverTile = get(room.tiles[globals.getCurrentLayer()], room.columns, mapTileX, mapTileY);
-        floodFill(room.tiles[globals.getCurrentLayer()], room.columns, mapTileX, mapTileY, fillOverTile, tileset.getCurrentTile(tilesetPanel))
+        // For now use just the first tile whatever
+        let fillWithTile = tileset.getTileCursor().tiles[0];
+        floodFill(room.tiles[globals.getCurrentLayer()], room.columns, mapTileX, mapTileY, fillOverTile, fillWithTile);
         renderFullMap();
     }
 }
