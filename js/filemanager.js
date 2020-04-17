@@ -6,11 +6,16 @@ var path = "./";
 
 function save(filename, data) {
     console.log(pathlib.join(process.cwd(), path + filename));
-    var sdata = JSON.stringify(data, function(k,v){
-        if(v instanceof Array)
-           return JSON.stringify(v);
+    var sdata = JSON.stringify(data, function(k,v) {
+        if ((k == "bg" || k == "fg" || k == "solids") && v instanceof Array) {
+            return JSON.stringify(v);
+        }
+
         return v;
-     }, '\t');
+    }, '\t');
+
+    sdata = sdata.replace(/\"\[/g, "[");
+    sdata = sdata.replace(/\]\"/g, "]"); 
 
     try {
         var filepath = dialog.showSaveDialog({
