@@ -235,6 +235,8 @@ function handleTilesMouseDown(e) {
                 cursorArea.w = tileset.getTileCursor().w;
                 cursorArea.h = tileset.getTileCursor().h;
                 cursorArea.stamped = false;
+
+                setTile(e);
             } else if (e.button == 2) {
                 // Right mouse button: pick tiles
                 tileset.getTileCursor().x = tileX;
