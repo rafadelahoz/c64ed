@@ -22,6 +22,11 @@ var mouseDown;
 var pressed = false;
 var dragging = false;
 
+var cursorArea = {
+    x: 0, y: 0, w: 0, h: 0,
+    stamped : false
+};
+
 var currentTool = "draw"; // fill
 
 function init() {
@@ -212,27 +217,35 @@ function onMapMouseDown(e) {
 function handleTilesMouseDown(e) {
     mouseDown = false;
 
-    pressed = true;
+    if (e.button == 0 || e.button == 2) {
+        pressed = true;
 
-    if (e.button == 0) {
-        mouseDown = true;
-    } else if (e.button == 2) {
-        // pickTile(e);
-        // Right mouse button: pick tile
         let x = e.clientX - mapX();
         let y = e.clientY - mapY();
         if (x > 0 && x < mapWidth && y > 0 && y < mapHeight) {
             let tileX = Math.floor(x / (globals.tileWidth*zoom));
             let tileY = Math.floor(y / (globals.tileHeight*zoom));
 
-            tileset.getTileCursor().x = tileX;
-            tileset.getTileCursor().y = tileY;
-            tileset.getTileCursor().w = 1;
-            tileset.getTileCursor().h = 1;
-            tileset.getTileCursor().fromTileset = false;
-            
-            refreshTileCursorData();
-        } 
+            if (e.button == 0) {
+                // Left mouse button: place tiles
+                mouseDown = true;
+                // Setup cursor stamp area so we dont draw over it again
+                cursorArea.x = tileX;
+                cursorArea.y = tileY;
+                cursorArea.w = tileset.getTileCursor().w;
+                cursorArea.h = tileset.getTileCursor().h;
+                cursorArea.stamped = false;
+            } else if (e.button == 2) {
+                // Right mouse button: pick tiles
+                tileset.getTileCursor().x = tileX;
+                tileset.getTileCursor().y = tileY;
+                tileset.getTileCursor().w = 1;
+                tileset.getTileCursor().h = 1;
+                tileset.getTileCursor().fromTileset = false;
+                
+                refreshTileCursorData();
+            }
+        }
     }
 }
 
@@ -544,12 +557,28 @@ function setTile(e) {
         
         let tileCursor = tileset.getTileCursor();
 
-        let targetMapTile = 0;
-        for (let ty = 0; ty < tileCursor.h; ty++)
-            for (let tx = 0; tx < tileCursor.w; tx++) {
-                targetMapTile = (mapTileY + ty) * room.columns + mapTileX + tx;
-                room.tiles[globals.getCurrentLayer()][targetMapTile] = tileCursor.tiles[ty * tileCursor.w + tx];
+        // Check if we are outside the cursor area
+        stampingOutside = 
+            (mapTileX >= (cursorArea.x + cursorArea.w) ||
+             mapTileX + tileCursor.w <= cursorArea.x) ||
+            (mapTileY >= (cursorArea.y + cursorArea.h) ||
+             mapTileY + tileCursor.h <= cursorArea.y);
+
+        if (!cursorArea.stamped || stampingOutside)
+        {
+            if (stampingOutside) {
+                cursorArea.x = mapTileX;
+                cursorArea.y = mapTileY;
             }
+            
+            cursorArea.stamped = true;
+            let targetMapTile = 0;
+            for (let ty = 0; ty < tileCursor.h; ty++)
+                for (let tx = 0; tx < tileCursor.w; tx++) {
+                    targetMapTile = (mapTileY + ty) * room.columns + mapTileX + tx;
+                    room.tiles[globals.getCurrentLayer()][targetMapTile] = tileCursor.tiles[ty * tileCursor.w + tx];
+                }
+        }
         
         renderFullMap();
     }
