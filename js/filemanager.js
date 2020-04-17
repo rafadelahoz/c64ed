@@ -6,12 +6,16 @@ var path = "./";
 
 function save(filename, data) {
     console.log(pathlib.join(process.cwd(), path + filename));
-    var sdata = JSON.stringify(data, null, '\t');
+    var sdata = JSON.stringify(data, function(k,v){
+        if(v instanceof Array)
+           return JSON.stringify(v);
+        return v;
+     }, '\t');
 
     try {
         var filepath = dialog.showSaveDialog({
             title: 'Where to save?', 
-            buttonLabel: 'THIS IS THE PLACE',
+            buttonLabel: 'Save',
             filters: [{name: 'MAPS', extensions: ['json']}],
             defaultPath: filename
         });
@@ -26,7 +30,7 @@ function load(filename) {
     try {
         var filepath = dialog.showOpenDialog({
             title: 'Select a map file to load', 
-            buttonLabel: 'THIS IS THE MAP',
+            buttonLabel: 'Load',
             filters: [{name: 'MAPS', extensions: ['json']}]
         });
 
