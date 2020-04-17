@@ -92,7 +92,8 @@
         "label": "Enemy Skeleton",
         "w": 1, "h": 1,
         "properties": {
-            "type": ["NORMAL", "RED"]
+            "type": ["NORMAL", "RED"],
+            "facing": ["left", "right"]
         }
     }
 }
