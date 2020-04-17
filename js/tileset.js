@@ -116,6 +116,9 @@ function buildTintedCanvas(tilesetPanel) {
 function onMouseMove(e) {
     let that = globals.getCurrentTilesetPanel();
 
+    if (!that)
+        return;
+
     let x = e.clientX - offsetX(that);
     let y = e.clientY - offsetY(that);
     let gridX, gridY;
