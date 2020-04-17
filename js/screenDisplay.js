@@ -577,6 +577,9 @@ function setTile(e) {
             let targetMapTile = 0;
             for (let ty = 0; ty < tileCursor.h; ty++)
                 for (let tx = 0; tx < tileCursor.w; tx++) {
+                    // Avoid flowing tiles to the next row
+                    if (mapTileX + tx >= room.columns)
+                        continue;
                     targetMapTile = (mapTileY + ty) * room.columns + mapTileX + tx;
                     room.tiles[globals.getCurrentLayer()][targetMapTile] = tileCursor.tiles[ty * tileCursor.w + tx];
                 }
