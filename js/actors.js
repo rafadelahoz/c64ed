@@ -319,11 +319,13 @@ function editCurrentActorSource() {
             elem = body.find("#entity-source-textarea");
             var actorData = JSON.parse(elem.val());
             
+            let room = roomGrid.getCurrentRoom();
+
             deleteCurrentActor();
             room.actors.push(actorData);
             selectedActor = findActorById(actorData.id, room);
             
-            rebuildActorsList(roomGrid.getCurrentRoom());
+            rebuildActorsList(room);
             triggerRoomRender();
         }
         
