@@ -95,5 +95,30 @@
             "type": ["NORMAL", "RED"],
             "facing": ["left", "right"]
         }
+    },
+
+    "enemy-frog": {
+        "label": "Enemy Frog",
+        "w": 1, "h": 1,
+        "properties": {
+            "color": "color"
+        }
+    },
+
+    "falling-hazard": {
+        "label": "Falling hazard",
+        "w": 1, "h": 1,
+        "properties": {
+            "color": "color"
+        }
+    },
+
+    "NPC": {
+        "label": "NPC",
+        "w": 1, "h": 1,
+        "properties": {
+            "color": "color",
+            "messages": "line#line"
+        }
     }
 }
