@@ -79,6 +79,43 @@
         }
     },
 
+    "solid": {
+        "label": "Solid",
+        "w": 1,
+        "h": 1,
+        "properties": {
+            "color": "#000000",
+            "graphic": ""
+        }
+    },
+
+    "puzzle-lever": {
+        "label": "Lever",
+        "w": 1,
+        "h": 1,
+        "properties": {
+            "switch": false
+        }
+    },
+
+    "puzzle-button": {
+        "label": "Button",
+        "w": 1,
+        "h": 1,
+        "properties": {
+
+        }
+    },
+
+    "puzzle-switcher": {
+        "label": "Switcher",
+        "w": 0,
+        "h": 0,
+        "properties": {
+            "target": "(actor id)"
+        }
+    },
+
     "enemy-plant": {
         "label": "Enemy Plant",
         "w": 1,

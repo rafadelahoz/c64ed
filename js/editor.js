@@ -163,6 +163,19 @@ function refreshColorInputs() {
     }
 }
 
+$('#btn-new').on('click', function(e) {
+    console.log("creating new");
+    data.init();
+    
+    screenGrid.init();
+    screenDisplay.init();
+
+    screenGrid.reload();
+    screenDisplay.loadCurrentRoom();
+
+    handleAfterRoomChange();
+});
+
 $('#btn-load').on('click', function(e) {
     console.log("loading");
 

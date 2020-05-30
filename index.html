@@ -16,8 +16,16 @@
             <h3>C64ED</h3>
         </div>
 
-        <label for="map-name">Name</label>
-        <input type="text" id="map-name"><br/>
+        <div class="btn-group btn-group-sm" role="group" role="group" aria-label="File buttons">
+          <button type="button" class="btn btn-secondary" id="btn-new"><i class="fa fa-sticky-note"></i></button>
+          <button type="button" class="btn btn-secondary" id="btn-save"><i class="fa fa-floppy-o"></i></button>
+          <button type="button" class="btn btn-secondary" id="btn-load"><i class="fa fa-folder-open"></i></button>
+        </div>
+
+        <div>
+          <label for="map-name">Name</label>
+          <input type="text" id="map-name"><br/>
+        </div>
 
         <button id="bgColor-picker" style="background: #fff; mix-blend-mode: difference;">BG</button>
         <button id="fgColor-bg-picker" style="background: #000; mix-blend-mode: difference;">TBG</button>
@@ -170,15 +178,6 @@
       </div>
     </div>
   </div>
-  <footer class="footer">
-    <div class="container">
-      <div class="btn-group" role="group" aria-label="Zoom buttons">
-        <button type="button" class="btn btn-secondary" id="btn-new"><i class="fa fa-sticky-note"></i></button>
-        <button type="button" class="btn btn-secondary" id="btn-save"><i class="fa fa-floppy-o"></i></button>
-        <button type="button" class="btn btn-secondary" id="btn-load"><i class="fa fa-folder-open"></i></button>
-      </div>
-    </div>
-  </footer>
 
   <datalist id="c64-colors">
     <option>#000000</option>
