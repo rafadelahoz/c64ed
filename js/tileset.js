@@ -81,7 +81,10 @@ function room() {
 }
 
 function bgColor() {
-    return room().colors[0];
+    if (room())
+        return room().colors[0];
+    else
+        return '#000';
 }
 
 function fgColor(layer) {
