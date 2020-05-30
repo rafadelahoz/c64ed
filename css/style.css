@@ -95,3 +95,7 @@ canvas {
 #entity-source-textarea {
     font-family: monospace;
 }
+
+.modal-header {
+    cursor: move;
+}

@@ -396,6 +396,24 @@ function buildModal(title, body, saveCallback, cancelCallback) {
         currentModal = null;
     });
 
+    $modal.find(".modal-header").on("mousedown", function(mousedownEvt) {
+        var $draggable = $(this);
+        var x = mousedownEvt.pageX - $draggable.offset().left,
+            y = mousedownEvt.pageY - $draggable.offset().top;
+        $("body").on("mousemove.draggable", function(mousemoveEvt) {
+            $draggable.closest(".modal-content").offset({
+                "left": mousemoveEvt.pageX - x,
+                "top": mousemoveEvt.pageY - y
+            });
+        });
+        $("body").one("mouseup", function() {
+            $("body").off("mousemove.draggable");
+        });
+        $draggable.closest(".modal").one("bs.modal.hide", function() {
+            $("body").off("mousemove.draggable");
+        });
+    });
+
     return $modal;
 }
 
