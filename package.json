@@ -14,14 +14,14 @@
   "author": "thegraffo",
   "devDependencies": {
     "bootstrap": "^4.1.3",
-    "electron": "^4.0.7",
+    "electron": "^18.3.7",
     "jquery": "^3.4.1",
     "popper.js": "^1.14.4",
     "mousetrap": "^1.6.3"
   },
   "dependencies": {
     "bootstrap": "^4.1.3",
-    "electron": "^4.0.7",
+    "electron": "^18.3.7",
     "jquery": "^3.4.1",
     "popper.js": "^1.14.4",
     "mousetrap": "^1.6.3"
